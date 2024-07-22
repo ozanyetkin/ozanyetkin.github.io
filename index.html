@@ -1,375 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ozan YETKİN - CV</title>
     <style>
-      body {
-        font-family: monospace;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        background-color: #f5f5f5;
-        overflow-x: hidden;
-        position: relative;
-      }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 200px;
-        background-color: #ffffff;
-        color: #000000;
-        overflow-x: hidden;
-        overflow-y: auto;
-        transition: transform 0.3s ease;
-        transform: translateX(-200px);
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        z-index: 1;
-        padding-top: 60px; /* Adjust this value as needed */
-      }
+        body {
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-      .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 16px;
-        color: #000000;
-        display: block;
-        transition: background-color 0.3s;
-      }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #ffffff;
+            color: #000000;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            transform: translateX(-200px);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            padding-top: 60px;
+            /* Adjust this value as needed */
+        }
 
-      .sidebar a:hover {
-        background-color: #f0f0f0;
-      }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            margin-bottom: 0.5em;
+            margin-left: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+            display: block;
+            transition: background-color 0.3s;
+        }
 
-      .main-content {
-        width: 80%; /* Adjust this width as needed */
-        max-width: 800px;
-        padding: 20px;
-        background-color: #ffffff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        transition: margin-left 0.3s;
-        position: relative;
-        z-index: 0;
-      }
-      
-      .openbtn {
-        font-size: 30px;
-        cursor: pointer;
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        z-index: 2;
-      }
-      h1,
-      h2,
-      h3 {
-        margin-bottom: 0.5em;
-      }
-      .section {
-        margin-bottom: 2em;
-      }
-      .section-title {
-        font-weight: bold;
-        margin-bottom: 0.5em;
-        text-decoration: underline;
-        font-size: 16px;
-      }
-      .contact-info,
-      .section-content {
-        margin-left: 20px;
-      }
+        .sidebar a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .main-content {
+            width: 80%;
+            /* Adjust this width as needed */
+            max-width: 800px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: margin-left 0.3s;
+            position: relative;
+            z-index: 0;
+        }
+
+        .openbtn {
+            font-size: 30px;
+            cursor: pointer;
+            position: fixed;
+            /* Use fixed positioning */
+            bottom: 20px;
+            left: 20px;
+            z-index: 2;
+            background-color: #ffffff;
+            border-radius: 20%;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .openbtn:hover {
+            background-color: #f0f0f0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-bottom: 0.5em;
+        }
+
+        .section {
+            margin-bottom: 2em;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 0.5em;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .contact-info {
+          margin-left: 0px;
+        }
+        .section-content {
+            margin-left: 20px;
+        }
+
+        /* Other existing styles */
+
+        /* Flexbox container for profile header */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            margin-top: 40px;
+            /* Add some space below */
+        }
+
+        .profile-header img {
+            margin-right: 20px;
+            /* Space between image and text */
+            border-radius: 50%;
+            /* Optional: Make the image circular */
+        }
+
+        .profile-info h1,
+        .profile-info h2 {
+            margin: 0;
+            /* Remove default margins */
+        }
+
+        .profile-info .contact-info {
+            margin-top: 10px;
+            /* Space above contact info */
+        }
+
+        /* Keep existing styles for .sidebar, .openbtn, etc. */
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div id="mySidebar" class="sidebar">
-      <a href="#contact-info">Contact Info</a>
-      <a href="#skills">Skills</a>
-      <a href="#education">Education</a>
-      <a href="#work-experience">Work Experience</a>
-      <a href="#research-experience">Research Experience</a>
-      <a href="#publications">Publications</a>
-      <a href="#organized-events">Organized Events</a>
-      <a href="#assisted-courses">Assisted Courses</a>
-      <a href="#languages">Languages</a>
-      <a href="#workshops-certificates">Workshops & Certificates</a>
-      <a href="#computer-literacy">Computer Literacy & Tools</a>
+        <a href="#contact-info"> > Contact Info</a>
+        <a href="#skills"> > Skills</a>
+        <a href="#education"> > Education</a>
+        <a href="#work-experience"> > Work Experience</a>
+        <a href="#research-experience"> > Research Experience</a>
+        <a href="#publications"> > Publications</a>
+        <a href="#organized-events"> > Organized Events</a>
+        <a href="#assisted-courses"> > Assisted Courses</a>
+        <a href="#languages"> > Languages</a>
+        <a href="#workshops-certificates"> > Workshops & Certificates</a>
+        <a href="#computer-literacy"> > Computer Literacy & Tools</a>
     </div>
 
-    <span class="openbtn" onclick="toggleNav()">&#9776;</span>
+    <span class="openbtn" onclick="toggleNav()">></span>
     <div id="main" class="main-content">
-      <div class="container">
-        <h1 id="contact-info">Ozan YETKİN</h1>
-        <h2>Designer | Researcher | Developer</h2>
-        <div class="contact-info">
-          <p>web: ozanyetkin.com | dds.archweb.metu.edu.tr | optiostudio.com</p>
-          <p>
-            e-mail: oyetkin@metu.edu.tr | ozan.yetkin@metu.edu.tr |
-            info@optiostudio.com
-          </p>
-          <p>office: METU Digital Design Studio | METU Technopolis CoZone</p>
+        <div class="profile-header">
+            <img src="https://avatars.githubusercontent.com/u/33118911?v=4" alt="Ozan Yetkin"
+                style="width: 160px; height: 160px;" />
+            <div class="profile-info">
+                <h1 id="contact-info">Ozan YETKİN</h1>
+                <h2>Designer | Researcher | Developer</h2>
+                <div class="contact-info">
+                    <p>web: ozanyetkin.com | dds.archweb.metu.edu.tr | optiostudio.com</p>
+                    <p>e-mail: oyetkin@metu.edu.tr | ozan.yetkin@metu.edu.tr | info@optiostudio.com</p>
+                    <p>office: METU Digital Design Studio | METU Technopolis CoZone</p>
+                </div>
+            </div>
         </div>
 
-
         <div class="section" id="skills">
-          <div class="section-title">Skills</div>
-          <div class="section-content">
-            <p>
-              computational design | generative design | design/objective space
-              exploration | multi-objective optimization | artificial
-              intelligence | machine learning | automation algorithms |
-              deterministic/probabilistic/hybrid approaches | geometry
-              processing | gamification
-            </p>
-          </div>
+            <div class="section-title">Skills</div>
+            <div class="section-content">
+                <p>
+                    computational design | generative design | design/objective space exploration | multi-objective
+                    optimization |
+                    artificial intelligence | machine learning | automation algorithms |
+                    deterministic/probabilistic/hybrid approaches |
+                    geometry processing | gamification
+                </p>
+            </div>
         </div>
 
         <div class="section" id="education">
-          <div class="section-title">Education</div>
-          <div class="section-content">
-            <p>
-              2020 – Ongoing<br />Doctor of Philosophy, Building Science<br />Middle
-              East Technical University (METU) / Graduate School of Natural and
-              Applied Sciences
-            </p>
-            <p>
-              2017 – 2020<br />Master of Science, Building Science<br />Middle
-              East Technical University (METU) / Graduate School of Natural and
-              Applied Sciences
-            </p>
-            <p>
-              2013 – 2017<br />Bachelor of Architecture<br />Middle East
-              Technical University (METU) / Department of Architecture
-            </p>
-          </div>
+            <div class="section-title">Education</div>
+            <div class="section-content">
+                <p>
+                    2020 – Ongoing<br />Doctor of Philosophy, Building Science<br />Middle
+                    East Technical University (METU) / Graduate School of Natural and
+                    Applied Sciences
+                </p>
+                <p>
+                    2017 – 2020<br />Master of Science, Building Science<br />Middle
+                    East Technical University (METU) / Graduate School of Natural and
+                    Applied Sciences
+                </p>
+                <p>
+                    2013 – 2017<br />Bachelor of Architecture<br />Middle East
+                    Technical University (METU) / Department of Architecture
+                </p>
+            </div>
         </div>
 
         <div class="section" id="work-experience">
-          <div class="section-title">Work Experience</div>
-          <div class="section-content">
-            <p>
-              04.2019 – Ongoing<br />Research Assistant, METU, Department of
-              Architecture
-            </p>
-            <p>
-              07.2019 – Ongoing<br />Co-Founder, OPTIO Design Technologies, METU
-              Technopolis
-            </p>
-            <p>06.2018 – 02.2019<br />R&D Specialist, BY Teknik, Ankara</p>
-            <p>08.2017 – 06.2018<br />Freelance Designer, UpWork, Worldwide</p>
-            <p>07.2016 – 09.2016<br />Intern Architect, RMJM, Istanbul</p>
-            <p>
-              06.2015 – 09.2015<br />Intern Engineer, TAV Construction, Abu
-              Dhabi
-            </p>
-          </div>
+            <div class="section-title">Work Experience</div>
+            <div class="section-content">
+                <p>
+                    04.2019 – Ongoing<br />Research Assistant, METU, Department of
+                    Architecture
+                </p>
+                <p>
+                    07.2019 – Ongoing<br />Co-Founder, OPTIO Design Technologies, METU
+                    Technopolis
+                </p>
+                <p>06.2018 – 02.2019<br />R&D Specialist, BY Teknik, Ankara</p>
+                <p>08.2017 – 06.2018<br />Freelance Designer, UpWork, Worldwide</p>
+                <p>07.2016 – 09.2016<br />Intern Architect, RMJM, Istanbul</p>
+                <p>
+                    06.2015 – 09.2015<br />Intern Engineer, TAV Construction, Abu
+                    Dhabi
+                </p>
+            </div>
         </div>
 
         <div class="section" id="research-experience">
-          <div class="section-title">Research Experience</div>
-          <div class="section-content">
-            <p>
-              01.2022 – Ongoing<br />Automation/Optimization/Suggestion System
-              for Sustainable Housing Design<br />Project Developer /
-              1507–TUBITAK–BILTEG
-            </p>
-            <p>
-              01.2021 – 01.2022<br />AI Supported Generative System for
-              Performative Acoustic Panels<br />Project Researcher /
-              1001–TUBITAK–BAP
-            </p>
-            <p>
-              09.2020 – 09.2021<br />Autonomous Building Design System<br />Project
-              Developer / 1512–TUBITAK–BIGG
-            </p>
-            <p>
-              10.2010 – 06.2012<br />AFL Computer Olympics<br />Participant /
-              TUBITAK
-            </p>
-            <p>
-              01.2010 – 09.2010<br />BILSEM Research Project in Physics<br />Student
-              Researcher / 2204–TUBITAK
-            </p>
-          </div>
+            <div class="section-title">Research Experience</div>
+            <div class="section-content">
+                <p>
+                    01.2022 – Ongoing<br />Automation/Optimization/Suggestion System
+                    for Sustainable Housing Design<br />Project Developer /
+                    1507–TUBITAK–BILTEG
+                </p>
+                <p>
+                    01.2021 – 01.2022<br />AI Supported Generative System for
+                    Performative Acoustic Panels<br />Project Researcher /
+                    1001–TUBITAK–BAP
+                </p>
+                <p>
+                    09.2020 – 09.2021<br />Autonomous Building Design System<br />Project
+                    Developer / 1512–TUBITAK–BIGG
+                </p>
+                <p>
+                    10.2010 – 06.2012<br />AFL Computer Olympics<br />Participant /
+                    TUBITAK
+                </p>
+                <p>
+                    01.2010 – 09.2010<br />BILSEM Research Project in Physics<br />Student
+                    Researcher / 2204–TUBITAK
+                </p>
+            </div>
         </div>
 
         <div class="section" id="publications">
-          <div class="section-title">Publications</div>
-          <div class="section-content">
-            <h3>International Conference and Symposium Presentations</h3>
-            <p>
-              2023 – Yetkin, O., Surer, E., Gönenç Sorguç, A., “Collaborating
-              with Agents in Architectural Design and Decision-Making Process:
-              Top-Down and Bottom-Up Case Studies Using Reinforcement
-              Learning”<br />Smart Objects and Technologies for Social Good
-              (GOODTECHS 2023), Leiria, Portugal.
-            </p>
-            <p>
-              2022 – Kruşa Yemişcioğlu, M., Gönenç Sorguç, A., Yetkin, O.,
-              “Levels of Mapping in Nature-informed Studies: A Case Study on
-              Informed Wall”<br />eCAADe Conference 2022, Ghent, Belgium.
-            </p>
-            <p>
-              2019 – Yetkin, O., Gönenç Sorguç, A., “Design Space Exploration of
-              Initial Structural Design Alternatives via Artificial Neural
-              Networks”<br />eCAADe+SIGraDi Conference 2019, Porto, Portugal.
-            </p>
-            <p>
-              2018 – Yetiş, G., Yetkin, O., Moon, K.P., Kılıç, Ö., “A Novel
-              Approach for Classification of Structural Elements in a 3D Model
-              by Supervised Learning”<br />eCAADe Conference 2018, Lodz, Poland.
-            </p>
+            <div class="section-title">Publications</div>
+            <div class="section-content">
+                <h3>International Conference and Symposium Presentations</h3>
+                <p>
+                    2023 – Yetkin, O., Surer, E., Gönenç Sorguç, A., “Collaborating
+                    with Agents in Architectural Design and Decision-Making Process:
+                    Top-Down and Bottom-Up Case Studies Using Reinforcement
+                    Learning”<br />Smart Objects and Technologies for Social Good
+                    (GOODTECHS 2023), Leiria, Portugal.
+                </p>
+                <p>
+                    2022 – Kruşa Yemişcioğlu, M., Gönenç Sorguç, A., Yetkin, O.,
+                    “Levels of Mapping in Nature-informed Studies: A Case Study on
+                    Informed Wall”<br />eCAADe Conference 2022, Ghent, Belgium.
+                </p>
+                <p>
+                    2019 – Yetkin, O., Gönenç Sorguç, A., “Design Space Exploration of
+                    Initial Structural Design Alternatives via Artificial Neural
+                    Networks”<br />eCAADe+SIGraDi Conference 2019, Porto, Portugal.
+                </p>
+                <p>
+                    2018 – Yetiş, G., Yetkin, O., Moon, K.P., Kılıç, Ö., “A Novel
+                    Approach for Classification of Structural Elements in a 3D Model
+                    by Supervised Learning”<br />eCAADe Conference 2018, Lodz, Poland.
+                </p>
 
-            <h3>National Conference and Symposium Presentations</h3>
-            <p>2022 – Gönenç Sorguç, A., Kruşa Yemişcioğlu, Yetkin,</p>
-            <p>
-              Yetkin, O., “Demystifying Machine Learning for Architecture
-              Students”<br />XVI. MSTAS 2022, Eskişehir.
-            </p>
-            <p>
-              2020 – Gönenç Sorguç, A., Yetkin, O., Kruşa Yemişcioğlu, M.,
-              Özgenel, Ç.F., “Sayısal Tasarım Araçlarının Kışı mı Geliyor?”<br />XIV.
-              MSTAS 2020, Trabzon.
-            </p>
-            <p>
-              2017 – Yetkin, O., “Zıtlıklardan Ara Mekanlara”<br />XI. MSTAS
-              2017 Poster Presentation, Ankara.
-            </p>
-            <p>
-              2017 – Şahinler, K., Yetiş, G., Yetkin, O., “Conflict of the
-              Virtual/Real Space, Morphology of the Snowflake”<br />XI. MSTAS
-              2017 Poster Presentation, Ankara.
-            </p>
-          </div>
+                <h3>National Conference and Symposium Presentations</h3>
+                <p>2022 – Gönenç Sorguç, A., Kruşa Yemişcioğlu, Yetkin,</p>
+                <p>
+                    Yetkin, O., “Demystifying Machine Learning for Architecture
+                    Students”<br />XVI. MSTAS 2022, Eskişehir.
+                </p>
+                <p>
+                    2020 – Gönenç Sorguç, A., Yetkin, O., Kruşa Yemişcioğlu, M.,
+                    Özgenel, Ç.F., “Sayısal Tasarım Araçlarının Kışı mı Geliyor?”<br />XIV.
+                    MSTAS 2020, Trabzon.
+                </p>
+                <p>
+                    2017 – Yetkin, O., “Zıtlıklardan Ara Mekanlara”<br />XI. MSTAS
+                    2017 Poster Presentation, Ankara.
+                </p>
+                <p>
+                    2017 – Şahinler, K., Yetiş, G., Yetkin, O., “Conflict of the
+                    Virtual/Real Space, Morphology of the Snowflake”<br />XI. MSTAS
+                    2017 Poster Presentation, Ankara.
+                </p>
+            </div>
         </div>
 
         <div class="section" id="organized-events">
-          <div class="section-title">Organized Events</div>
-          <div class="section-content">
-            <p>
-              27.06 – 30.06.2022<br />Performative Design Strategies for Extreme
-              Conditions on Mars, DigitalFUTURES<br />Instructor
-            </p>
-            <p>
-              26.10 – Present<br />International Council for Research and
-              Innovation in Building and Construction<br />Coordinator
-            </p>
-            <p>
-              20.02 – 20.02.2020<br />Concrete Structure Design Competition,
-              Cement Industry Employers’ Association<br />Prize Winner
-            </p>
-            <p>
-              10.02 – 10.02.2020<br />Speculations on the New: Text Competition,
-              Architects’ Association 1927<br />Prize Winner
-            </p>
-            <p>
-              02.08 – 02.08.2019<br />Architectural Design Studio-IV Final Jury,
-              TOBB University of Economics and Technology<br />Jury Member
-            </p>
-            <p>
-              23.05 – 23.05.2018<br />Breaking the Walls of Sleepless Nights,
-              DAAD Falling Walls Lab 2018<br />Presenter
-            </p>
-            <p>
-              07.08 – 21.11.2017<br />Home Planet’s Mars Urbanization Challenge,
-              Launch Forth Education League<br />Participant
-            </p>
-            <p>
-              14.06 – 01.07.2017<br />Inside Out: Virtual Reality, Projection
-              Mapping, and Pavilion Exhibition, METU Faculty of Architecture<br />Contributor
-            </p>
-            <p>
-              13.03 – 14.03.2017<br />Flying in/on/over Boundless Boundaries:
-              Virtual Reality Exhibition, METU Faculty of Architecture<br />Contributor
-            </p>
-            <p>
-              22.10 – 20.11.2016<br />Are We Human?, 3rd Istanbul Design
-              Biennial<br />Contributor
-            </p>
-          </div>
+            <div class="section-title">Organized Events</div>
+            <div class="section-content">
+                <p>
+                    27.06 – 30.06.2022<br />Performative Design Strategies for Extreme
+                    Conditions on Mars, DigitalFUTURES<br />Instructor
+                </p>
+                <p>
+                    26.10 – Present<br />International Council for Research and
+                    Innovation in Building and Construction<br />Coordinator
+                </p>
+                <p>
+                    20.02 – 20.02.2020<br />Concrete Structure Design Competition,
+                    Cement Industry Employers’ Association<br />Prize Winner
+                </p>
+                <p>
+                    10.02 – 10.02.2020<br />Speculations on the New: Text Competition,
+                    Architects’ Association 1927<br />Prize Winner
+                </p>
+                <p>
+                    02.08 – 02.08.2019<br />Architectural Design Studio-IV Final Jury,
+                    TOBB University of Economics and Technology<br />Jury Member
+                </p>
+                <p>
+                    23.05 – 23.05.2018<br />Breaking the Walls of Sleepless Nights,
+                    DAAD Falling Walls Lab 2018<br />Presenter
+                </p>
+                <p>
+                    07.08 – 21.11.2017<br />Home Planet’s Mars Urbanization Challenge,
+                    Launch Forth Education League<br />Participant
+                </p>
+                <p>
+                    14.06 – 01.07.2017<br />Inside Out: Virtual Reality, Projection
+                    Mapping, and Pavilion Exhibition, METU Faculty of Architecture<br />Contributor
+                </p>
+                <p>
+                    13.03 – 14.03.2017<br />Flying in/on/over Boundless Boundaries:
+                    Virtual Reality Exhibition, METU Faculty of Architecture<br />Contributor
+                </p>
+                <p>
+                    22.10 – 20.11.2016<br />Are We Human?, 3rd Istanbul Design
+                    Biennial<br />Contributor
+                </p>
+            </div>
         </div>
 
         <div class="section" id="assisted-courses">
-          <div class="section-title">Assisted Courses</div>
-          <div class="section-content">
-            <p>
-              BS 723 | Introduction to Machine Learning in Architecture (2020 –
-              …)
-            </p>
-            <p>
-              BS 724 | Nature Informed Computational Design in Architecture
-              (2020 – …)
-            </p>
-            <p>BS 725 | Folding in Architecture (2021 – …)</p>
-            <p>
-              BS 770 | Digital Fabrication Techniques in Architecture (2019 – …)
-            </p>
-            <p>ARCH 470 | Digital Design Studio (2019 – …)</p>
-            <p>ARCH 475 | Advanced Digital Design Studio (2019 – …)</p>
-            <p>ARCH 333 | Mathematics in Architecture (2019 – …)</p>
-            <p>ARCH 203 | Digital Media in Architecture I (2019)</p>
-            <p>
-              ARCH 231 | Architectural Engineering I: Statics and Strength of
-              Materials (2022)
-            </p>
-            <p>ARCH 251 | Building Materials Technologies (2019, 2021)</p>
-          </div>
+            <div class="section-title">Assisted Courses</div>
+            <div class="section-content">
+                <p>
+                    BS 723 | Introduction to Machine Learning in Architecture (2020 –
+                    …)
+                </p>
+                <p>
+                    BS 724 | Nature Informed Computational Design in Architecture
+                    (2020 – …)
+                </p>
+                <p>BS 725 | Folding in Architecture (2021 – …)</p>
+                <p>
+                    BS 770 | Digital Fabrication Techniques in Architecture (2019 – …)
+                </p>
+                <p>ARCH 470 | Digital Design Studio (2019 – …)</p>
+                <p>ARCH 475 | Advanced Digital Design Studio (2019 – …)</p>
+                <p>ARCH 333 | Mathematics in Architecture (2019 – …)</p>
+                <p>ARCH 203 | Digital Media in Architecture I (2019)</p>
+                <p>
+                    ARCH 231 | Architectural Engineering I: Statics and Strength of
+                    Materials (2022)
+                </p>
+                <p>ARCH 251 | Building Materials Technologies (2019, 2021)</p>
+            </div>
         </div>
 
         <div class="section" id="languages">
-          <div class="section-title">Foreign Languages</div>
-          <div class="section-content">
-            <p>English: Professional Working Proficiency</p>
-            <p>German: Beginner</p>
-          </div>
+            <div class="section-title">Foreign Languages</div>
+            <div class="section-content">
+                <p>English: Professional Working Proficiency</p>
+                <p>German: Beginner</p>
+            </div>
         </div>
 
         <div class="section" id="workshops-certificates">
-          <div class="section-title">Workshops & Certificates</div>
-          <div class="section-content">
-            <p>
-              Deep Learning in Computer Vision Seminar (METU Multimedia
-              Informatics) (2018)
-            </p>
-            <p>Interdisciplinary Design Studio (METU Design Factory) (2017)</p>
-            <p>Autodesk Fusion 360 Workshop (METU Design Factory) (2017)</p>
-            <p>Machine Learning Course (Udemy) (2017)</p>
-            <p>Python Programming Course (Codecademy) (2017)</p>
-          </div>
+            <div class="section-title">Workshops & Certificates</div>
+            <div class="section-content">
+                <p>
+                    Deep Learning in Computer Vision Seminar (METU Multimedia
+                    Informatics) (2018)
+                </p>
+                <p>Interdisciplinary Design Studio (METU Design Factory) (2017)</p>
+                <p>Autodesk Fusion 360 Workshop (METU Design Factory) (2017)</p>
+                <p>Machine Learning Course (Udemy) (2017)</p>
+                <p>Python Programming Course (Codecademy) (2017)</p>
+            </div>
         </div>
 
         <div class="section" id="computer-literacy">
-          <div class="section-title">Computer Literacy & Tools</div>
-          <div class="section-content">
-            <p>Rhinoceros: Advanced</p>
-            <p>Grasshopper: Advanced</p>
-            <p>RhinoScriptSyntax: Advanced</p>
-            <p>Revit: Advanced</p>
-            <p>Dynamo: Advanced</p>
-            <p>Autodesk DesignScript: Advanced</p>
-            <p>Python: Advanced</p>
-            <p>C#: Intermediate</p>
-            <p>TEKLA: Intermediate</p>
-            <p>SAP2000: Intermediate</p>
-            <p>Fusion 360: Intermediate</p>
-            <p>Unity: Intermediate</p>
-            <p>Unreal Engine: Intermediate</p>
-            <p>3ds Max: Intermediate</p>
-            <p>Navisworks: Intermediate</p>
-            <p>FormIt: Intermediate</p>
-            <p>SketchUp: Intermediate</p>
-            <p>InDesign: Intermediate</p>
-            <p>Illustrator: Intermediate</p>
-            <p>Photoshop: Intermediate</p>
-            <p>Premiere: Intermediate</p>
-            <p>MS Office: Intermediate</p>
-          </div>
+            <div class="section-title">Computer Literacy & Tools</div>
+            <div class="section-content">
+                <p>Rhinoceros: Advanced</p>
+                <p>Grasshopper: Advanced</p>
+                <p>RhinoScriptSyntax: Advanced</p>
+                <p>Revit: Advanced</p>
+                <p>Dynamo: Advanced</p>
+                <p>Autodesk DesignScript: Advanced</p>
+                <p>Python: Advanced</p>
+                <p>C#: Intermediate</p>
+                <p>TEKLA: Intermediate</p>
+                <p>SAP2000: Intermediate</p>
+                <p>Fusion 360: Intermediate</p>
+                <p>Unity: Intermediate</p>
+                <p>Unreal Engine: Intermediate</p>
+                <p>3ds Max: Intermediate</p>
+                <p>Navisworks: Intermediate</p>
+                <p>FormIt: Intermediate</p>
+                <p>SketchUp: Intermediate</p>
+                <p>InDesign: Intermediate</p>
+                <p>Illustrator: Intermediate</p>
+                <p>Photoshop: Intermediate</p>
+                <p>Premiere: Intermediate</p>
+                <p>MS Office: Intermediate</p>
+            </div>
         </div>
-      </div>
+    </div>
     </div>
 
     <script>
@@ -385,6 +442,6 @@
             }
         }
     </script>
-    
-  </body>
+</body>
+
 </html>
