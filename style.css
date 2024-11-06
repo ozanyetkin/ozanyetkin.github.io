@@ -11,7 +11,9 @@ body {
   position: relative;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin-bottom: 0.5em;
 }
 
@@ -127,7 +129,8 @@ p {
   border-radius: 50%;
 }
 
-.profile-info h1, .profile-info h2 {
+.profile-info h1,
+.profile-info h2 {
   margin: 0;
 }
 
@@ -208,4 +211,9 @@ h3 {
 
 html {
   scroll-behavior: smooth;
+}
+
+p::before {
+  content: "> ";
+  color: #ffffff; /* Optional: Change the color of the ">" */
 }
