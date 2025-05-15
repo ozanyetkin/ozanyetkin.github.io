@@ -158,15 +158,14 @@ h3 {
 .thumbnails {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  gap: 10px;
 }
 .thumbnails figure {
   overflow: hidden;
 }
 
 .thumbnails img {
-  width: 120%;
-  height: 200px;
+  width: 100%;
   object-fit: cover;
   object-position: center center;
   transition: transform 0.3s ease;
