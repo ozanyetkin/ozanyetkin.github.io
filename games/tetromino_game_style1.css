@@ -1,0 +1,108 @@
+
+        /* Define reusable CSS variables */
+        :root {
+            --block-size: 30px;
+            --gap: 2px;
+            --border-size: 2px;
+            --sidebar-width: 200px;
+            --rows: 20;
+            --cols: 10;
+            --canvas-width: calc(var(--cols) * var(--block-size) + 2 * var(--gap));
+            --canvas-height: calc(var(--rows) * var(--block-size) + 2 * var(--gap));
+            --container-gap: 30px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: black;
+            font-family: 'Press Start 2P', monospace;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Stretch flex items so they share the same height */
+        .container {
+            display: flex;
+            gap: var(--container-gap);
+            align-items: stretch;
+        }
+
+        /* Game wrapper: force the same fixed height */
+        .game-wrapper {
+            position: relative;
+            display: inline-block;
+            border: var(--border-size) solid white;
+            height: calc(var(--canvas-height) + 2 * var(--border-size));
+        }
+
+        /* Game Canvas: dimensions based on CSS variables */
+        #game {
+            background: black;
+            display: block;
+            image-rendering: pixelated;
+            width: var(--canvas-width);
+            height: var(--canvas-height);
+        }
+
+        /* Overlay over game canvas */
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            z-index: 10;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Sidebar: force the same fixed height as game-wrapper */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(var(--canvas-height) + 5 * var(--border-size));
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: calc(-1 * var(--border-size));
+        }
+
+        .info-box {
+            border: var(--border-size) solid white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .info-box h2 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        /* Next Piece Preview */
+        #nextCanvas {
+            background: black;
+            display: block;
+            image-rendering: pixelated;
+            margin: 10px auto;
+            border: none;
+        }
+    

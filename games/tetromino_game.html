@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Tetromino Game - Retro Edition</title>
+<!-- Retro Pixelated Font -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
+<link href="tetromino_game_style1.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+<!-- The game-wrapper provides an external frame that remains visible even when overlay is active -->
+<div class="game-wrapper">
+<!-- Canvas size is now controlled via CSS variables -->
+<canvas id="game"></canvas>
+<div id="overlay" style="display: none;"></div>
+</div>
+<div class="sidebar">
+<div class="info-box">
+<h2>NEXT</h2>
+<canvas height="180" id="nextCanvas" width="180"></canvas>
+</div>
+<div class="info-box">
+<p id="scoreDisplay">Score: 0</p>
+</div>
+<div class="info-box">
+<p id="levelDisplay">Level: 0</p>
+</div>
+<div class="info-box">
+<p id="linesDisplay">Lines: 0</p>
+</div>
+<div class="info-box">
+<p id="highScoreDisplay">High: 0</p>
+</div>
+<div class="info-box" style="font-size:10px;">
+<p>P: Pause</p>
+</div>
+</div>
+</div>
+<script src="tetromino_game_script1.js" type="text/javascript"></script>
+</body>
+</html>

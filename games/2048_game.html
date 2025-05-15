@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>2048 Game</title>
+<link href="2048_game_style1.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="container">
+<h1>2048</h1>
+<p id="instructions">Use your arrow keys to move the tiles.</p>
+<div id="grid">
+<!-- 16 background cells -->
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+<!-- Container for animated tiles -->
+<div id="tile-container"></div>
+<!-- Game over overlay -->
+<div id="game-over">
+<div id="game-over-content">
+                    Game Over
+                    <br/>
+<button id="restart-btn">Restart</button>
+</div>
+</div>
+</div>
+<!-- Score panel below the game area -->
+<div id="score-panel">
+<div>Score: <span id="score">0</span></div>
+<div>Best: <span id="best">0</span></div>
+</div>
+</div>
+<script src="2048_game_script1.js" type="text/javascript"></script>
+</body>
+</html>

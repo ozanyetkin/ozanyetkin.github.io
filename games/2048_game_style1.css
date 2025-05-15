@@ -1,0 +1,236 @@
+/* CSS Variables for consistency */
+:root {
+  --tile-size: 80px;
+  --tile-gap: 10px;
+  --tile-offset: calc(var(--tile-size) + var(--tile-gap));
+  --board-size: calc(4 * var(--tile-size) + 5 * var(--tile-gap));
+  --header-font-size: 4.2em;
+  --instr-font-size: 1.1em;
+  --score-font-size: 1.2em;
+  --button-font-size: 0.8em;
+  --gameover-font-size: 1.5em
+  }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: sans-serif;
+  color: #fff;
+  user-select: none;
+  height: 100%
+  }
+/* Make the entire page use flex to center vertically */
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center
+  }
+/* Main container to hold title, instructions, game, and score */
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--board-size)
+  }
+h1 {
+  font-size: var(--header-font-size);
+  margin: 0;
+  padding: 0
+  }
+#instructions {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-size: var(--instr-font-size);
+  color: #ccc;
+  text-align: center
+  }
+/* Score panel: score left, best right, no divider */
+#score-panel {
+  margin-top: 15px;
+  font-size: var(--score-font-size);
+  width: 100%;
+  display: flex;
+  justify-content: space-between
+  }
+#score-panel span {
+  font-weight: bold
+  }
+/* The game board is defined via CSS variables for consistent spacing */
+#grid {
+  position: relative;
+  width: var(--board-size);
+  height: var(--board-size);
+  background: #2e2e2e;
+  /* Darker gray, close to black */
+  border-radius: 10px;
+  margin: 0 auto
+  }
+/* Each cell is defined using variables for spacing */
+.cell {
+  position: absolute;
+  width: var(--tile-size);
+  height: var(--tile-size);
+  background: #444;
+  border-radius: 5px;
+  z-index: 1;
+  /* Ensure cells remain behind tiles */
+  }
+/* We have 16 cells in a 4x4 layout.
+       The position for cell at row=r, col=c is:
+       top = var(--tile-gap) + r*var(--tile-offset),
+       left = var(--tile-gap) + c*var(--tile-offset) */
+.cell:nth-child(1) {
+  top: var(--tile-gap);
+  left: var(--tile-gap)
+  }
+.cell:nth-child(2) {
+  top: var(--tile-gap);
+  left: calc(var(--tile-gap) + var(--tile-offset))
+  }
+.cell:nth-child(3) {
+  top: var(--tile-gap);
+  left: calc(var(--tile-gap) + 2 * var(--tile-offset))
+  }
+.cell:nth-child(4) {
+  top: var(--tile-gap);
+  left: calc(var(--tile-gap) + 3 * var(--tile-offset))
+  }
+.cell:nth-child(5) {
+  top: calc(var(--tile-gap) + var(--tile-offset));
+  left: var(--tile-gap)
+  }
+.cell:nth-child(6) {
+  top: calc(var(--tile-gap) + var(--tile-offset));
+  left: calc(var(--tile-gap) + var(--tile-offset))
+  }
+.cell:nth-child(7) {
+  top: calc(var(--tile-gap) + var(--tile-offset));
+  left: calc(var(--tile-gap) + 2 * var(--tile-offset))
+  }
+.cell:nth-child(8) {
+  top: calc(var(--tile-gap) + var(--tile-offset));
+  left: calc(var(--tile-gap) + 3 * var(--tile-offset))
+  }
+.cell:nth-child(9) {
+  top: calc(var(--tile-gap) + 2 * var(--tile-offset));
+  left: var(--tile-gap)
+  }
+.cell:nth-child(10) {
+  top: calc(var(--tile-gap) + 2 * var(--tile-offset));
+  left: calc(var(--tile-gap) + var(--tile-offset))
+  }
+.cell:nth-child(11) {
+  top: calc(var(--tile-gap) + 2 * var(--tile-offset));
+  left: calc(var(--tile-gap) + 2 * var(--tile-offset))
+  }
+.cell:nth-child(12) {
+  top: calc(var(--tile-gap) + 2 * var(--tile-offset));
+  left: calc(var(--tile-gap) + 3 * var(--tile-offset))
+  }
+.cell:nth-child(13) {
+  top: calc(var(--tile-gap) + 3 * var(--tile-offset));
+  left: var(--tile-gap)
+  }
+.cell:nth-child(14) {
+  top: calc(var(--tile-gap) + 3 * var(--tile-offset));
+  left: calc(var(--tile-gap) + var(--tile-offset))
+  }
+.cell:nth-child(15) {
+  top: calc(var(--tile-gap) + 3 * var(--tile-offset));
+  left: calc(var(--tile-gap) + 2 * var(--tile-offset))
+  }
+.cell:nth-child(16) {
+  top: calc(var(--tile-gap) + 3 * var(--tile-offset));
+  left: calc(var(--tile-gap) + 3 * var(--tile-offset))
+  }
+/* Container for animated tiles */
+#tile-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--board-size);
+  height: var(--board-size);
+  overflow: hidden;
+  z-index: 2;
+  /* Tiles on top of cells */
+  }
+/* Outer tile handles the "slide" animation via transform (150ms). */
+.tile {
+  position: absolute;
+  width: var(--tile-size);
+  height: var(--tile-size);
+  transition: transform 150ms ease
+  }
+/* Inner tile handles scale-based animations (spawn, merge) */
+.tile-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 2em;
+  font-weight: bold;
+  border-radius: 5px
+  }
+/* Spawn animation: grows from scale(0) to scale(1) */
+.tile-new .tile-inner {
+  animation: spawn 150ms ease
+  }
+@keyframes spawn {
+  0% {
+    transform: scale(0);
+    } 100% {
+    transform: scale(1);
+    }
+  }
+/* Merge animation: quick pop from scale(1) to scale(1.2) and back */
+.tile-merged .tile-inner {
+  animation: merge 150ms ease
+  }
+@keyframes merge {
+  0% {
+    transform: scale(1);
+    } 50% {
+    transform: scale(1.2);
+    } 100% {
+    transform: scale(1);
+    }
+  }
+/* Game over overlay: completely black now */
+#game-over {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--board-size);
+  height: var(--board-size);
+  background: #000;
+  /* fully black */
+  color: #fff;
+  font-size: var(--gameover-font-size);
+  /* smaller game over text */
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column
+  }
+#game-over-content {
+  margin: auto
+  }
+/* Restart button: same gray as the board background */
+#restart-btn {
+  margin-top: 20px;
+  font-size: var(--button-font-size);
+  padding: 10px 20px;
+  cursor: pointer;
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 5px
+  }

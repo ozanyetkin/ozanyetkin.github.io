@@ -1,0 +1,17 @@
+
+        body {
+            margin: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* The border is 4 physical pixels (one game pixel) thick */
+        canvas {
+            image-rendering: pixelated;
+            background: black;
+            border: 4px solid white;
+        }
+    

@@ -155,6 +155,35 @@ h3 {
   margin: 0;
 }
 
+.thumbnails {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+.thumbnails figure {
+  overflow: hidden;
+}
+
+.thumbnails img {
+  width: 120%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center center;
+  transition: transform 0.3s ease;
+}
+
+.thumbnails img:hover {
+  transform: scale(1.1);
+}
+
+.thumbnails figure,
+.thumbnails .game-title,
+.thumbnails figcaption {
+  text-align: center;
+  margin-top: 0.5em;
+  color: #ffffff;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .sidebar {

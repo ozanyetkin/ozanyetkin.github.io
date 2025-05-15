@@ -1,0 +1,136 @@
+/* Make background black for the entire page */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: #000
+  }
+/* Main container: centers all content both vertically and horizontally */
+#gameContainer {
+  width: 100vw;
+  height: 100vh;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center
+  }
+/* Title styling for the game */
+#gameTitle {
+  margin-bottom: 20px;
+  text-align: center
+  }
+/* Large heading style for the game title */
+#gameTitle h1 {
+  font-size: 3em;
+  margin: 0
+  }
+/* Gameplay area container: holds grid, timer, scoreboard and overlay */
+#gameArea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center
+  }
+/* Time display styling above the grid */
+#timeboard {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  text-align: center
+  }
+/* Grid container: 3x3 grid for the holes */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(3, 150px);
+  grid-gap: 20px
+  }
+/* Each individual hole in the grid */
+.hole {
+  width: 150px;
+  height: 90px;
+  background: #000;
+  position: relative;
+  overflow: hidden
+  }
+/* The "ground" line at the bottom of each hole */
+.hole::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 0;
+  height: 8px;
+  background: #333;
+  border-radius: 2px;
+  z-index: 2
+  }
+/* Occupant (mole or bomb) styling: initially hidden below the hole */
+.occupant {
+  position: absolute;
+  left: 50%;
+  /* The initial translateY(120%) ensures the occupant is hidden below the hole */
+  transform: translatex(-50%) translatey(120%);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  z-index: 1
+  }
+/* When the occupant appears (rises above ground) */
+.occupant.appear {
+  transform: translatex(-50%) translatey(0)
+  }
+/* Scoreboard styling: displays score and best score below the grid */
+#scoreboard {
+  margin-top: 40px;
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2em
+  }
+/* Overlay covers the entire gameplay area (used for start and game over screens) */
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  /* Fully opaque black overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100
+  }
+/* Hidden overlay state: used to hide the overlay when game is in progress */
+#overlay.hidden {
+  display: none
+  }
+/* Overlay content styling: centers text and buttons */
+.overlay-content {
+  text-align: center
+  }
+/* Margin settings for paragraphs and headers inside the overlay */
+.overlay-content p, .overlay-content h2 {
+  margin: 0 0 20px 0
+  }
+/* Paragraph styling within the overlay: adjusts font size and line height */
+.overlay-content p {
+  font-size: 1.4em;
+  line-height: 1.6em
+  }
+/* Button styling for interactive elements */
+button {
+  padding: 10px 20px;
+  font-size: 1.2em;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background: #444;
+  color: #fff;
+  margin-top: 10px
+  }
+/* Button hover effect */
+button:hover {
+  background: #666
+  }
