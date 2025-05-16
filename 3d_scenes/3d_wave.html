@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>three.js webgl - particles - waves</title>
+    <meta content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" name="viewport" />
+</head>
+
+<body>
+    <!-- Vertex Shader -->
+    <script id="vertexshader" type="x-shader/x-vertex">
+      attribute float scale;
+      void main() {
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+        gl_PointSize = scale * ( 300.0 / -mvPosition.z );
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    </script>
+
+    <!-- Fragment Shader -->
+    <script id="fragmentshader" type="x-shader/x-fragment">
+      uniform vec3 color;
+      void main() {
+        if ( length( gl_PointCoord - vec2( 0.5, 0.5 ) ) > 0.475 ) discard;
+        gl_FragColor = vec4( color, 1.0 );
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+    <!-- Main Script -->
+    <script type="module" defer src="3d_wave_script3.js"></script>
+    <link href="3d_wave_style1.css" rel="stylesheet" />
+</body>
+
+</html>

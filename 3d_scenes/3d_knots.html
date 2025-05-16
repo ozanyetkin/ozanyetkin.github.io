@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>3D Knots</title>
+
+    <!-- your import map stays here -->
+    <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+      "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/"
+    }
+  }
+  </script>
+
+    <link href="./3d_knots_style1.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="ui">
+        <!-- Knot selection -->
+        <div class="group">
+            <label for="knot">Knot:
+                <select id="knot">
+                    <option>Granny Knot</option>
+                    <option>Trefoil Knot</option>
+                    <option>Torus Knot</option>
+                    <option>Cinquefoil Knot</option>
+                </select>
+            </label>
+        </div>
+        <!-- Sliders -->
+        <div class="group">
+            <label for="scale">Scale: <span class="val" id="scaleVal">1.00</span>
+                <input type="range" id="scale" min="0.5" max="1.5" step="0.01" value="1">
+            </label>
+            <label for="thickness">Thickness: <span class="val" id="thicknessVal">0.20</span>
+                <input type="range" id="thickness" min="0.1" max="0.3" step="0.01" value="0.2">
+            </label>
+            <label for="extrusionSegments">Extrusion Segmentations: <span class="val" id="extrudeVal">220</span>
+                <input type="range" id="extrusionSegments" min="20" max="420" step="1" value="220">
+            </label>
+            <label for="radiusSegments">Radius Segmentations: <span class="val" id="radiusVal">12</span>
+                <input type="range" id="radiusSegments" min="4" max="20" step="1" value="12">
+            </label>
+        </div>
+        <!-- Checkboxes -->
+        <div class="group">
+            <div class="checkbox-row">
+                <label><input type="checkbox" id="showSurface" checked>Show Surface</label>
+                <label><input type="checkbox" id="showEdges" checked>Show Edges</label>
+            </div>
+            <div class="checkbox-row">
+                <label><input type="checkbox" id="firstPerson">First Person</label>
+                <label><input type="checkbox" id="centerCamera">Center Camera</label>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" defer src="3d_knots_script2.js"></script>
+</body>
+
+</html>

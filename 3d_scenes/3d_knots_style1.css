@@ -1,0 +1,65 @@
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        #ui {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 260px;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #fff;
+        }
+
+        .group {
+            background: rgba(50, 50, 50, 0.9);
+            /* dark gray, 90% opaque */
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .group:last-child {
+            margin-bottom: 0;
+        }
+
+        .group label {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .group label:last-child {
+            margin-bottom: 0;
+        }
+
+        #ui select,
+        #ui input[type=range] {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        #ui .val {
+            float: right;
+        }
+
+        .checkbox-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .checkbox-row label {
+            display: flex;
+            align-items: center;
+            width: 48%;
+            margin-bottom: 0;
+        }
+
+        #ui input[type=checkbox] {
+            margin-right: 5px;
+        }
+    
