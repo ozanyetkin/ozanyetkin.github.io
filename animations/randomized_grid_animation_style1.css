@@ -1,0 +1,43 @@
+
+        /* Use CSS variables for easy tweaking of dimensions and colors */
+        :root {
+            --grid-size: 17;
+            --square-size: 20px;
+            --bg-color: #000;
+            --tomato: 255, 85, 0;
+            --indigo: 85, 0, 255;
+        }
+
+        /* Reset and full-screen background */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: var(--bg-color);
+            font-family: sans-serif;
+        }
+
+        /* Center container flexibly */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The container is responsive based on grid parameters */
+        #container {
+            position: relative;
+            width: calc(var(--grid-size) * var(--square-size));
+            height: calc(var(--grid-size) * var(--square-size));
+        }
+
+        /* Style for each square */
+        .square {
+            position: absolute;
+            width: var(--square-size);
+            height: var(--square-size);
+            box-sizing: border-box;
+            will-change: transform, background-color;
+        }
+    

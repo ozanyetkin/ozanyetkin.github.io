@@ -1,0 +1,160 @@
+/* Ensure consistent font throughout */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif
+  }
+/* Center everything vertically and horizontally in the page */
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #F5F5F5;
+  /* Light background */
+  }
+/* A simple white container style with shadow and padding */
+.whiteContainer {
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 1040px;
+  /* Ensure all containers are aligned */
+  }
+/*
+      We want the chart and tables to have the same total width: 1000px.
+      We'll wrap each in a .whiteContainer of width 1000px, then style
+      the contents inside.
+    */
+#chartWrapper {
+  margin-bottom: 20px;
+  /* 20px gap at the bottom */
+  }
+#chartContainer {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background-color: #fff;
+  overflow: hidden;
+  border: none;
+  /* No border */
+  }
+/* Month lines and labels */
+.month-line {
+  position: absolute;
+  top: 30px;
+  /* below labels */
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.1)
+  }
+.month-label {
+  position: absolute;
+  top: 5px;
+  font-size: 12px;
+  color: #333;
+  transform: translatex(-50%);
+  white-space: nowrap
+  }
+/* Bars container within the chart */
+#barsContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0
+  }
+/* Each task bar */
+.bar {
+  position: absolute;
+  height: 20px;
+  border-radius: 4px;
+  /* Change to grab cursor */
+  cursor: grab;
+  overflow: hidden;
+  user-select: none;
+  /* Standard syntax */
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10+ */
+  }
+/* Label inside bars */
+.bar span.label {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #fff;
+  pointer-events: none
+  }
+/* Draggable endpoints */
+.bar-handle {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 20px;
+  background-color: #FF7F51;
+  /* Coral Red */
+  cursor: ew-resize
+  }
+.bar-handle-start {
+  left: 0;
+  transform: translatex(-4px)
+  }
+.bar-handle-end {
+  right: 0;
+  transform: translatex(4px)
+  }
+/* Tables side by side, total width = 1000px */
+#tablesContainer {
+  display: flex;
+  gap: 20px
+  }
+/* Each table container is half of 1000 minus the gap => 490px */
+#tableWrapper1, #tableWrapper2 {
+  width: 490px
+  }
+/* Table styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #fff
+  }
+th, td {
+  border: none;
+  text-align: left;
+  padding: 8px;
+  vertical-align: middle;
+  font-size: 14px
+  }
+thead {
+  background-color: #fff
+  }
+tr {
+  border: none
+  }
+tr:hover {
+  background-color: transparent
+  }
+/* Keep month/day selects side by side (no wrapping) */
+.monthDayCell {
+  white-space: nowrap
+  }
+/* Month/Day selectors */
+select {
+  margin-right: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 14px;
+  outline: none;
+  appearance: menulist
+  }
+select:focus {
+  border-color: #C41E3A;
+  /* Cardinal focus highlight */
+  }

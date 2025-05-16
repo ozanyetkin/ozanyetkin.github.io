@@ -1,0 +1,26 @@
+/* Reset margins and use a pure black background */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  /* Pure black */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center
+  }
+/* Define a 15×15 grid with gaps */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(15, 20px);
+  grid-gap: 4px
+  }
+/* Each cell is a 20×20 rectangle with its transform origin centered.
+           Adding will-change hints smoother animations by allowing the browser
+           to optimize the transform and background-color properties. */
+.cell {
+  width: 20px;
+  height: 20px;
+  transform-origin: center;
+  will-change: transform, background-color
+  }

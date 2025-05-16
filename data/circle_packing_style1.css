@@ -1,0 +1,112 @@
+
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        /* Full-screen visualization */
+        #visualization {
+            width: 100vw;
+            height: 100vh;
+            background: #f8f8f8;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Floating Panel Containers */
+        #buttonContainer,
+        #dataContainer {
+            position: fixed;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Button container styling */
+        #buttonContainer {
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+        }
+
+        #buttonContainer button {
+            flex: 1;
+            margin: 0 4px;
+            padding: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background-color: #e7e7e7;
+            transition: background-color 0.3s ease;
+        }
+
+        #buttonContainer button:hover {
+            background-color: #ddd;
+        }
+
+        /* Data container styling */
+        #dataContainer {
+            top: 70px;
+            right: 10px;
+            width: 300px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        /* Circle Data Line Styling */
+        .circle-data-line {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            align-items: center;
+            padding: 4px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: transparent;
+            transition: background-color 0.2s ease;
+        }
+
+        .circle-data-line:last-child {
+            border-bottom: none;
+        }
+
+        .data-col {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-family: monospace;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        /* Hover highlight */
+        .highlight {
+            background-color: #ff8a94;
+        }
+
+        /* Fast-change highlight */
+        .fast {
+            background-color: #dcdcdc;
+        }
+    

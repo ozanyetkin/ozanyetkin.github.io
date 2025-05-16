@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Responsive Random Chord Diagram with Lighter Highlights</title>
+<link href="chord_diagram_style1.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="container">
+<div id="chart">
+<!-- The SVG will be sized responsively based on the #chart container -->
+<svg id="chordDiagram"></svg>
+</div>
+<div id="data">
+<div id="controls">
+<button id="newData">Generate New Data</button>
+<button id="shuffle">Shuffle Connections</button>
+<button id="randomize">Randomize Numbers</button>
+</div>
+<h2>Chord Connections</h2>
+<div id="groupConnections"></div>
+</div>
+</div>
+<!-- Load D3 v7 from CDN -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="chord_diagram_script1.js" type="text/javascript"></script>
+</body>
+</html>

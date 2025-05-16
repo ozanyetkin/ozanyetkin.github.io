@@ -235,6 +235,14 @@ h3 {
   h2 {
     font-size: 14px;
   }
+
+  .thumbnails {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .thumbnails {
+    grid-template-columns: 1fr;
+  }
 }
 
 html {

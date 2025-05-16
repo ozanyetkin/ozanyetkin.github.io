@@ -1,0 +1,54 @@
+/* Basic page styling */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%
+  }
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0
+  }
+/* Table styling */
+table {
+  border-collapse: separate;
+  border-spacing: 6px;
+  /* Slightly increased for better separation */
+  }
+/* Default cell styling */
+td {
+  width: 85px;
+  /* Slightly wider for better proportions */
+  height: 45px;
+  /* Increased height for readability */
+  text-align: center;
+  vertical-align: middle;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 8px;
+  cursor: ns-resize;
+  user-select: none;
+  padding: 5px
+  }
+/* Corner cell: Matches row number cell width */
+.corner-cell {
+  width: 45px;
+  /* Aligned with row number cells */
+  cursor: default
+  }
+/* Column header cells */
+.header-cell {
+  color: #222;
+  /* Darker for better contrast */
+  font-weight: bold;
+  background-color: transparent;
+  cursor: default;
+  user-select: none
+  }
+/* Row number cells */
+.row-number-cell {
+  width: 60px;
+  /* Matches corner cell width */
+  }

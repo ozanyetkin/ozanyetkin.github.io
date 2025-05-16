@@ -1,0 +1,131 @@
+/* (styles remain unchanged) */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0
+  }
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  font-family: sans-serif
+  }
+#slider-container, #chart-container, #table-container {
+  width: 100%;
+  max-width: 800px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  margin-bottom: 20px
+  }
+/* Make the table minimal: all-white background, no lines */
+table {
+  border-collapse: collapse;
+  margin: 10px auto;
+  width: 90%;
+  background: #fff;
+  overflow-x: auto
+  }
+th, td {
+  border: none;
+  background: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  transition: background 0.2s;
+  cursor: pointer
+  }
+/* Chart styling */
+.axis path, .axis line {
+  fill: none;
+  stroke: #333;
+  shape-rendering: crispEdges
+  }
+.line {
+  fill: none;
+  stroke-width: 4px;
+  cursor: pointer;
+  transition: stroke-width 0.2s
+  }
+.line:hover {
+  stroke-width: 6px
+  }
+/* Slider styling (unchanged) */
+#slider-wrapper {
+  position: relative;
+  width: 800px;
+  max-width: 100%;
+  height: 40px;
+  /* space for ticks */
+  margin-bottom: 20px
+  }
+/* The slider itself */
+#year-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  outline: none;
+  margin: 0;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  bottom: 0;
+  transform: translatey(50%);
+  background: none;
+  /* We'll style the track separately */
+  }
+/* The slider track (Chrome, Safari, Edge) */
+#year-range::-webkit-slider-runnable-track {
+  background: #aaa;
+  /* gray background */
+  height: 10px;
+  border-radius: 5px
+  }
+/* The slider thumb (Chrome, Safari, Edge) */
+#year-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #C41E3A;
+  /* cardinal color */
+  width: 90px;
+  height: 15px;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 1px solid #333;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  margin-top: -2.5px;
+  /* center thumb on 10px track (thumb is 15px) */
+  }
+/* The slider track (Firefox) */
+#year-range::-moz-range-track {
+  background: #aaa;
+  height: 10px;
+  border-radius: 5px
+  }
+/* The slider thumb (Firefox) */
+#year-range::-moz-range-thumb {
+  background: #C41E3A;
+  width: 90px;
+  height: 15px;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 0 solid #333
+  }
+/* Ticks container (datalist) */
+datalist {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  font-size: 0.8rem;
+  color: #555
+  }
+datalist option {
+  text-align: center
+  }

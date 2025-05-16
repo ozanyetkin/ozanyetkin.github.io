@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Minimalistic Gantt Chart</title>
+<link href="gantt_chart_style1.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- Chart Container -->
+<div class="whiteContainer" id="chartWrapper">
+<div id="chartContainer">
+<div id="barsContainer"></div>
+</div>
+</div>
+<!-- Tables Side by Side -->
+<div id="tablesContainer">
+<!-- First Table Container -->
+<div class="whiteContainer" id="tableWrapper1">
+<table id="taskTable1">
+<thead>
+<tr>
+<th style="width:40%">Task</th>
+<th style="width:30%">Start</th>
+<th style="width:30%">End</th>
+</tr>
+</thead>
+<tbody id="taskTableBody1"></tbody>
+</table>
+</div>
+<!-- Second Table Container -->
+<div class="whiteContainer" id="tableWrapper2">
+<table id="taskTable2">
+<thead>
+<tr>
+<th style="width:40%">Task</th>
+<th style="width:30%">Start</th>
+<th style="width:30%">End</th>
+</tr>
+</thead>
+<tbody id="taskTableBody2"></tbody>
+</table>
+</div>
+</div>
+<script src="gantt_chart_script1.js" type="text/javascript"></script>
+</body>
+</html>

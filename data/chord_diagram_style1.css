@@ -1,0 +1,120 @@
+
+        :root {
+            --primary-bg: #f0f0f0;
+            --hover-bg: #e0e0e0;
+            --active-bg: #d0d0d0;
+            --border-color: #ccc;
+            --button-radius: 8px;
+            --font-size: 0.9rem;
+            --font-family: sans-serif;
+        }
+
+        body {
+            font: var(--font-size) var(--font-family);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Overall container: diagram on left, fixed–width side pane on right */
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left side: chord diagram */
+        #chart {
+            flex: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 0.8rem;
+        }
+
+        /* Right side: data display and controls (fixed width) */
+        #data {
+            flex: 0 0 420px;
+            overflow-y: auto;
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Controls at the top */
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin: 5px 0;
+            padding: 0.5rem 1rem;
+            font-size: var(--font-size);
+            border-radius: var(--button-radius);
+            width: 100%;
+            min-height: 50px;
+            box-sizing: border-box;
+            cursor: pointer;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--hover-bg);
+        }
+
+        button:active {
+            background-color: var(--active-bg);
+            transform: scale(0.98);
+        }
+
+        /* Group container in data display */
+        .group-container {
+            border: 1px solid var(--border-color);
+            border-left-width: 5px;
+            padding: 10px 10px 10px 15px;
+            margin-bottom: 10px;
+            border-radius: var(--button-radius);
+            position: relative;
+        }
+
+        .group-container h3 {
+            margin: 0 0 5px 0;
+            cursor: pointer;
+        }
+
+        /* List items for chord connections */
+        li {
+            cursor: pointer;
+            padding: 2px 5px;
+            list-style-type: none;
+        }
+
+        /* Chord paths (we use inline style transitions) */
+        .chord {
+            cursor: pointer;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            #container {
+                flex-direction: column;
+            }
+
+            #chart,
+            #data {
+                flex: none;
+                width: 100%;
+            }
+
+            #chart {
+                height: 50vh;
+            }
+
+            #data {
+                height: auto;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+        }
+    

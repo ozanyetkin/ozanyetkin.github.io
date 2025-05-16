@@ -1,0 +1,28 @@
+html, body {
+  height: 100%;
+  margin: 0
+  }
+body {
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center
+  }
+svg {
+  display: block
+  }
+#usage {
+  margin-top: 15px;
+  font: 14px sans-serif;
+  color: #333
+  }
+.arc {
+  cursor: pointer
+  }
+.label {
+  text-anchor: middle;
+  fill: #000;
+  font-size: 12px;
+  pointer-events: none
+  }
