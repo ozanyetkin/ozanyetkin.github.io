@@ -1,0 +1,108 @@
+/* Use flex to center content vertically and horizontally, keeping Arial font */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #f0f0f0;
+  font-family: Arial, sans-serif
+  }
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center
+  }
+/* Container that holds the entire layout */
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  /* fill the vertical space */
+  box-sizing: border-box
+  }
+/* Treemap container with extra gap, white frame, rounded corners, and shadow */
+#chart-container {
+  width: 640px;
+  /* extra width to accommodate 600px SVG + padding */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  padding: 20px;
+  /* gap inside the frame */
+  margin-bottom: 40px;
+  /* spacing below the treemap container */
+  }
+/* Center the SVG within the treemap container */
+#chart-container svg {
+  display: block;
+  margin: 0 auto
+  }
+/* Update Table Container */
+#table-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  padding: 20px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* Align tables to left and right */
+  align-items: flex-start
+  }
+/* Tables should have a fixed width */
+table {
+  width: 45%;
+  /* Adjust to prevent overlapping */
+  border-collapse: collapse;
+  margin: 0
+  }
+table thead th {
+  text-align: center;
+  padding: 5px
+  }
+table tbody tr td {
+  border: none;
+  padding: 8px 5px;
+  /* row height */
+  text-align: center;
+  vertical-align: middle
+  }
+/* Circle indicating color */
+.color-circle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle
+  }
+.category-name {
+  vertical-align: middle
+  }
+/* Center text in inputs, hide spin arrows */
+table td input {
+  width: 60px;
+  height: 35px;
+  text-align: center;
+  font-size: 14px;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+  /* hide spin for Firefox */
+  }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0
+  }
+/* Text inside treemap rectangles */
+.treemap-rect-text {
+  fill: #fff;
+  font-size: 14px;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  pointer-events: none
+  }

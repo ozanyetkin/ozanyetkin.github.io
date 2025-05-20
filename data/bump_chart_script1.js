@@ -53,11 +53,11 @@ entities.forEach(e => {
 
 // 4) Setup the SVG chart
 const margin = {
-    top: 20,
-    right: 20,
-    bottom: 40,
-    left: 40
-  },
+  top: 20,
+  right: 20,
+  bottom: 40,
+  left: 40
+},
   width = 800 - margin.left - margin.right,
   height = 400 - margin.top - margin.bottom;
 
@@ -99,9 +99,8 @@ entityGroups.append("path")
   .attr("class", "line")
   .attr("fill", "none")
   .attr("stroke", d => entityColors[d])
-  .on("click", function(event) {
+  .on("click", function (event) {
     event.stopPropagation();
-    // Use the parent group’s datum (the entity name)
     const entity = d3.select(this.parentNode).datum();
     toggleHighlight(entity);
   });
@@ -116,7 +115,7 @@ function toggleHighlight(entity) {
 
 function updateVisibility() {
   // Update chart lines based on the parent's datum (entity name)
-  chartG.selectAll(".entityGroup").each(function(entity) {
+  chartG.selectAll(".entityGroup").each(function (entity) {
     d3.select(this).select(".line")
       .transition()
       .duration(300)
@@ -163,11 +162,11 @@ function updateChart(startYear) {
 
   // Update xScale domain
   xScale.domain([startYear, endYear]);
-  // Force integer ticks
-  xAxis.tickValues(d3.range(startYear, endYear + 1));
+  // Build explicit integer ticks for this span
+  const xTicks = d3.range(startYear, endYear + 1);
 
   // Update lines
-  entityGroups.each(function(entity) {
+  entityGroups.each(function (entity) {
     d3.select(this).select("path.line")
       .datum(filteredRanksByEntity[entity])
       .transition()
@@ -176,9 +175,19 @@ function updateChart(startYear) {
       .attr("stroke", entityColors[entity]);
   });
 
-  // Update axes
-  xAxisG.transition().duration(500).call(xAxis);
-  yAxisG.transition().duration(500).call(yAxis);
+  // Rebuild x-axis with the new tick values and format
+  xAxisG
+    .transition()
+    .duration(500)
+    .call(
+      d3.axisBottom(xScale)
+        .tickValues(xTicks)
+        .tickFormat(d3.format("d"))
+    );
+  yAxisG
+    .transition()
+    .duration(500)
+    .call(yAxis);
 
   updateVisibility();
 
@@ -249,9 +258,17 @@ function updateChart(startYear) {
 // Initialize
 updateChart(1970);
 
+// Set slider attributes dynamically (optional but robust)
+const slider = d3.select("#year-range");
+slider.attr("min", 1970)
+  .attr("max", 2015)
+  .attr("step", 1);
+
 // Slider listener
-const slider = document.getElementById("year-range");
-slider.addEventListener("input", function() {
-  const startYear = +this.value;
-  updateChart(startYear);
+slider.on("input", function () {
+  const val = +this.value;
+  updateChart(val);
+
+  // Optional: Update slider label if there's a span to show the value
+  d3.select("#year-label").text(val);
 });
