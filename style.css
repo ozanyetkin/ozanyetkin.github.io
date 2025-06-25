@@ -1,4 +1,28 @@
 /* General Styles */
+:root {
+  /* Dark theme (default) */
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --sidebar-bg: #000000;
+  --accent-color: #ffd943;
+  --link-color: #76a1ff;
+  --hover-color: #fe4f68;
+  --button-bg: #3166d9;
+  --button-hover: #ffd944;
+}
+
+[data-theme="light"] {
+  /* Light theme */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --sidebar-bg: #ffffff;
+  --accent-color: #1a73e8;
+  --link-color: #1a73e8;
+  --hover-color: #fe4f68;
+  --button-bg: #1a73e8;
+  --button-hover: #ffc107;
+}
+
 body {
   font-family: monospace;
   margin: 0;
@@ -6,9 +30,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background-color: #000000;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   overflow-x: hidden;
   position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1,
@@ -18,7 +44,7 @@ h3 {
 }
 
 h1 {
-  color: #ffd943;
+  color: var(--accent-color);
 }
 
 p {
@@ -34,7 +60,7 @@ p {
   font-weight: bold;
   margin-bottom: 0.5em;
   font-size: 16px;
-  color: #ffd943;
+  color: var(--accent-color);
 }
 
 .contact-info {
@@ -45,6 +71,29 @@ p {
   margin-left: 20px;
 }
 
+/* Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  z-index: 3;
+  background-color: var(--button-bg);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.1);
+}
+
 /* Sidebar */
 .sidebar {
   position: fixed;
@@ -52,11 +101,11 @@ p {
   left: 0;
   height: 100%;
   width: 300px;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--sidebar-bg);
+  color: var(--text-color);
   overflow-x: hidden;
   overflow-y: auto;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
   transform: translateX(0px);
   z-index: 1;
   padding-top: 50px;
@@ -69,18 +118,19 @@ p {
   margin-bottom: 0.5em;
   font-size: 16px;
   font-weight: bold;
-  color: #ffffff;
+  color: var(--text-color);
   display: block;
   transition: background-color 0.3s;
 }
 
 .sidebar a:hover {
-  background-color: #fe4f68;
+  background-color: var(--hover-color);
+  color: var(--bg-color);
 }
 
 .sidebar a.active {
-  background-color: #ffd943;
-  color: #000000;
+  background-color: var(--accent-color);
+  color: var(--bg-color);
 }
 
 /* Main Content */
@@ -88,9 +138,9 @@ p {
   width: 100%;
   max-width: 1000px;
   padding: 40px;
-  background-color: #000000;
-  color: #ffffff;
-  transition: margin-left 0.3s;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: margin-left 0.3s, background-color 0.3s ease, color 0.3s ease;
   position: relative;
   z-index: 0;
   margin-left: 0;
@@ -99,21 +149,23 @@ p {
 /* Open Button */
 .openbtn {
   font-size: 30px;
+  width: 30px;
   cursor: pointer;
   position: fixed;
   bottom: 40px;
   left: 40px;
   z-index: 2;
-  background-color: #3166d9;
-  color: #ffffff;
+  background-color: var(--button-bg);
+  color: var(--bg-color);
   border-radius: 20%;
   padding: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s, box-shadow 0.3s;
+  text-align: center;
 }
 
 .openbtn:hover {
-  background-color: #ffd944;
+  background-color: var(--button-hover);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -180,15 +232,34 @@ h3 {
 .thumbnails figcaption {
   text-align: center;
   margin-top: 0.5em;
-  color: #ffffff;
+  color: var(--text-color);
+}
+
+/* Link colors */
+a {
+  color: var(--link-color);
+}
+
+a:hover {
+  color: var(--hover-color);
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
+  .theme-toggle {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
   .sidebar {
     width: 100%;
     height: auto;
     transform: translateY(-100%);
+    border-right: none;
+    border-bottom: 1px solid var(--text-color);
   }
 
   .sidebar a {
@@ -251,5 +322,5 @@ html {
 
 p::before {
   content: "> ";
-  color: #ffffff; /* Optional: Change the color of the ">" */
+  color: var(--text-color); /* Use CSS variable for consistency */
 }

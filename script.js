@@ -13,6 +13,37 @@ function toggleNav() {
   }
 }
 
+// Theme toggle functionality
+function toggleTheme() {
+  const body = document.body;
+  const themeIcon = document.getElementById('theme-icon');
+  const currentTheme = body.getAttribute('data-theme');
+
+  if (currentTheme === 'light') {
+    body.removeAttribute('data-theme');
+    themeIcon.textContent = '⬤';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    body.setAttribute('data-theme', 'light');
+    themeIcon.textContent = '⬤';
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+// Initialize theme from localStorage
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const themeIcon = document.getElementById('theme-icon');
+
+  if (savedTheme === 'light') {
+    document.body.setAttribute('data-theme', 'dark');
+    themeIcon.textContent = '⬤';
+  } else {
+    document.body.removeAttribute('data-theme');
+    themeIcon.textContent = '⬤';
+  }
+}
+
 // Ensure the sidebar is properly set on page load and resize
 function initializeSidebar() {
   var sidebar = document.getElementById("mySidebar");
@@ -27,12 +58,12 @@ function initializeSidebar() {
   }
 }
 
-// Initialize the sidebar state on page load
+// Initialize the sidebar state and theme on page load
 initializeSidebar();
+initializeTheme();
 
 // Reinitialize the sidebar state on window resize
 window.onresize = initializeSidebar;
-
 
 document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('.section');
