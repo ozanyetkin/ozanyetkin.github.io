@@ -321,6 +321,6 @@ html {
 }
 
 p::before {
-  content: "> ";
+  content: "• ";
   color: var(--text-color); /* Use CSS variable for consistency */
 }
