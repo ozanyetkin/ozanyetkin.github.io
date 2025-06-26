@@ -49,7 +49,6 @@ h1 {
 
 p {
   font-size: 13px;
-  margin-bottom: 0.5em;
 }
 
 .section {
@@ -71,6 +70,17 @@ p {
   margin-left: 20px;
 }
 
+.item {
+  margin-bottom: 1em;
+  padding: 4px;
+}
+
+.item-header {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Theme Toggle Button */
 .theme-toggle {
   position: fixed;
@@ -86,7 +96,6 @@ p {
   cursor: pointer;
   font-size: 20px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 @-moz-document url-prefix() {
@@ -167,7 +176,6 @@ p {
   color: var(--bg-color);
   border-radius: 20%;
   padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s, box-shadow 0.3s;
   text-align: center;
   display: flex;
@@ -176,6 +184,32 @@ p {
 }
 
 .openbtn:hover {
+  background-color: var(--button-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+/* Download Button */
+.downloadbtn {
+  font-size: 25px;
+  width: 50px;
+  position: fixed;
+  cursor: pointer;
+  top: 40px;
+  left: 40px;
+  background-color: var(--button-bg);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.downloadbtn:hover {
   background-color: var(--button-hover);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transform: scale(1.1);
@@ -344,7 +378,45 @@ html {
   scroll-behavior: smooth;
 }
 
-p::before {
+.item span:first-child::before {
   content: "• ";
   color: var(--text-color); /* Use CSS variable for consistency */
+}
+
+/* Apply minimal print-friendly styles in ATS mode */
+body.ats-mode {
+  font-family: monospace !important;
+  background: white !important;
+  color: black !important;
+  margin: 2cm;
+}
+
+/* Hide non-textual content */
+body.ats-mode .sidebar,
+body.ats-mode .theme-toggle,
+body.ats-mode .openbtn,
+body.ats-mode .thumbnail,
+body.ats-mode .thumbnails,
+body.ats-mode img,
+body.ats-mode canvas,
+body.ats-mode svg {
+  display: none !important;
+}
+
+/* Ensure section spacing and readability */
+body.ats-mode .section,
+body.ats-mode .section-content {
+  width: 100% !important;
+  max-width: none !important;
+  font-size: 12pt !important;
+  line-height: 1.5;
+  color: black !important;
+}
+
+/* Reset layout quirks */
+body.ats-mode * {
+  all: unset;
+  display: revert;
+  font-family: monospace !important;
+  color: black !important;
 }

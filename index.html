@@ -7,6 +7,7 @@
   <title>Ozan Yetkin</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/gif" href="favicon.ico" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -33,6 +34,7 @@
   </div>
 
   <span class="openbtn" onclick="toggleNav()">■</span>
+  <button id="ats-toggle-btn" class="downloadbtn">▼</button>
   <div id="main" class="main-content">
     <div class="profile-header">
       <img src="https://avatars.githubusercontent.com/u/33118911?v=4" alt="Ozan Yetkin"
@@ -80,20 +82,27 @@
     <div class="section" id="education">
       <div class="section-title">Education</div>
       <div class="section-content">
-        <p>
-          2020 – Ongoing<br />Doctor of Philosophy, Building Science<br />Middle
-          East Technical University (METU), Graduate School of Natural and
-          Applied Sciences
-        </p>
-        <p>
-          2017 – 2020<br />Master of Science, Building Science<br />Middle
-          East Technical University (METU), Graduate School of Natural and
-          Applied Sciences
-        </p>
-        <p>
-          2013 – 2017<br />Bachelor of Architecture<br />Middle East
-          Technical University (METU), Department of Architecture
-        </p>
+        <div class="item">
+          <div class="item-header">
+            <span>Doctor of Philosophy, Building Science</span>
+            <span>2020 – Ongoing</span>
+          </div>
+          <span>Middle East Technical University (METU), Graduate School of Natural and Applied Sciences</span>
+        </div>
+        <div class="item">
+          <div class="item-header">
+            <span>Master of Science, Building Science</span>
+            <span>2017 – 2020</span>
+          </div>
+          <span>Middle East Technical University (METU), Graduate School of Natural and Applied Sciences</span>
+        </div>
+        <div class="item">
+          <div class="item-header">
+            <span>Bachelor of Architecture</span>
+            <span>2013 – 2017</span>
+          </div>
+          <span>Middle East Technical University (METU), Department of Architecture</span>
+        </div>
       </div>
     </div>
 
@@ -161,52 +170,52 @@
       <div class="section-content">
         <h3>International Conference and Symposium Presentations</h3>
         <p>
-          2025 - Karadoğan, S., Yetkin, O., Efeoğlu, E., Çoban, A. B., "AI-Integrated Pattern Prediction Model:
+          2025 - Karadogan, S., Yetkin, O., Efeoglu, E., Coban, A. B., "AI-Integrated Pattern Prediction Model:
           Exploring the Influence of Building Fabric Morphology on Land Use Pattern", Urban Morphology in the Age of
           Artificial Intelligence, Proceedings of the XXXII Conference International Seminar on Urban Form (ISUF 2025),
           Torino, Italy.
         </p>
         <p>
-          2023 – Yetkin, O., Surer, E., Gönenç Sorguç, A., “Collaborating with Agents in Architectural Design and
+          2023 – Yetkin, O., Surer, E., Gonenç Sorguc, A., “Collaborating with Agents in Architectural Design and
           Decision-Making Process: Top-Down and Bottom-Up Case Studies Using Reinforcement Learning”, European Alliance
           for Innovation, Proceedings of the Smart Objects and Technologies for Social Good (EAI GOODTECHS 2023),
           Leiria, Portugal.
         </p>
         <p>
-          2022 – Kruşa Yemişcioğlu, M., Gönenç Sorguç, A., Yetkin, O., “Levels of Mapping in Nature-informed Studies: A
+          2022 – Krusa Yemiscioglu, M., Gonenç Sorguc, A., Yetkin, O., “Levels of Mapping in Nature-informed Studies: A
           Case Study on Informed Wall”, Co-creating the Future: Inclusion in and through Design, Proceedings of the 40th
           Education and Research in Computer Aided Architectural Design in Europe (eCAADe 2022), Ghent, Belgium.
         </p>
         <p>
-          2019 – Yetkin, O., Gönenç Sorguç, A., “Design Space Exploration of Initial Structural Design Alternatives via
+          2019 – Yetkin, O., Gonenç Sorguc, A., “Design Space Exploration of Initial Structural Design Alternatives via
           Artificial Neural Networks”, Architecture in the Age of the 4th Industrial Revolution, Proceedings of the 37th
           Education and Research in Computer Aided Architectural Design in Europe (eCAADe+SIGraDi 2019), Porto,
           Portugal.
         </p>
         <p>
-          2018 – Yetiş, G., Yetkin, O., Moon, K.P., Kılıç, Ö., “A Novel Approach for Classification of Structural
+          2018 – Yetis, G., Yetkin, O., Moon, K.P., Kilic, O., “A Novel Approach for Classification of Structural
           Elements in a 3D Model by Supervised Learning”, Computing for a Better Tomorrow, Proceedings of the 36th
           Education and Research in Computer Aided Architectural Design in Europe (eCAADe 2018), Lodz, Poland.
         </p>
 
         <h3>National Conference and Symposium Presentations</h3>
         <p>
-          2022 – Gönenç Sorguç, A., Kruşa Yemişcioğlu, Yetkin, O.,
+          2022 – Gonenc Sorguc, A., Krusa Yemiscioglu, Yetkin, O.,
           “Demystifying Machine Learning for Architecture
-          Students”, XVI. Mimarlıkta Sayısal Tasarım Sempozyumu (MSTAS 2022), Eskişehir.
+          Students”, XVI. Mimarlikta Sayisal Tasarim Sempozyumu (MSTAS 2022), Eskisehir.
         </p>
         <p>
-          2020 – Gönenç Sorguç, A., Yetkin, O., Kruşa Yemişcioğlu, M.,
-          Özgenel, Ç.F., “Sayısal Tasarım Araçlarının Kışı mı Geliyor?”, XIV. Mimarlıkta Sayısal Tasarım Sempozyumu
+          2020 – Gonenc Sorguc, A., Yetkin, O., Krusa Yemiscioglu, M.,
+          Özgenel, Ç.F., “Sayisal Tasarim Araclarinin Kisi mi Geliyor?”, XIV. Mimarlikta Sayisal Tasarim Sempozyumu
           (MSTAS 2020), Trabzon.
         </p>
         <p>
-          2017 – Yetkin, O., “Zıtlıklardan Ara Mekanlara”, XI. Mimarlıkta Sayısal Tasarım Sempozyumu (MSTAS 2017),
+          2017 – Yetkin, O., “Zitliklardan Ara Mekanlara”, XI. Mimarlikta Sayisal Tasarim Sempozyumu (MSTAS 2017),
           Poster Presentation, Ankara.
         </p>
         <p>
-          2017 – Şahinler, K., Yetiş, G., Yetkin, O., “Conflict of the
-          Virtual/Real Space, Morphology of the Snowflake”, XI. Mimarlıkta Sayısal Tasarım Sempozyumu (MSTAS 2017),
+          2017 – Sahinler, K., Yetis, G., Yetkin, O., “Conflict of the
+          Virtual/Real Space, Morphology of the Snowflake”, XI. Mimarlikta Sayisal Tasarim Sempozyumu (MSTAS 2017),
           Poster Presentation, Ankara.
         </p>
       </div>
@@ -542,8 +551,10 @@
         <p>If you are interested in collaborating, please feel free to contact me via e-mail at <a
             href="mailto:oyetkin@metu.edu.tr">oyetkin@metu.edu.tr</a>.</p>
       </div>
-
-      <script src="script.js"></script>
+    </div>
+    <script src="script.js"></script>
+  </div>
+  <div id="ats-cv" style="display:none"></div>
 </body>
 
 </html>
