@@ -121,6 +121,7 @@ p {
   color: var(--text-color);
   display: block;
   transition: background-color 0.3s;
+  border-radius: 8px;
 }
 
 .sidebar a:hover {
@@ -191,10 +192,22 @@ p {
 }
 
 /* Grid Layout for Computer Literacy */
-.section-content-computer-literacy {
+.section-content-computer-literacy ul {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-content-computer-literacy li {
+  padding: 5px 0;
+}
+
+.section-content-computer-literacy li::before {
+  content: "• ";
+  color: var(--text-color);
 }
 
 .section-content-computer-literacy img,
@@ -285,7 +298,7 @@ a:hover {
     text-align: center;
   }
 
-  .section-content-computer-literacy {
+  .section-content-computer-literacy ul {
     grid-template-columns: 1fr; /* Single column layout on mobile */
   }
 
