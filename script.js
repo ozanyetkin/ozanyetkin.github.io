@@ -89,117 +89,190 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// CV generator
-document.getElementById("ats-toggle-btn").addEventListener("click", async () => {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  doc.setFont("Courier", "normal");
-  doc.setFontSize(11);
+// Generate ATS-friendly PDF for CV using jsPDF
+// script.js - Generate ATS-friendly PDF using jsPDF
 
-  const marginLeft = 40;
-  const indent = 20;
-  const maxWidth = 500;
-  const lineHeight = 14;
-  let y = 40;
+// Ensure jsPDF is loaded via <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  function drawBlock(title, items, options = {}) {
-    const { columns = 1 } = options;
-
-    doc.setFont("Courier", "bold");
-    doc.text(title, marginLeft, y);
-    y += lineHeight;
-    doc.setFont("Courier", "normal");
-
-    if (columns === 1) {
-      items.forEach(group => {
-        const [title, date, desc] = group;
-        const bullet = `• ${title}${date ? " (" + date + ")" : ""}`;
-
-        const bulletLines = doc.splitTextToSize(bullet, maxWidth);
-        bulletLines.forEach(line => {
-          if (y > 780) {
-            doc.addPage();
-            y = 40;
-          }
-          doc.text(line, marginLeft, y);
-          y += lineHeight;
-        });
-
-        if (desc) {
-          const descLines = doc.splitTextToSize(desc, maxWidth - indent);
-          descLines.forEach(line => {
-            if (y > 780) {
-              doc.addPage();
-              y = 40;
-            }
-            doc.text(line, marginLeft + indent, y);
-            y += lineHeight;
-          });
-        }
-
-        y += lineHeight;
-      });
-    } else {
-      const flatItems = items.flat().map(i => i.replace(/<br\s*\/?\s*>/gi, " ").trim());
-      const rows = Math.ceil(flatItems.length / columns);
-      const columnGap = 40;
-      const colWidth = (maxWidth - columnGap * (columns - 1)) / columns;
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < columns; col++) {
-          const i = row + col * rows;
-          if (i < flatItems.length) {
-            doc.text(flatItems[i], marginLeft + col * (colWidth + columnGap), y);
-          }
-        }
-        y += lineHeight;
-      }
-      y += lineHeight;
-    }
-  }
-
-  function collectSpanItems(selector) {
-    return [...document.querySelectorAll(selector)].map(item => {
-      const headerSpans = [...item.querySelectorAll(".item-header span")].map(s => s.textContent.trim());
-      const desc = item.querySelector(".item-header ~ span")?.textContent.trim() || "";
-      return [headerSpans[0] || "", headerSpans[1] || "", desc];
-    });
-  }
-
-  function collectFlatText(selector) {
-    return [...document.querySelectorAll(selector)]
-      .map(el => [el.innerHTML.trim()])
-      .filter(g => g[0].length);
-  }
-
-  const basicInfo = [...document.querySelectorAll(".profile-info p")].map(p => [p.textContent.trim()]);
-  drawBlock("Ozan Yetkin", basicInfo);
-
-  const sections = [
-    { id: "research-interests", title: "Research Interests" },
-    { id: "education", title: "Education" },
-    { id: "work-experience", title: "Work Experience" },
-    { id: "research-experience", title: "Research Experience" },
-    { id: "publications", title: "Publications" },
-    { id: "organized-events", title: "Organized Events" },
-    { id: "assisted-courses", title: "Assisted Courses" },
-    { id: "languages", title: "Languages" },
-    { id: "workshops-certificates", title: "Workshops & Certificates" }
-  ];
-
-  sections.forEach(({ id, title }) => {
-    const section = document.getElementById(id);
-    if (!section) return;
-    const itemGroups = collectSpanItems(`#${id} .item`);
-    if (itemGroups.length > 0) {
-      drawBlock(title, itemGroups);
-    } else {
-      const fallback = collectFlatText(`#${id} p, #${id} li`);
-      if (fallback.length > 0) drawBlock(title, fallback);
-    }
-  });
-
-  const compTools = [...document.querySelectorAll("#computer-literacy li")].map(li => [li.textContent.trim()]);
-  if (compTools.length > 0) drawBlock("Computer Literacy & Tools", compTools, { columns: 2 });
-
-  doc.save("Ozan_Yetkin_ATS_CV.pdf");
+window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('ats-toggle-btn');
+  if (btn) btn.addEventListener('click', generateATS);
 });
+
+function generateATS() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const margin = 40;
+  const lineHeight = 14;
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+
+  // Load photo if available
+  const imgEl = document.querySelector('.profile-header img');
+  if (imgEl) {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.src = imgEl.src;
+    img.onload = () => {
+      const imgH = lineHeight * 4; // height fit to 4 lines
+      const imgW = (img.width / img.height) * imgH;
+      const imgX = margin;
+      const imgY = margin;
+      // Draw PNG photo
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const dataURL = canvas.toDataURL('image/png');
+      doc.addImage(dataURL, 'PNG', imgX, imgY, imgW, imgH);
+      buildText(imgW + margin * 0.5);
+    };
+  } else {
+    buildText(0);
+  }
+
+  function buildText(offsetX) {
+    let xStart = margin + offsetX;
+    let y = margin;
+
+    // Name
+    doc.setFont('courier', 'bold'); doc.setFontSize(14);
+    const name = document.querySelector('#contact-info')?.innerText.trim() || '';
+    if (name) doc.text(name, xStart, y);
+    y += lineHeight * 1.2;
+
+    // Contact Info
+    doc.setFont('courier', 'normal'); doc.setFontSize(10);
+    document.querySelectorAll('.contact-info span').forEach(span => {
+      let x = xStart;
+      const labelEl = span.querySelector('strong');
+      if (labelEl) {
+        const label = labelEl.innerText.replace(':', '').trim() + ': ';
+        doc.text(label, x, y);
+        x += doc.getTextWidth(label);
+      }
+      span.querySelectorAll('a').forEach((a, i) => {
+        const text = a.innerText.trim();
+        doc.textWithLink(text, x, y, { url: a.href.trim() });
+        x += doc.getTextWidth(text);
+        if (i < span.querySelectorAll('a').length - 1) {
+          const sep = ' | ';
+          doc.text(sep, x, y);
+          x += doc.getTextWidth(sep);
+        }
+      });
+      y += lineHeight;
+    });
+    y += lineHeight;
+
+    // Research Interests
+    const riText = document.querySelector('#research-interests .section-content')?.innerText.replace(/\s+/g, ' ').trim() || '';
+    if (riText) {
+      doc.setFont('courier', 'bold'); doc.setFontSize(12);
+      doc.text('RESEARCH INTERESTS', margin, y);
+      y += lineHeight;
+      doc.setFont('courier', 'normal'); doc.setFontSize(10);
+      const lines = doc.splitTextToSize(riText, pageWidth - 2 * margin);
+      doc.text(lines, margin, y);
+      y += lines.length * lineHeight + lineHeight;
+    }
+
+    // Sections order
+    const sections = ['education', 'work-experience', 'research-experience', 'publications', 'organized-events', 'assisted-courses', 'workshops-certificates', 'languages', 'computer-literacy'];
+    sections.forEach(id => {
+      const sec = document.getElementById(id);
+      if (!sec) return;
+      // Title
+      const title = sec.querySelector('.section-title')?.innerText.trim().toUpperCase();
+      if (title) {
+        if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+        doc.setFont('courier', 'bold'); doc.setFontSize(12);
+        doc.text(title, margin, y);
+        y += lineHeight;
+        doc.setFont('courier', 'normal'); doc.setFontSize(10);
+      }
+
+      // Workshops & Certificates: separate lines
+      if (id === 'workshops-certificates') {
+        sec.querySelectorAll('.item').forEach(item => {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          // Bullet + bold title
+          const [lbl, date] = Array.from(item.querySelectorAll('.item-header span')).map(e => e.innerText.trim());
+          doc.setFont('courier', 'bold');
+          doc.text(`• ${lbl}`, margin, y);
+          doc.setFont('courier', 'normal');
+          if (date) {
+            const dtW = doc.getTextWidth(date);
+            doc.text(date, pageWidth - margin - dtW, y);
+          }
+          y += lineHeight;
+          // Detail
+          const detail = item.querySelector('span')?.innerText.trim() || '';
+          const dlines = doc.splitTextToSize(detail, pageWidth - 2 * margin - 20);
+          doc.text(dlines, margin + 20, y);
+          y += dlines.length * lineHeight + lineHeight * 0.5;
+        });
+        return;
+      }
+
+      // Languages: two columns with bullets
+      if (id === 'languages') {
+        const texts = Array.from(sec.querySelectorAll('.section-content-languages .item')).map(item => {
+          const sp = item.querySelectorAll('span'); return `• ${sp[0].innerText.trim()}: ${sp[2].innerText.trim()}`;
+        });
+        const col = (pageWidth - 2 * margin) / 2;
+        const half = Math.ceil(texts.length / 2);
+        for (let i = 0; i < half; i++) {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          doc.text(texts[i], margin, y);
+          if (texts[i + half]) doc.text(texts[i + half], margin + col, y);
+          y += lineHeight;
+        }
+        y += lineHeight;
+        return;
+      }
+
+      // Computer Literacy: groups bold titles, bullets, two columns
+      if (id === 'computer-literacy') {
+        sec.querySelectorAll('.section-content-computer-literacy').forEach(group => {
+          const sub = group.querySelector('h3')?.innerText.trim();
+          if (sub) { if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold'); doc.text(sub, margin, y); y += lineHeight; doc.setFont('courier', 'normal'); }
+          const texts = Array.from(group.querySelectorAll('.item')).map(item => {
+            const sp = item.querySelectorAll('span'); return `• ${sp[0].innerText.trim()}: ${sp[2].innerText.trim()}`;
+          });
+          const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(texts.length / 2);
+          for (let i = 0; i < half2; i++) {
+            if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.text(texts[i], margin, y); if (texts[i + half2]) doc.text(texts[i + half2], margin + col2, y); y += lineHeight;
+          }
+          y += lineHeight;
+        }); return;
+      }
+
+      // Generic items: bullets, bold titles, wrap labels & details, right-align dates
+      sec.querySelectorAll('.item').forEach(item => {
+        if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+        const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
+        const lbl = lblEl?.innerText.trim() || '';
+        const date = dateEl?.innerText.trim() || '';
+        // Title
+        doc.setFont('courier', 'bold');
+        const titleLines = doc.splitTextToSize(`• ${lbl}`, pageWidth - 2 * margin - doc.getTextWidth(date) - 20);
+        titleLines.forEach((ln, idx) => doc.text(ln, margin, y + idx * lineHeight));
+        // Date
+        if (date) { const dtW = doc.getTextWidth(date); doc.setFont('courier', 'normal'); doc.text(date, pageWidth - margin - dtW, y); }
+        y += titleLines.length * lineHeight;
+        doc.setFont('courier', 'normal');
+        // Details
+        item.querySelectorAll(':scope > span').forEach(s => {
+          const txt = s.innerText.trim(); if (txt) { const dls = doc.splitTextToSize(txt, pageWidth - 2 * margin - 20); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
+        });
+        y += lineHeight * 0.5;
+      });
+      y += lineHeight;
+    });
+
+    // Save PDF
+    doc.save('Ozan_Yetkin_CV.pdf');
+  }
+}
