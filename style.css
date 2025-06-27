@@ -71,7 +71,6 @@ p {
 }
 
 .item {
-  margin-bottom: 1em;
   padding: 4px;
 }
 
@@ -79,6 +78,7 @@ p {
   font-weight: bold;
   display: flex;
   justify-content: space-between;
+  margin-top: 1em;
 }
 
 /* Theme Toggle Button */
@@ -237,13 +237,23 @@ p {
 }
 
 /* Grid Layout for Computer Literacy */
-.section-content-computer-literacy ul {
+.section-content-computer-literacy {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5px;
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.section-content-languages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
 .section-content-computer-literacy li {
@@ -290,6 +300,16 @@ h3 {
 .thumbnails figcaption {
   text-align: center;
   margin-top: 0.5em;
+  color: var(--text-color);
+}
+
+.thumbnail-title {
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.thumbnail-title::before {
+  content: "• ";
   color: var(--text-color);
 }
 
