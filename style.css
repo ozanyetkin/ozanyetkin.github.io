@@ -74,11 +74,26 @@ p {
   padding: 4px;
 }
 
+.item span:first-of-type {
+  max-width: 860px;
+  display: inline;
+}
+
+.item:has(.item-header) span:first-of-type {
+  display: block;
+}
+
 .item-header {
   font-weight: bold;
   display: flex;
   justify-content: space-between;
   margin-top: 1em;
+}
+
+.item-header > *:last-child {
+  width: 160px;
+  flex-shrink: 0;
+  text-align: right;
 }
 
 /* Theme Toggle Button */

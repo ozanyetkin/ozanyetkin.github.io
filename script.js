@@ -108,7 +108,7 @@ function generateATS() {
   if (imgEl) {
     const img = new Image(); img.crossOrigin = 'Anonymous'; img.src = imgEl.src;
     img.onload = () => {
-      const imgH = lineHeight * 5;
+      const imgH = lineHeight * 5.4;
       const imgW = (img.width / img.height) * imgH;
       const imgX = margin;
       const imgY = margin;
@@ -318,7 +318,7 @@ function generateATS() {
         doc.setTextColor('#000000'); doc.save('Ozan_Yetkin_CV_ATS.pdf');
       };
     } else {
-      doc.save('Ozan_Yetkin_CV_ATS.pdf');
+      doc.save('Ozan_Yetkin_CV.pdf');
     }
   }
 }
