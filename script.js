@@ -190,107 +190,136 @@ function generateATS() {
       y += lines.length * lineHeight + lineHeight;
     }
 
-    // Other sections
-    const sections = ['education', 'work-experience', 'research-experience', 'publications', 'organized-events', 'assisted-courses', 'workshops-certificates', 'languages', 'computer-literacy'];
-    sections.forEach(id => {
-      const sec = document.getElementById(id); if (!sec) return;
-      const title = sec.querySelector('.section-title')?.innerText.trim().toUpperCase();
-      if (title) {
-        if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-        doc.setTextColor('#1a73e8').setFont('courier', 'bold').setFontSize(12);
-        doc.text(title, margin, y); y += lineHeight;
-        doc.setTextColor('#000000').setFont('courier', 'normal').setFontSize(10);
-      }
+    // ATS-friendly unique section mapping
+    const sectionMapping = {
+      'education': 'EDUCATION',
+      'work-experience': 'PROFESSIONAL EXPERIENCE',
+      'research-experience': 'RESEARCH PROJECTS',
+      'publications': 'PUBLICATIONS',
+      'organized-events': 'LEADERSHIP & EVENTS',
+      'assisted-courses': 'TEACHING EXPERIENCE',
+      'workshops-certificates': 'CERTIFICATIONS',
+      'languages': 'LANGUAGES',
+      'computer-literacy': 'TECHNICAL SKILLS'
+    };
 
-      if (id === 'workshops-certificates') {
+    // Group sections by standard titles
+    const groupedSections = {};
+    const sections = ['education', 'work-experience', 'research-experience', 'publications', 'organized-events', 'assisted-courses', 'workshops-certificates', 'languages', 'computer-literacy'];
+
+    sections.forEach(id => {
+      const standardTitle = sectionMapping[id];
+      if (!groupedSections[standardTitle]) {
+        groupedSections[standardTitle] = [];
+      }
+      groupedSections[standardTitle].push(id);
+    });
+
+    // Render sections in standard order
+    const standardOrder = ['EDUCATION', 'PROFESSIONAL EXPERIENCE', 'RESEARCH PROJECTS', 'PUBLICATIONS', 'LEADERSHIP & EVENTS', 'TEACHING EXPERIENCE', 'CERTIFICATIONS', 'LANGUAGES', 'TECHNICAL SKILLS'];
+
+    standardOrder.forEach(standardTitle => {
+      if (!groupedSections[standardTitle]) return;
+
+      // Print section header once
+      if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+      doc.setTextColor('#1a73e8').setFont('courier', 'bold').setFontSize(12);
+      doc.text(standardTitle, margin, y); y += lineHeight;
+      doc.setTextColor('#000000').setFont('courier', 'normal').setFontSize(10);
+
+      groupedSections[standardTitle].forEach(id => {
+        const sec = document.getElementById(id); if (!sec) return;
+
+        if (id === 'workshops-certificates') {
+          sec.querySelectorAll('.item').forEach(item => {
+            if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+            const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
+            const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
+            const entity = item.querySelector(':scope>span')?.innerText.trim() || '';
+
+            const dtW = date ? doc.getTextWidth(date) : 0;
+            const availW = pageWidth - 2 * margin - dtW;
+
+            // Split text to handle bold formatting
+            const bulletAndLabel = `- ${lbl}`;
+            const commaAndEntity = entity ? `, ${entity}` : '';
+
+            doc.setFont('courier', 'bold');
+            const boldLines = doc.splitTextToSize(bulletAndLabel, availW);
+
+            boldLines.forEach((ln, i) => {
+              doc.text(ln, margin, y + i * lineHeight);
+              if (i === boldLines.length - 1 && commaAndEntity) {
+                const boldWidth = doc.getTextWidth(ln);
+                doc.setFont('courier', 'normal');
+                const normalLines = doc.splitTextToSize(commaAndEntity, availW - boldWidth);
+                doc.text(normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight);
+                if (normalLines.length > 1) {
+                  normalLines.slice(1).forEach((normalLn, j) => {
+                    doc.text(normalLn, margin, y + (i + j + 1) * lineHeight);
+                  });
+                }
+              }
+            });
+
+            if (date) {
+              doc.setFont('courier', 'bold');
+              doc.text(date, pageWidth - margin - dtW, y);
+            }
+
+            const totalLines = boldLines.length + (commaAndEntity && boldLines.length > 0 ? Math.max(0, doc.splitTextToSize(commaAndEntity, availW - doc.getTextWidth(boldLines[boldLines.length - 1])).length - 1) : 0);
+            y += totalLines * lineHeight + lineHeight * 0.5;
+          }); y += lineHeight; return;
+        }
+
+        if (id === 'languages') {
+          const items = Array.from(sec.querySelectorAll('.section-content-languages .item'));
+          const arr = items.map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
+          const col = (pageWidth - 2 * margin) / 2; const half = Math.ceil(arr.length / 2);
+          for (let i = 0; i < half; i++) {
+            if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+            doc.setFont('courier', 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
+            doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+            if (arr[i + half]) {
+              doc.setFont('courier', 'bold'); doc.text(`- ${arr[i + half].name}`, margin + col, y);
+              doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y);
+            } y += lineHeight;
+          } y += lineHeight; return;
+        }
+
+        if (id === 'computer-literacy') {
+          sec.querySelectorAll('.section-content-computer-literacy').forEach(gr => {
+            const sub = gr.querySelector('h3')?.innerText.trim();
+            if (sub) {
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold').setFontSize(11);
+              doc.text(sub, margin, y); y += lineHeight; doc.setFont('courier', 'normal').setFontSize(10);
+            }
+            const arr = Array.from(gr.querySelectorAll('.item')).map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
+            const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(arr.length / 2);
+            for (let i = 0; i < half2; i++) {
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
+              doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+              if (arr[i + half2]) {
+                doc.setFont('courier', 'bold'); doc.text(`- ${arr[i + half2].name}`, margin + col2, y);
+                doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y);
+              } y += lineHeight;
+            } y += lineHeight;
+          }); return;
+        }
+
         sec.querySelectorAll('.item').forEach(item => {
           if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-          const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
-          const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
-          const entity = item.querySelector(':scope>span')?.innerText.trim() || '';
-
-          const dtW = date ? doc.getTextWidth(date) : 0;
-          const availW = pageWidth - 2 * margin - dtW;
-
-          // Split text to handle bold formatting
-          const bulletAndLabel = `• ${lbl}`;
-          const commaAndEntity = entity ? `, ${entity}` : '';
-
-          doc.setFont('courier', 'bold');
-          const boldLines = doc.splitTextToSize(bulletAndLabel, availW);
-
-          boldLines.forEach((ln, i) => {
-            doc.text(ln, margin, y + i * lineHeight);
-            if (i === boldLines.length - 1 && commaAndEntity) {
-              const boldWidth = doc.getTextWidth(ln);
-              doc.setFont('courier', 'normal');
-              const normalLines = doc.splitTextToSize(commaAndEntity, availW - boldWidth);
-              doc.text(normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight);
-              if (normalLines.length > 1) {
-                normalLines.slice(1).forEach((normalLn, j) => {
-                  doc.text(normalLn, margin, y + (i + j + 1) * lineHeight);
-                });
-              }
-            }
-          });
-
-          if (date) {
-            doc.setFont('courier', 'bold');
-            doc.text(date, pageWidth - margin - dtW, y);
-          }
-
-          const totalLines = boldLines.length + (commaAndEntity && boldLines.length > 0 ? Math.max(0, doc.splitTextToSize(commaAndEntity, availW - doc.getTextWidth(boldLines[boldLines.length - 1])).length - 1) : 0);
-          y += totalLines * lineHeight + lineHeight * 0.5;
-        }); y += lineHeight; return;
-      }
-
-      if (id === 'languages') {
-        const items = Array.from(sec.querySelectorAll('.section-content-languages .item'));
-        const arr = items.map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
-        const col = (pageWidth - 2 * margin) / 2; const half = Math.ceil(arr.length / 2);
-        for (let i = 0; i < half; i++) {
-          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-          doc.setFont('courier', 'bold'); doc.text(`• ${arr[i].name}`, margin, y);
-          doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`• ${arr[i].name}`), y);
-          if (arr[i + half]) {
-            doc.setFont('courier', 'bold'); doc.text(`• ${arr[i + half].name}`, margin + col, y);
-            doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`• ${arr[i + half].name}`), y);
-          } y += lineHeight;
-        } y += lineHeight; return;
-      }
-
-      if (id === 'computer-literacy') {
-        sec.querySelectorAll('.section-content-computer-literacy').forEach(gr => {
-          const sub = gr.querySelector('h3')?.innerText.trim();
-          if (sub) {
-            if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold').setFontSize(11);
-            doc.text(sub, margin, y); y += lineHeight; doc.setFont('courier', 'normal').setFontSize(10);
-          }
-          const arr = Array.from(gr.querySelectorAll('.item')).map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
-          const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(arr.length / 2);
-          for (let i = 0; i < half2; i++) {
-            if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold'); doc.text(`• ${arr[i].name}`, margin, y);
-            doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`• ${arr[i].name}`), y);
-            if (arr[i + half2]) {
-              doc.setFont('courier', 'bold'); doc.text(`• ${arr[i + half2].name}`, margin + col2, y);
-              doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`• ${arr[i + half2].name}`), y);
-            } y += lineHeight;
-          } y += lineHeight;
-        }); return;
-      }
-
-      sec.querySelectorAll('.item').forEach(item => {
-        if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-        const [lblEl, dateEl] = item.querySelectorAll('.item-header span'); const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
-        const dtW = date ? doc.getTextWidth(date) : 0; const availW = pageWidth - 2 * margin - dtW - 20;
-        doc.setFont('courier', 'bold'); const lines = doc.splitTextToSize(`• ${lbl}`, availW);
-        lines.forEach((ln, i) => doc.text(ln, margin, y + i * lineHeight));
-        if (date) { doc.setFont('courier', 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
-        y += lines.length * lineHeight;
-        const detail = item.querySelector(':scope > span')?.innerText.trim() || '';
-        if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont('courier', 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
-        y += lineHeight * 0.5;
-      }); y += lineHeight;
+          const [lblEl, dateEl] = item.querySelectorAll('.item-header span'); const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
+          const dtW = date ? doc.getTextWidth(date) : 0; const availW = pageWidth - 2 * margin - dtW - 20;
+          doc.setFont('courier', 'bold'); const lines = doc.splitTextToSize(`- ${lbl}`, availW);
+          lines.forEach((ln, i) => doc.text(ln, margin, y + i * lineHeight));
+          if (date) { doc.setFont('courier', 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
+          y += lines.length * lineHeight;
+          const detail = item.querySelector(':scope > span')?.innerText.trim() || '';
+          if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont('courier', 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
+          y += lineHeight * 0.5;
+        }); y += lineHeight;
+      });
     });
 
     // Portfolio at bottom: QR to right, text
