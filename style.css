@@ -347,6 +347,17 @@ html {
     text-align: center;
   }
 
+  .item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .item-header > *:last-child {
+    /* let the date flow under the title */
+    width: auto;
+    text-align: left;
+    margin-top: 0.3em;
+  }
+  
   .section-content-computer-literacy,
   .section-content-languages {
     grid-template-columns: 1fr;
