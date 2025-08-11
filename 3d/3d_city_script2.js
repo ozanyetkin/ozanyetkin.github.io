@@ -6,11 +6,20 @@ let scene, camera, renderer, city;
 let mouseX = 0, mouseY = 0;
 const buildings = [], beams = [];
 let snowGeo, snowVel = [];
+let isMobile = false;
+let touchStartX = 0, touchStartY = 0;
+let lastTouchX = 0, lastTouchY = 0;
+let touchIndicator;
 
 init();
 animate();
 
 function init() {
+    // Detect mobile device
+    isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+               ('ontouchstart' in window) || 
+               (navigator.maxTouchPoints > 0);
+
     // SCENE & FOG
     const pinkRed = 0xff0735;
     scene = new THREE.Scene();
@@ -26,6 +35,7 @@ function init() {
     // RENDERER
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for mobile
     document.body.appendChild(renderer.domElement);
 
     // LIGHTS
@@ -67,7 +77,8 @@ function init() {
     city.add(blackSurface);
 
     // BUILDINGS
-    for (let i = 0; i < 300; i++) {
+    const buildingCount = isMobile ? 200 : 300; // Reduce buildings on mobile for performance
+    for (let i = 0; i < buildingCount; i++) {
         const w = THREE.MathUtils.randFloat(5, 10),
             d = THREE.MathUtils.randFloat(5, 10),
             h = THREE.MathUtils.randFloat(12, 45),
@@ -180,7 +191,8 @@ function init() {
 
     // LIGHT BEAMS
     const beamMat = new THREE.MeshBasicMaterial({ color: 0xfdd835, transparent: true, opacity: 0.8 });
-    for (let i = 0; i < 40; i++) {
+    const beamCount = isMobile ? 25 : 40; // Reduce beams on mobile for performance
+    for (let i = 0; i < beamCount; i++) {
         const horizontal = Math.random() < 0.5;
         const len = THREE.MathUtils.randFloat(5, 15);
         const t = 0.1, y = THREE.MathUtils.randFloat(5, 35);
@@ -202,7 +214,7 @@ function init() {
     }
 
     // SNOW PARTICLES (tiny, yellow, slow & random)
-    const count = 500;
+    const count = isMobile ? 300 : 500; // Reduce particles on mobile for performance
     snowGeo = new THREE.BufferGeometry();
     const posArr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -221,27 +233,104 @@ function init() {
     });
     city.add(new THREE.Points(snowGeo, snowMat));
 
+    // Create touch indicator for mobile users
+    if (isMobile) {
+        touchIndicator = document.createElement('div');
+        touchIndicator.className = 'touch-indicator';
+        touchIndicator.innerHTML = 'Touch and drag to explore the city';
+        document.body.appendChild(touchIndicator);
+        
+        // Hide the indicator after 4 seconds
+        setTimeout(() => {
+            if (touchIndicator) {
+                touchIndicator.classList.add('fade-out');
+                setTimeout(() => {
+                    if (touchIndicator && touchIndicator.parentNode) {
+                        touchIndicator.parentNode.removeChild(touchIndicator);
+                    }
+                }, 2000);
+            }
+        }, 4000);
+    }
+
     // EVENTS
     window.addEventListener('resize', onResize);
-    document.addEventListener('mousemove', e => {
-        mouseX = (e.clientX / innerWidth) - 0.5;
-        mouseY = (e.clientY / innerHeight) - 0.5;
-    });
+    
+    if (isMobile) {
+        // Touch events for mobile
+        document.addEventListener('touchstart', onTouchStart, { passive: false });
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd, { passive: false });
+    } else {
+        // Mouse events for desktop
+        document.addEventListener('mousemove', e => {
+            mouseX = (e.clientX / innerWidth) - 0.5;
+            mouseY = (e.clientY / innerHeight) - 0.5;
+        });
+    }
+}
+
+function onTouchStart(event) {
+    event.preventDefault();
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    lastTouchX = touch.clientX;
+    lastTouchY = touch.clientY;
+}
+
+function onTouchMove(event) {
+    event.preventDefault();
+    if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - lastTouchX;
+        const deltaY = touch.clientY - lastTouchY;
+        
+        // Convert touch movement to mouse-like coordinates
+        mouseX += deltaX * 0.002; // Sensitivity adjustment
+        mouseY += deltaY * 0.002;
+        
+        // Clamp values to reasonable ranges
+        mouseX = Math.max(-0.5, Math.min(0.5, mouseX));
+        mouseY = Math.max(-0.5, Math.min(0.5, mouseY));
+        
+        lastTouchX = touch.clientX;
+        lastTouchY = touch.clientY;
+    }
+}
+
+function onTouchEnd(event) {
+    event.preventDefault();
+    // Gradually return to center when touch ends
+    const damping = 0.95;
+    const centerTouchX = () => {
+        mouseX *= damping;
+        mouseY *= damping;
+        if (Math.abs(mouseX) > 0.01 || Math.abs(mouseY) > 0.01) {
+            requestAnimationFrame(centerTouchX);
+        }
+    };
+    centerTouchX();
 }
 
 function onResize() {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for mobile
 }
 
 function animate() {
     requestAnimationFrame(animate);
 
-    // rotate city, clamp pitch to never see under ground
-    city.rotation.y += (mouseX * Math.PI * 0.5 - city.rotation.y) * 0.05;
-    city.rotation.x += (-mouseY * Math.PI * 0.2 - city.rotation.x) * 0.05;
-    city.rotation.x = THREE.MathUtils.clamp(city.rotation.x, 0, 0.2);
+    // Optimize for mobile performance
+    const dampingFactor = isMobile ? 0.03 : 0.05;
+    const rotationLimit = isMobile ? 0.15 : 0.2;
+
+    // rotate city, clamp pitch to never see under ground but allow looking up
+    city.rotation.y += (mouseX * Math.PI * 0.5 - city.rotation.y) * dampingFactor;
+    city.rotation.x += (-mouseY * Math.PI * 0.2 - city.rotation.x) * dampingFactor;
+    city.rotation.x = THREE.MathUtils.clamp(city.rotation.x, -0.1, rotationLimit);
 
     // move & wrap beams
     beams.forEach(b => {

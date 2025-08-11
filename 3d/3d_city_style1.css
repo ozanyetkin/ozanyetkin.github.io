@@ -1,8 +1,53 @@
 body {
   margin: 0;
+  padding: 0;
   overflow: hidden;
+  background: #000;
+  touch-action: none; /* Prevent default touch behaviors */
+  -webkit-touch-callout: none; /* Disable callout */
+  -webkit-user-select: none; /* Disable selection */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+  user-select: none;
+  font-family: Arial, sans-serif;
 }
 
 canvas {
   display: block;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Touch indicator for mobile users */
+.touch-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  text-align: center;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 2s ease-in-out;
+}
+
+.touch-indicator.fade-out {
+  opacity: 0;
+}
+
+@media (min-width: 769px) {
+  .touch-indicator {
+    display: none;
+  }
 }
