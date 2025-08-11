@@ -6,6 +6,7 @@
             /* Black background */
             font-family: sans-serif;
             color: #fff;
+            touch-action: pan-x pan-y; /* Allow touch on sliders but prevent default elsewhere */
         }
 
         #sliderContainer {
@@ -18,18 +19,178 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
             border-radius: 10px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px); /* Add blur effect for better visibility */
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .slider-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0 5px;
+            position: relative;
+        }
+
+        .slider-wrapper label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* Custom range slider styling */
+        .slider-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 6px;
+            background: linear-gradient(to right, #666 0%, #666 var(--slider-progress, 50%), #333 var(--slider-progress, 50%), #333 100%);
+            border-radius: 3px;
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.1s ease;
         }
 
         input[type=range] {
-            width: 150px;
+            width: 120px;
+            height: 30px; /* Larger for easier touch interaction */
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            touch-action: manipulation; /* Allow touch interaction */
+        }
+
+        /* Webkit browsers (Chrome, Safari, newer Edge) */
+        input[type=range]::-webkit-slider-track {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #fff;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #666;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Firefox */
+        input[type=range]::-moz-range-track {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            border: none;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            background: #fff;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #666;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        input[type=range]::-moz-range-progress {
+            background: #666;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        /* Add focus styles for better accessibility */
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]:focus::-webkit-slider-thumb {
+            border-color: #999;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            #sliderContainer {
+                width: 95%;
+                padding: 20px 10px;
+                bottom: 10px;
+                flex-direction: column;
+                gap: 15px;
+                background: rgba(0, 0, 0, 0.3); /* Even more transparent on mobile */
+            }
+
+            .slider-wrapper {
+                width: 100%;
+                margin: 0;
+            }
+
+            .slider-wrapper::before {
+                width: 80%;
+                height: 8px;
+                bottom: 20px;
+            }
+
+            .slider-wrapper label {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            input[type=range] {
+                width: 80%;
+                height: 40px; /* Even larger for mobile touch */
+            }
+
+            input[type=range]::-webkit-slider-thumb {
+                height: 28px;
+                width: 28px;
+                border: 3px solid #666;
+            }
+
+            input[type=range]::-moz-range-thumb {
+                height: 24px;
+                width: 24px;
+                border: 3px solid #666;
+            }
+
+            input[type=range]::-webkit-slider-track {
+                height: 8px; /* Thicker track on mobile */
+            }
+
+            input[type=range]::-moz-range-track {
+                height: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #sliderContainer {
+                background: rgba(0, 0, 0, 0.25); /* Most transparent on small screens */
+                padding: 15px 8px;
+            }
+
+            .slider-wrapper label {
+                font-size: 14px;
+            }
+
+            input[type=range] {
+                width: 90%;
+            }
+
+            .slider-wrapper::before {
+                width: 90%;
+            }
         }
     

@@ -5,9 +5,27 @@
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
         camera.position.z = 3;
+        
+        // Adjust camera position for mobile to center sphere above controls
+        function updateCameraPosition() {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                // Move camera up to center sphere in available space above controls
+                camera.position.y = -0.3;
+            } else {
+                camera.position.y = 0;
+            }
+        }
+        
+        updateCameraPosition();
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: false,
+            powerPreference: "high-performance"
+        });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
         document.body.appendChild(renderer.domElement);
 
         // --- Lights ---
@@ -18,8 +36,12 @@
 
         // --- Create Sphere Geometry ---
         const radius = 0.5;  // Smaller sphere
-        const widthSegments = 256;
-        const heightSegments = 256;
+        
+        // Adaptive geometry resolution based on screen size
+        const isMobile = window.innerWidth <= 768;
+        const widthSegments = isMobile ? 128 : 256;
+        const heightSegments = isMobile ? 128 : 256;
+        
         const geometry = new THREE.SphereBufferGeometry(radius, widthSegments, heightSegments);
 
         // Material that uses vertex colors
@@ -47,29 +69,129 @@
         let heightCoefficient = parseFloat(document.getElementById("heightSlider").value);
         const maxCoefficient = 0.5;  // Matches slider max
 
-        document.getElementById("noiseSlider").addEventListener("input", function (e) {
+        // Function to update slider progress visualization
+        function updateSliderProgress(slider) {
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            const wrapper = slider.parentElement;
+            const progressColor = '#666';
+            const trackColor = '#333';
+            wrapper.style.setProperty('--slider-progress', `${value}%`);
+            
+            // Update the pseudo-element background
+            const style = `linear-gradient(to right, ${progressColor} 0%, ${progressColor} ${value}%, ${trackColor} ${value}%, ${trackColor} 100%)`;
+            wrapper.setAttribute('data-progress', value);
+        }
+
+        const noiseSlider = document.getElementById("noiseSlider");
+        const heightSlider = document.getElementById("heightSlider");
+
+        // Initialize progress visualization
+        updateSliderProgress(noiseSlider);
+        updateSliderProgress(heightSlider);
+
+        noiseSlider.addEventListener("input", function (e) {
             noiseScale = parseFloat(e.target.value);
+            updateSliderProgress(e.target);
         });
-        document.getElementById("heightSlider").addEventListener("input", function (e) {
+        heightSlider.addEventListener("input", function (e) {
             heightCoefficient = parseFloat(e.target.value);
+            updateSliderProgress(e.target);
         });
 
         // --- Mouse Variables for Dynamic Noise & Rotation ---
         let mouseX = 0, mouseY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+        let isInteracting = false;
+
+        // Mouse events
         document.addEventListener('mousemove', onDocumentMouseMove, false);
         function onDocumentMouseMove(event) {
-            mouseX = (event.clientX - windowHalfX) / windowHalfX;
-            mouseY = (event.clientY - windowHalfY) / windowHalfY;
+            if (!isInteracting) {
+                mouseX = (event.clientX - windowHalfX) / windowHalfX;
+                mouseY = (event.clientY - windowHalfY) / windowHalfY;
+            }
+        }
+
+        // Touch events for mobile devices
+        document.addEventListener('touchstart', onTouchStart, { passive: false });
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd, false);
+
+        let lastTouchX = 0, lastTouchY = 0;
+        let touchStartTime = 0;
+
+        function onTouchStart(event) {
+            // Don't prevent default if touching a slider or its container
+            const target = event.target;
+            if (target.type === 'range' || target.closest('#sliderContainer')) {
+                return; // Let the browser handle slider interaction
+            }
+            
+            event.preventDefault();
+            isInteracting = true;
+            touchStartTime = Date.now();
+            
+            if (event.touches.length === 1) {
+                lastTouchX = event.touches[0].clientX;
+                lastTouchY = event.touches[0].clientY;
+            }
+        }
+
+        function onTouchMove(event) {
+            // Don't prevent default if touching a slider or its container
+            const target = event.target;
+            if (target.type === 'range' || target.closest('#sliderContainer')) {
+                return; // Let the browser handle slider interaction
+            }
+            
+            event.preventDefault();
+            
+            if (event.touches.length === 1) {
+                const touch = event.touches[0];
+                const deltaX = touch.clientX - lastTouchX;
+                const deltaY = touch.clientY - lastTouchY;
+                
+                // Update mouse position for sphere rotation
+                mouseX += deltaX * 0.005;
+                mouseY += deltaY * 0.005;
+                
+                // Clamp values to prevent extreme rotations
+                mouseX = Math.max(-1, Math.min(1, mouseX));
+                mouseY = Math.max(-1, Math.min(1, mouseY));
+                
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+            }
+        }
+
+        function onTouchEnd(event) {
+            // Don't prevent default if touching a slider or its container
+            const target = event.target;
+            if (target.type === 'range' || target.closest('#sliderContainer')) {
+                return; // Let the browser handle slider interaction
+            }
+            
+            event.preventDefault();
+            isInteracting = false;
+            
+            // Check if it was a tap (short touch duration and minimal movement)
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 200) {
+                // Trigger pulse animation on tap
+                startPulse();
+            }
         }
 
         // --- Handle Window Resize ---
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            updateCameraPosition(); // Update camera position on resize
         }
 
         // --- Colors ---
@@ -80,7 +202,10 @@
         // --- Raycaster for Detecting Clicks on the Sphere ---
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
+        
+        // Mouse click events
         window.addEventListener('click', onClick, false);
+        
         function onClick(event) {
             // Convert mouse click to normalized device coordinates (-1 to +1)
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
