@@ -1,9 +1,38 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: black
-  }
+  background: black;
+  touch-action: none; /* Prevent default touch behaviors */
+  height: 100vh;
+  width: 100vw;
+}
+
 canvas {
-  display: block
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  body {
+    -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Prevent zoom on double tap for iOS Safari */
+@media (max-width: 768px) and (orientation: portrait) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+/* Handle orientation changes */
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    height: 100vh;
+  }
+}
