@@ -1,5 +1,62 @@
+* {
+  box-sizing: border-box;
+}
+
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent pull-to-refresh and other mobile browser behaviors */
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-overflow-scrolling: touch;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  body {
+    -webkit-text-size-adjust: 100%;
   }
+}
+
+/* Landscape orientation optimization */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  body {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Handle notches on newer mobile devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
