@@ -1,17 +1,226 @@
+body {
+  margin: 0;
+  padding: 10px;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: "Press Start 2P", monospace;
+  color: white;
+  overflow: hidden; /* Prevent page scrolling */
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* Prevent all touch gestures that might cause scrolling */
+}
 
-        body {
-            margin: 0;
-            background: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+html {
+  overflow: hidden; /* Prevent scrolling on html as well */
+  height: 100%;
+  touch-action: none;
+}
 
-        /* The border is 4 physical pixels (one game pixel) thick */
-        canvas {
-            image-rendering: pixelated;
-            background: black;
-            border: 4px solid white;
-        }
-    
+#gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
+}
+
+/* The border is 4 physical pixels (one game pixel) thick */
+canvas {
+  image-rendering: pixelated;
+  background: black;
+  border: 4px solid white;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 200px);
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto; /* Horizontally center the canvas */
+}
+
+/* Mobile controls */
+#mobileControls {
+  display: none;
+  flex-direction: row; /* Keep buttons in a single row */
+  align-items: center;
+  justify-content: center;
+  gap: 30px; /* Increased gap between buttons */
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+}
+
+/* Remove the movementControls div since buttons are now direct children */
+#movementControls {
+  display: flex;
+  gap: 30px; /* This won't be used anymore but keeping for compatibility */
+}
+
+.control-btn {
+  background: #000;
+  border: 4px solid #fff;
+  color: white;
+  font-family: "Press Start 2P", monospace;
+  font-size: 20px;
+  padding: 20px 25px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  border-radius: 0; /* Removed border radius for pixel art style */
+  min-width: 80px;
+  min-height: 80px;
+  box-shadow: inset -4px -4px 0px #333, inset 4px 4px 0px #666;
+  position: relative;
+  transition: none; /* Remove smooth transitions for pixel art feel */
+}
+
+.control-btn:active {
+  background: #333;
+  transform: none; /* Remove scale transform */
+  box-shadow: inset -2px -2px 0px #111, inset 2px 2px 0px #444;
+  border: 4px solid #ccc;
+}
+
+.fire-btn {
+  background: #800000;
+  font-size: 24px;
+  padding: 25px 35px;
+  min-width: 120px;
+  min-height: 80px;
+  box-shadow: inset -4px -4px 0px #400000, inset 4px 4px 0px #cc0000;
+}
+
+.fire-btn:active {
+  background: #cc0000;
+  box-shadow: inset -2px -2px 0px #400000, inset 2px 2px 0px #ff4444;
+  border: 4px solid #ffcccc;
+}
+
+#instructions {
+  text-align: center;
+  font-size: 12px; /* Increased from 8px */
+  line-height: 1.8; /* Increased line height for better readability */
+  color: #ccc;
+  max-width: 500px; /* Increased max width */
+  margin: 10px 0;
+}
+
+#instructions p {
+  margin: 8px 0; /* Increased margin */
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) or (pointer: coarse) {
+  body {
+    padding: 0px;
+    overflow: hidden; /* Ensure no scrolling on mobile */
+  }
+
+  canvas {
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 180px); /* Adjusted for bigger buttons */
+  }
+
+  #mobileControls {
+    display: flex;
+  }
+
+  #instructions {
+    font-size: 10px; /* Increased from 6px */
+  }
+
+  /* Make buttons even bigger on mobile */
+  .control-btn {
+    font-size: 24px;
+    padding: 25px 30px;
+    min-width: 100px;
+    min-height: 100px;
+    border: 6px solid #fff;
+  }
+
+  .fire-btn {
+    font-size: 28px;
+    padding: 30px 40px;
+    min-width: 140px;
+    min-height: 100px;
+    border: 6px solid #fff;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  canvas {
+    max-height: calc(100vh - 200px); /* Adjusted for bigger buttons */
+  }
+
+  .control-btn {
+    font-size: 20px;
+    padding: 20px 25px;
+    min-width: 80px;
+    min-height: 80px;
+    border: 5px solid #fff;
+  }
+
+  .fire-btn {
+    font-size: 24px;
+    padding: 25px 30px;
+    min-width: 120px;
+    min-height: 80px;
+    border: 5px solid #fff;
+  }
+
+  #mobileControls {
+    gap: 20px; /* Reduced gap for smaller screens */
+  }
+
+  #instructions {
+    font-size: 8px; /* Increased from 5px */
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  #gameContainer {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  canvas {
+    max-height: calc(100vh - 40px);
+    max-width: calc(100vw - 300px); /* Adjusted for bigger buttons */
+  }
+
+  #mobileControls {
+    flex-direction: row; /* Keep side-by-side in landscape too */
+    gap: 15px;
+    margin-left: 10px;
+  }
+
+  .control-btn {
+    padding: 15px 20px;
+    min-width: 60px;
+    min-height: 60px;
+    font-size: 16px;
+    border: 4px solid #fff;
+  }
+
+  .fire-btn {
+    padding: 18px 25px;
+    min-width: 80px;
+    min-height: 60px;
+    font-size: 18px;
+    border: 4px solid #fff;
+  }
+
+  #instructions {
+    display: none;
+  }
+}
