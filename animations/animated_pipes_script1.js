@@ -1,10 +1,63 @@
 // ----- Setup Canvas -----
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const width = canvas.width,
-  height = canvas.height;
+
+// Function to resize canvas
+function resizeCanvas() {
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const displayWidth = window.innerWidth;
+  const displayHeight = window.innerHeight;
+
+  // Set the canvas size in CSS pixels
+  canvas.style.width = displayWidth + 'px';
+  canvas.style.height = displayHeight + 'px';
+
+  // Set the canvas size in actual pixels for high-DPI displays
+  canvas.width = displayWidth * devicePixelRatio;
+  canvas.height = displayHeight * devicePixelRatio;
+
+  // Scale the context to match the device pixel ratio
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+}
+
+// Initial canvas setup
+resizeCanvas();
+let width = window.innerWidth,
+  height = window.innerHeight;
+
+// Handle window resize events
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  width = window.innerWidth;
+  height = window.innerHeight;
+});
+
+// Handle orientation change on mobile devices
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    resizeCanvas();
+    width = window.innerWidth;
+    height = window.innerHeight;
+  }, 100);
+});
+
+// Prevent scrolling on touch devices
+document.addEventListener('touchstart', function (e) {
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('touchend', function (e) {
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+}, { passive: false });
+
+// Prevent context menu on long press
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
 
 // ----- Global Settings -----
 // Eight possible unit directions (horizontal, vertical, and diagonals)
@@ -133,7 +186,9 @@ function adjustForBounds(pipe, candidate) {
 // Each pipe has a unique id, pastel color, random speed and thickness, and a persistent direction.
 // Its body is a continuous polyline (an array of points). Its visible length oscillates.
 function createPipe() {
-  const thickness = Math.floor(Math.random() * 5) + 2; // 2–6 pixels
+  const thickness = window.innerWidth <= 768 ?
+    Math.floor(Math.random() * 3) + 1 : // 1–3 pixels for mobile
+    Math.floor(Math.random() * 5) + 2;  // 2–6 pixels for desktop
   const speed = Math.floor(Math.random() * 5) + 1; // 1–5 pixels per update
   const color = randomPastelColor();
   const r = Math.ceil(thickness / 2); // (not used for collision here)
@@ -159,7 +214,7 @@ function createPipe() {
   };
 }
 
-const numPipes = 50;
+const numPipes = window.innerWidth <= 768 ? 30 : 50;
 const pipes = [];
 for (let i = 0; i < numPipes; i++) {
   pipes.push(createPipe());
