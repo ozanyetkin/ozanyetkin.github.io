@@ -8,7 +8,10 @@ let bestScore = localStorage.getItem('bestScore') ? parseInt(localStorage.getIte
 let spawnTimeout = null;
 let gameInterval = null;
 
-// Define mole types with increased height; these are the moles (non-bomb occupants)
+// Mobile detection and touch support
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 'ontouchstart' in window;
+
+// Define mole types with responsive sizing
 const moleTypes = [{
   color: "#77dd77",
   points: 10,
@@ -42,6 +45,70 @@ const bombType = {
   width: 50,
   height: 50
 };
+
+// Function to get responsive sizing based on screen width
+function getResponsiveSize() {
+  const width = window.innerWidth;
+  if (width <= 480) {
+    return {
+      moleWidth: 30,
+      moleHeight: 50,
+      bombWidth: 30,
+      bombHeight: 30,
+      moleBottom: -10,
+      bombBottom: 5
+    };
+  } else if (width <= 768) {
+    return {
+      moleWidth: 35,
+      moleHeight: 60,
+      bombWidth: 35,
+      bombHeight: 35,
+      moleBottom: -15,
+      bombBottom: 8
+    };
+  } else {
+    return {
+      moleWidth: 50,
+      moleHeight: 80,
+      bombWidth: 50,
+      bombHeight: 50,
+      moleBottom: -20,
+      bombBottom: 15
+    };
+  }
+}
+
+// Enhanced click/touch handler for better mobile support
+function addClickHandler(element, callback) {
+  if (isMobile) {
+    let touchStarted = false;
+
+    element.addEventListener('touchstart', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      touchStarted = true;
+      // Remove the scaling effect that was causing sliding
+    }, { passive: false });
+
+    element.addEventListener('touchend', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (touchStarted) {
+        callback();
+        touchStarted = false;
+      }
+    }, { passive: false });
+
+    element.addEventListener('touchcancel', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      touchStarted = false;
+    }, { passive: false });
+  } else {
+    element.addEventListener('click', callback);
+  }
+}
 
 // Show start overlay (intro screen)
 function showStartOverlay() {
@@ -82,24 +149,29 @@ function spawnOccupant() {
     occupant = moleTypes[Math.floor(Math.random() * moleTypes.length)];
   }
 
+  // Get responsive sizing
+  const sizes = getResponsiveSize();
+
   // Create the occupant element and set its appearance
   const occupantElem = document.createElement("div");
   occupantElem.classList.add("occupant");
   occupantElem.style.backgroundColor = occupant.color;
-  occupantElem.style.width = occupant.width + "px";
-  occupantElem.style.height = occupant.height + "px";
 
-  // Adjust styling for bomb or mole: bomb is circular; mole is pill-shaped
+  // Apply responsive sizing
   if (occupant.isBomb) {
+    occupantElem.style.width = sizes.bombWidth + "px";
+    occupantElem.style.height = sizes.bombHeight + "px";
     occupantElem.style.borderRadius = "50%";
-    occupantElem.style.bottom = "20px";
+    occupantElem.style.bottom = sizes.bombBottom + "px";
   } else {
-    occupantElem.style.borderRadius = occupant.height / 2 + "px";
-    occupantElem.style.bottom = "-20px";
+    occupantElem.style.width = sizes.moleWidth + "px";
+    occupantElem.style.height = sizes.moleHeight + "px";
+    occupantElem.style.borderRadius = sizes.moleHeight / 2 + "px";
+    occupantElem.style.bottom = sizes.moleBottom + "px";
   }
 
-  // Add click event: update score based on occupant and remove it when hit
-  occupantElem.addEventListener("click", () => {
+  // Add enhanced click/touch handler
+  addClickHandler(occupantElem, () => {
     score += occupant.points;
     document.getElementById("score").textContent = score;
     removeOccupant(holeIndex, occupantElem);
@@ -181,6 +253,57 @@ function endGame() {
 // On window load, display the start overlay and set up button click event listeners
 window.onload = () => {
   showStartOverlay();
-  document.getElementById("startBtn").addEventListener("click", startGame);
-  document.getElementById("playAgainBtn").addEventListener("click", startGame);
+
+  // Add enhanced click handlers for buttons
+  addClickHandler(document.getElementById("startBtn"), startGame);
+  addClickHandler(document.getElementById("playAgainBtn"), startGame);
+
+  // Prevent default touch behavior on the body to avoid scrolling
+  if (isMobile) {
+    document.body.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    // Prevent zoom on double tap
+    document.body.addEventListener('touchstart', function (e) {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.body.addEventListener('touchend', function (e) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+  }
+
+  // Handle orientation changes
+  window.addEventListener('orientationchange', function () {
+    setTimeout(function () {
+      // Force recalculation of responsive sizes
+      if (holes.some(hole => hole !== null)) {
+        // If game is running, update existing occupants
+        holes.forEach((occupantElem, idx) => {
+          if (occupantElem) {
+            const sizes = getResponsiveSize();
+            const isBomb = occupantElem.style.borderRadius === "50%";
+            if (isBomb) {
+              occupantElem.style.width = sizes.bombWidth + "px";
+              occupantElem.style.height = sizes.bombHeight + "px";
+              occupantElem.style.bottom = sizes.bombBottom + "px";
+            } else {
+              occupantElem.style.width = sizes.moleWidth + "px";
+              occupantElem.style.height = sizes.moleHeight + "px";
+              occupantElem.style.borderRadius = sizes.moleHeight / 2 + "px";
+              occupantElem.style.bottom = sizes.moleBottom + "px";
+            }
+          }
+        });
+      }
+    }, 100);
+  });
 };
