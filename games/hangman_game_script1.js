@@ -77,7 +77,10 @@ function initGame() {
     const btn = document.createElement("button");
     btn.textContent = letter;
     btn.className = "letter-btn";
-    btn.onclick = () => guessLetter(letter, btn);
+
+    // Use the new touch-optimized event handling
+    addTouchOptimization(btn, letter);
+
     lettersContainer.appendChild(btn);
   }
 }
@@ -99,6 +102,24 @@ function guessLetter(letter, button) {
   }
 
   updateGameState();
+}
+
+// Add touch event optimization for mobile
+function addTouchOptimization(button, letter) {
+  // Prevent double-tap zoom on mobile
+  button.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    if (!button.disabled) {
+      guessLetter(letter, button);
+    }
+  });
+
+  // Keep click for desktop compatibility
+  button.addEventListener('click', function (e) {
+    if (!button.disabled && e.type === 'click') {
+      guessLetter(letter, button);
+    }
+  });
 }
 
 // Update the ASCII art, revealed letters, and check win/loss
@@ -133,4 +154,38 @@ function resetGame() {
 }
 
 // Automatically start on load
-window.onload = initGame;
+window.onload = function () {
+  initGame();
+
+  // Add touch optimization to reset button
+  const resetButton = document.getElementById("resetButton");
+  resetButton.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    resetGame();
+  });
+  resetButton.addEventListener('click', function (e) {
+    if (e.type === 'click') {
+      resetGame();
+    }
+  });
+
+  // Add keyboard support
+  document.addEventListener('keydown', function (e) {
+    const key = e.key.toLowerCase();
+    if (key >= 'a' && key <= 'z') {
+      const letterButtons = document.querySelectorAll('.letter-btn');
+      const targetButton = Array.from(letterButtons).find(btn =>
+        btn.textContent === key && !btn.disabled
+      );
+      if (targetButton) {
+        guessLetter(key, targetButton);
+      }
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      // Allow Enter or Space to start new game when game is over
+      const message = document.getElementById("message").textContent;
+      if (message.includes('win') || message.includes('lost')) {
+        resetGame();
+      }
+    }
+  });
+};
