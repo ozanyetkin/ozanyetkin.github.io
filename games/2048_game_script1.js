@@ -160,6 +160,65 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// Touch/Swipe support for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+const minSwipeDistance = 20; // Reduced minimum distance for better responsiveness
+
+// Get the container element for a larger touch area
+const gameContainer = document.getElementById("container");
+
+// Add touch events to both container and body for maximum swipe area
+[gameContainer, document.body].forEach(element => {
+  element.addEventListener("touchstart", (e) => {
+    if (isAnimating) return;
+    e.preventDefault(); // Prevent scrolling
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: false });
+
+  element.addEventListener("touchend", (e) => {
+    if (isAnimating) return;
+    e.preventDefault(); // Prevent scrolling
+
+    touchEndX = e.changedTouches[0].clientX;
+    touchEndY = e.changedTouches[0].clientY;
+
+    handleSwipe();
+  }, { passive: false });
+});
+
+function handleSwipe() {
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
+
+  // Check if swipe distance is significant enough
+  if (Math.max(absDeltaX, absDeltaY) < minSwipeDistance) {
+    return;
+  }
+
+  // Determine swipe direction
+  if (absDeltaX > absDeltaY) {
+    // Horizontal swipe
+    if (deltaX > 0) {
+      moveRight();
+    } else {
+      moveLeft();
+    }
+  } else {
+    // Vertical swipe
+    if (deltaY > 0) {
+      moveDown();
+    } else {
+      moveUp();
+    }
+  }
+}
+
 /**
  * Each direction's move has 3 steps, each followed by an animation:
  *  1) Slide (no merge)
@@ -581,6 +640,11 @@ function renderBoard() {
   const container = document.getElementById("tile-container");
   container.innerHTML = "";
 
+  // Get current CSS variable values for responsive positioning
+  const tileSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tile-size'));
+  const tileGap = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tile-gap'));
+  const tileOffset = tileSize + tileGap;
+
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
       let tile = board[r][c];
@@ -596,7 +660,7 @@ function renderBoard() {
           row: tile.row,
           col: tile.col
         };
-        tileDiv.style.transform = `translate(${oldPos.col * 90 + 10}px, ${oldPos.row * 90 + 10}px)`;
+        tileDiv.style.transform = `translate(${oldPos.col * tileOffset + tileGap}px, ${oldPos.row * tileOffset + tileGap}px)`;
 
         const inner = document.createElement("div");
         inner.classList.add("tile-inner");
@@ -618,7 +682,7 @@ function renderBoard() {
         tileDiv.offsetWidth;
 
         // Then set final position
-        tileDiv.style.transform = `translate(${tile.col * 90 + 10}px, ${tile.row * 90 + 10}px)`;
+        tileDiv.style.transform = `translate(${tile.col * tileOffset + tileGap}px, ${tile.row * tileOffset + tileGap}px)`;
       }
     }
   }
