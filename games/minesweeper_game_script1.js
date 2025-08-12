@@ -1,4 +1,4 @@
-(function() {
+(function () {
   // Board size and mine count settings
   const boardSize = 9;
   const totalMines = 10;
@@ -9,6 +9,12 @@
   let timer = 0;
   let timerInterval = null;
 
+  // Mobile touch handling variables
+  let touchStartTime = 0;
+  let touchTimer = null;
+  let longPressTriggered = false;
+  const LONG_PRESS_DURATION = 500; // ms
+
   // DOM elements
   const boardElement = document.getElementById('board');
   const mineCountElement = document.getElementById('mineCount');
@@ -18,9 +24,33 @@
 
   // Click on face resets the game
   faceElement.addEventListener('click', initGame);
+  faceElement.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    initGame();
+  });
 
   // Initialize game on page load
   initGame();
+
+  // Prevent scrolling on mobile devices
+  document.addEventListener('touchstart', function (e) {
+    // Allow touch events only on game elements
+    if (!e.target.closest('.game-area')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function (e) {
+    // Prevent all touch move events to stop scrolling
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchend', function (e) {
+    // Allow touch end events on game elements
+    if (!e.target.closest('.game-area')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   // Update the displayed mine count (remaining mines = total mines - flagged count)
   function updateMineCount() {
@@ -106,6 +136,11 @@
         // Right-click for flag
         cellDiv.addEventListener('contextmenu', onCellRightClick);
 
+        // Touch events for mobile
+        cellDiv.addEventListener('touchstart', onCellTouchStart, { passive: false });
+        cellDiv.addEventListener('touchend', onCellTouchEnd, { passive: false });
+        cellDiv.addEventListener('touchcancel', onCellTouchCancel, { passive: false });
+
         boardElement.appendChild(cellDiv);
       }
     }
@@ -162,6 +197,87 @@
       cellData.flagged = !cellData.flagged;
       updateCellUI(row, col);
       updateMineCount();
+    }
+  }
+
+  // Touch event handlers for mobile devices
+  function onCellTouchStart(e) {
+    if (gameOver) return;
+    e.preventDefault();
+
+    touchStartTime = Date.now();
+    longPressTriggered = false;
+
+    const row = parseInt(e.target.getAttribute('data-row'));
+    const col = parseInt(e.target.getAttribute('data-col'));
+    const cell = board[row][col];
+
+    // Show surprised face for touch
+    if (!cell.revealed && !cell.flagged) {
+      faceElement.textContent = ":o";
+    }
+
+    // Start long press timer
+    touchTimer = setTimeout(() => {
+      longPressTriggered = true;
+      // Trigger flag action on long press
+      if (!cell.revealed) {
+        cell.flagged = !cell.flagged;
+        updateCellUI(row, col);
+        updateMineCount();
+        // Provide haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }
+      // Return face to normal after flagging
+      if (!gameOver) {
+        faceElement.textContent = ":)";
+      }
+    }, LONG_PRESS_DURATION);
+  }
+
+  function onCellTouchEnd(e) {
+    if (gameOver) return;
+    e.preventDefault();
+
+    const touchDuration = Date.now() - touchStartTime;
+
+    // Clear the long press timer
+    if (touchTimer) {
+      clearTimeout(touchTimer);
+      touchTimer = null;
+    }
+
+    // Return face to normal if not long press
+    if (!longPressTriggered && !gameOver) {
+      faceElement.textContent = ":)";
+    }
+
+    // If it wasn't a long press, treat it as a regular click
+    if (!longPressTriggered && touchDuration < LONG_PRESS_DURATION) {
+      const row = parseInt(e.target.getAttribute('data-row'));
+      const col = parseInt(e.target.getAttribute('data-col'));
+
+      if (!started) {
+        started = true;
+        startTimer();
+      }
+      revealCell(row, col);
+    }
+  }
+
+  function onCellTouchCancel(e) {
+    // Clean up on touch cancel
+    if (touchTimer) {
+      clearTimeout(touchTimer);
+      touchTimer = null;
+    }
+    longPressTriggered = false;
+
+    // Return face to normal
+    if (!gameOver) {
+      faceElement.textContent = ":)";
     }
   }
 

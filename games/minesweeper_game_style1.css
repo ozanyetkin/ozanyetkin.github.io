@@ -1,44 +1,80 @@
 /* CSS Variables for consistency */
 :root {
-  --cell-size: 40px;
-  --cell-gap: 5px;
-  --number-font-size: 22px;
-  --number-font-weight: 900
+  --cell-size: 45px;
+  --cell-gap: 6px;
+  --number-font-size: 24px;
+  --number-font-weight: 900;
+  --board-columns: 9;
+}
+
+/* Mobile-first responsive variables */
+@media (max-width: 768px) {
+  :root {
+    --cell-size: min(9vw, 38px);
+    --cell-gap: 4px;
+    --number-font-size: min(5vw, 20px);
+    --board-columns: 9;
   }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --cell-size: min(10vw, 35px);
+    --cell-gap: 4px;
+    --number-font-size: min(5.5vw, 18px);
+    --board-columns: 9;
+  }
+}
+
+/* Calculate board width dynamically */
+:root {
+  --board-width: calc(
+    var(--board-columns) * var(--cell-size) + (var(--board-columns) - 1) *
+      var(--cell-gap)
+  );
+}
 /* Full-page styling */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   background-color: #000;
-  font-family: sans-serif
-  }
+  font-family: sans-serif;
+  overflow-x: hidden;
+  /* Prevent scrolling on mobile */
+  position: fixed;
+  width: 100%;
+}
 /* Center everything */
 .container {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center
-  }
-/* A dedicated area for both scoreboard and board, fixed width */
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+/* A dedicated area for both scoreboard and board, responsive width */
 .game-area {
   width: var(--board-width);
+  max-width: 95vw;
   display: flex;
   flex-direction: column;
-  align-items: center
-  }
+  align-items: center;
+}
 /* Title in lowercase, bigger, as wide as the gameplay area */
 h1#title {
   width: 100%;
-  margin: 0;
+  margin: 0 0 10px 0;
   padding: 0;
   color: #fff;
-  font-size: 2.5em;
+  font-size: clamp(2.2em, 5vw, 3em);
   text-transform: lowercase;
-  text-align: center
-  }
+  text-align: center;
+}
 /* Scoreboard uses grid to center the face element horizontally */
 .scoreboard {
   width: 100%;
@@ -46,25 +82,25 @@ h1#title {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   color: #fff;
-  margin: 10px 0
-  }
+  margin: 10px 0;
+}
 /* Align first cell to left and last cell to right */
 .scoreboard span:first-child {
-  text-align: left
-  }
+  text-align: left;
+}
 .scoreboard span:last-child {
-  text-align: right
-  }
+  text-align: right;
+}
 .scoreboard span {
-  font-size: 16px;
-  text-transform: lowercase
-  }
+  font-size: clamp(14px, 3vw, 18px);
+  text-transform: lowercase;
+}
 /* Larger counts and face to match each other */
 .scoreboard .scoreValue {
-  font-size: 18px;
+  font-size: clamp(16px, 3.5vw, 20px);
   font-weight: bold;
-  margin-left: 5px
-  }
+  margin-left: 5px;
+}
 /* Make the face look and behave like a clickable button, remove border */
 #face {
   display: inline-block;
@@ -73,29 +109,44 @@ h1#title {
   padding: 5px;
   transition: background-color 0.1s, transform 0.1s;
   color: #fff;
-  font-size: 24px;
-  text-align: center
-  }
+  font-size: clamp(20px, 4vw, 28px);
+  text-align: center;
+  min-width: 40px;
+  touch-action: manipulation;
+}
 #face:hover {
   cursor: pointer;
-  background-color: #000
-  }
+  background-color: #000;
+}
 #face:active {
   background-color: #000;
-  transform: translatey(1px)
+  transform: translatey(1px);
+}
+
+/* Touch-friendly active state for mobile */
+@media (max-width: 768px) {
+  #face:active {
+    background-color: #333;
+    transform: scale(0.95);
   }
+}
+
 /* Board container can have a 'game-over' class to disable hover effects */
 .board {
   display: grid;
-  grid-template-columns: repeat(9, var(--cell-size));
+  grid-template-columns: repeat(var(--board-columns), var(--cell-size));
   gap: var(--cell-gap);
-  width: var(--board-width)
-  }
-.board.game-over .cell:not(.revealed):not(.flagged):hover, .board.game-over .cell:not(.revealed):not(.flagged):active {
+  width: var(--board-width);
+  touch-action: manipulation;
+  /* Prevent any scrolling within the board */
+  overflow: hidden;
+}
+.board.game-over .cell:not(.revealed):not(.flagged):hover,
+.board.game-over .cell:not(.revealed):not(.flagged):active {
   background-color: #222;
   transform: none;
-  cursor: default
-  }
+  cursor: default;
+}
 /* Cells styling */
 .cell {
   width: var(--cell-size);
@@ -107,64 +158,183 @@ h1#title {
   align-items: center;
   justify-content: center;
   user-select: none;
-  font-size: 18px;
+  font-size: 20px;
   color: #fff;
   box-sizing: border-box;
   font-weight: bold;
-  transition: background-color 0.1s, transform 0.1s
+  transition: background-color 0.1s, transform 0.1s;
+  touch-action: manipulation;
+  position: relative;
+}
+
+/* Mobile touch-friendly sizing */
+@media (max-width: 768px) {
+  .cell {
+    font-size: var(--number-font-size);
+    border-radius: 6px;
   }
+}
 /* Hover and active states for unrevealed, unflagged cells when game is not over */
 .board:not(.game-over) .cell:not(.revealed):not(.flagged):hover {
   background-color: #333;
-  cursor: pointer
-  }
+  cursor: pointer;
+}
 .board:not(.game-over) .cell:not(.revealed):not(.flagged):active {
   background-color: #444;
-  transform: translatey(1px)
+  transform: translatey(1px);
+}
+
+/* Mobile touch feedback */
+@media (max-width: 768px) {
+  .board:not(.game-over) .cell:not(.revealed):not(.flagged):active {
+    background-color: #444;
+    transform: scale(0.95);
   }
+
+  .board:not(.game-over) .cell:not(.revealed):not(.flagged):hover {
+    background-color: #222; /* Disable hover on mobile */
+  }
+}
+
 .cell.revealed {
   background-color: #555;
-  cursor: default
-  }
+  cursor: default;
+}
 /* Larger lower-left triangle for flags, slightly raised */
 .cell.flagged::after {
   content: "◣";
   color: #fff;
-  font-size: 28px;
+  font-size: clamp(22px, 5vw, 32px);
   position: relative;
-  top: -2px
-  }
+  top: -2px;
+}
 /* Pastel colors for numbers */
 .num1 {
-  color: #aec6cf
-  }
+  color: #aec6cf;
+}
 .num2 {
-  color: #7d7
-  }
+  color: #7d7;
+}
 .num3 {
-  color: #ffb347
-  }
+  color: #ffb347;
+}
 .num4 {
-  color: #779ecb
-  }
+  color: #779ecb;
+}
 .num5 {
-  color: #cfcfc4
-  }
+  color: #cfcfc4;
+}
 .num6 {
-  color: #f49ac2
-  }
+  color: #f49ac2;
+}
 .num7 {
-  color: #b39eb5
-  }
+  color: #b39eb5;
+}
 .num8 {
-  color: #b19cd9
-  }
+  color: #b19cd9;
+}
 /* Pastel red for the last clicked mine and wrong flags */
-.lastClickedMine, .wrongFlag {
+.lastClickedMine,
+.wrongFlag {
   background-color: #f28b82 !important;
-  color: #000 !important
-  }
+  color: #000 !important;
+}
 /* Override the flag icon for wrong flags to be black */
 .wrongFlag::after {
-  color: #000 !important
+  color: #000 !important;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  html,
+  body {
+    /* Enhanced scroll prevention on mobile */
+    position: fixed;
+    overflow: hidden;
+    touch-action: none;
   }
+
+  .container {
+    padding: 5px;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+    /* Ensure perfect vertical centering */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-area {
+    width: var(--board-width);
+    max-width: 95vw;
+    touch-action: manipulation;
+    /* Center the game area vertically within its container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-5vh);
+  }
+
+  .scoreboard {
+    margin: 8px 0;
+  }
+
+  h1#title {
+    margin: 0 0 8px 0;
+  }
+
+  /* Add instruction text for mobile users */
+  .game-area::after {
+    content: "tap to reveal • long press to flag";
+    display: block;
+    color: #666;
+    font-size: clamp(12px, 3vw, 14px);
+    text-align: center;
+    margin-top: 8px;
+    text-transform: lowercase;
+  }
+}
+
+@media (max-width: 480px) {
+  html,
+  body {
+    /* Enhanced scroll prevention on small mobile */
+    position: fixed;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .container {
+    padding: 3px;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+    /* Ensure perfect vertical centering on small screens */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-area {
+    max-width: 96vw;
+    touch-action: manipulation;
+    /* Center the game area vertically within its container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-5vh);
+  }
+
+  .scoreboard {
+    margin: 5px 0;
+  }
+
+  h1#title {
+    margin: 0 0 5px 0;
+  }
+}
