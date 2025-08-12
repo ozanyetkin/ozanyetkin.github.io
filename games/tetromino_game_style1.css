@@ -1,108 +1,266 @@
+/* Define reusable CSS variables */
+:root {
+  --block-size: 30px;
+  --gap: 2px;
+  --border-size: 2px;
+  --sidebar-width: 200px;
+  --rows: 20;
+  --cols: 10;
+  --canvas-width: calc(var(--cols) * var(--block-size) + 2 * var(--gap));
+  --canvas-height: calc(var(--rows) * var(--block-size) + 2 * var(--gap));
+  --container-gap: 30px;
+}
 
-        /* Define reusable CSS variables */
-        :root {
-            --block-size: 30px;
-            --gap: 2px;
-            --border-size: 2px;
-            --sidebar-width: 200px;
-            --rows: 20;
-            --cols: 10;
-            --canvas-width: calc(var(--cols) * var(--block-size) + 2 * var(--gap));
-            --canvas-height: calc(var(--rows) * var(--block-size) + 2 * var(--gap));
-            --container-gap: 30px;
-        }
+/* Mobile responsive variables */
+@media (max-width: 768px) {
+  :root {
+    --block-size: 20px;
+    --sidebar-width: 130px;
+    --container-gap: 8px;
+  }
+}
 
-        * {
-            box-sizing: border-box;
-        }
+@media (max-width: 480px) {
+  :root {
+    --block-size: 18px;
+    --sidebar-width: 120px;
+    --container-gap: 6px;
+  }
+}
 
-        body {
-            margin: 0;
-            padding: 20px;
-            background: black;
-            font-family: 'Press Start 2P', monospace;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+* {
+  box-sizing: border-box;
+}
 
-        /* Stretch flex items so they share the same height */
-        .container {
-            display: flex;
-            gap: var(--container-gap);
-            align-items: stretch;
-        }
+body {
+  margin: 0;
+  padding: 10px;
+  background: black;
+  font-family: "Press Start 2P", monospace;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
 
-        /* Game wrapper: force the same fixed height */
-        .game-wrapper {
-            position: relative;
-            display: inline-block;
-            border: var(--border-size) solid white;
-            height: calc(var(--canvas-height) + 2 * var(--border-size));
-        }
+@media (min-width: 769px) {
+  body {
+    padding: 20px;
+    height: 100vh;
+    flex-direction: row;
+    overflow: hidden;
+  }
+}
 
-        /* Game Canvas: dimensions based on CSS variables */
-        #game {
-            background: black;
-            display: block;
-            image-rendering: pixelated;
-            width: var(--canvas-width);
-            height: var(--canvas-height);
-        }
+@media (max-width: 768px) {
+  body {
+    padding: 5px;
+    gap: 10px;
+    height: 100vh;
+    overflow: hidden;
+  }
+}
 
-        /* Overlay over game canvas */
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            z-index: 10;
-            text-align: center;
-            box-sizing: border-box;
-        }
+/* Stretch flex items so they share the same height */
+.container {
+  display: flex;
+  gap: var(--container-gap);
+  align-items: stretch;
+  flex-direction: row;
+  max-width: 100%;
+  height: calc(var(--canvas-height) + 2 * var(--border-size));
+}
 
-        /* Sidebar: force the same fixed height as game-wrapper */
-        .sidebar {
-            width: var(--sidebar-width);
-            height: calc(var(--canvas-height) + 5 * var(--border-size));
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            gap: 20px;
-            margin-top: calc(-1 * var(--border-size));
-        }
+/* Game wrapper: force the same fixed height */
+.game-wrapper {
+  position: relative;
+  display: inline-block;
+  border: var(--border-size) solid white;
+  height: calc(var(--canvas-height) + 2 * var(--border-size));
+}
 
-        .info-box {
-            border: var(--border-size) solid white;
-            padding: 10px;
-            text-align: center;
-        }
+/* Game Canvas: dimensions based on CSS variables */
+#game {
+  background: black;
+  display: block;
+  image-rendering: pixelated;
+  width: var(--canvas-width);
+  height: var(--canvas-height);
+}
 
-        .info-box h2 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-        }
+/* Overlay over game canvas */
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  z-index: 10;
+  text-align: center;
+  box-sizing: border-box;
+}
 
-        .info-box p {
-            margin: 5px 0;
-            font-size: 12px;
-        }
+/* Sidebar: force the same fixed height as game-wrapper */
+.sidebar {
+  width: var(--sidebar-width);
+  height: calc(var(--canvas-height) + 2 * var(--border-size));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
+}
 
-        /* Next Piece Preview */
-        #nextCanvas {
-            background: black;
-            display: block;
-            image-rendering: pixelated;
-            margin: 10px auto;
-            border: none;
-        }
-    
+@media (max-width: 768px) {
+  .sidebar {
+    width: var(--sidebar-width);
+    height: calc(var(--canvas-height) + 2 * var(--border-size));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    box-sizing: border-box;
+  }
+}
+
+.info-box {
+  border: var(--border-size) solid white;
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .info-box {
+    padding: 6px;
+    flex: 1;
+  }
+}
+
+/* Hide keyboard instructions on mobile */
+@media (max-width: 768px) {
+  .info-box.keyboard-instructions {
+    display: none;
+  }
+}
+
+.info-box h2 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .info-box h2 {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+  }
+}
+
+.info-box p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .info-box p {
+    font-size: 10px;
+    margin: 3px 0;
+  }
+}
+
+/* Next Piece Preview */
+#nextCanvas {
+  background: black;
+  display: block;
+  image-rendering: pixelated;
+  margin: 10px auto;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  #nextCanvas {
+    width: 100px;
+    height: 100px;
+    margin: 5px auto;
+  }
+}
+
+/* Mobile Controls */
+.mobile-controls {
+  display: none;
+  width: calc(
+    var(--canvas-width) + var(--container-gap) + var(--sidebar-width)
+  );
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: block;
+  }
+}
+
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.controls-row:last-child {
+  margin-bottom: 0;
+}
+
+.control-btn {
+  background: #333;
+  border: 2px solid white;
+  color: white;
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  height: 50px;
+  border-radius: 0;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.1s;
+  line-height: 1;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.control-btn:active {
+  background: #555;
+  transform: scale(0.95);
+}
+
+.control-btn:hover {
+  background: #444;
+}
+
+@media (max-width: 480px) {
+  .control-btn {
+    height: 45px;
+    font-size: 9px;
+  }
+
+  .controls-row {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+}

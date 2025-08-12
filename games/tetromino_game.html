@@ -1,43 +1,63 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-<meta charset="utf-8"/>
-<title>Tetromino Game</title>
-<!-- Retro Pixelated Font -->
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
-<link href="tetromino_game_style1.css" rel="stylesheet"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Tetromino Game</title>
+    <!-- Retro Pixelated Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet" />
+    <link href="tetromino_game_style1.css" rel="stylesheet" />
 </head>
+
 <body>
-<div class="container">
-<!-- The game-wrapper provides an external frame that remains visible even when overlay is active -->
-<div class="game-wrapper">
-<!-- Canvas size is now controlled via CSS variables -->
-<canvas id="game"></canvas>
-<div id="overlay" style="display: none;"></div>
-</div>
-<div class="sidebar">
-<div class="info-box">
-<h2>NEXT</h2>
-<canvas height="180" id="nextCanvas" width="180"></canvas>
-</div>
-<div class="info-box">
-<p id="scoreDisplay">Score: 0</p>
-</div>
-<div class="info-box">
-<p id="levelDisplay">Level: 0</p>
-</div>
-<div class="info-box">
-<p id="linesDisplay">Lines: 0</p>
-</div>
-<div class="info-box">
-<p id="highScoreDisplay">High: 0</p>
-</div>
-<div class="info-box" style="font-size:10px;">
-<p>P: Pause</p>
-</div>
-</div>
-</div>
-<script src="tetromino_game_script1.js" type="text/javascript"></script>
+    <div class="container">
+        <!-- The game-wrapper provides an external frame that remains visible even when overlay is active -->
+        <div class="game-wrapper">
+            <!-- Canvas size is now controlled via CSS variables -->
+            <canvas id="game"></canvas>
+            <div id="overlay" style="display: none;"></div>
+        </div>
+        <div class="sidebar">
+            <div class="info-box">
+                <h2>NEXT</h2>
+                <canvas height="180" id="nextCanvas" width="180"></canvas>
+            </div>
+            <div class="info-box">
+                <p id="scoreDisplay">SCORE: 0</p>
+            </div>
+            <div class="info-box">
+                <p id="levelDisplay">LEVEL: 0</p>
+            </div>
+            <div class="info-box">
+                <p id="linesDisplay">LINES: 0</p>
+            </div>
+            <div class="info-box">
+                <p id="highScoreDisplay">High: 0</p>
+            </div>
+            <div class="info-box keyboard-instructions">
+                <p>P: PAUSE</p>
+                <p>R: RESTART</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+        <div class="controls-row">
+            <button class="control-btn" id="pauseBtn">PAUSE</button>
+            <button class="control-btn" id="rotateBtn">ROTATE</button>
+            <button class="control-btn" id="hardDropBtn">DROP</button>
+        </div>
+        <div class="controls-row">
+            <button class="control-btn" id="leftBtn">LEFT</button>
+            <button class="control-btn" id="downBtn">DOWN</button>
+            <button class="control-btn" id="rightBtn">RIGHT</button>
+        </div>
+    </div>
+
+    <script src="tetromino_game_script1.js" type="text/javascript"></script>
 </body>
+
 </html>
