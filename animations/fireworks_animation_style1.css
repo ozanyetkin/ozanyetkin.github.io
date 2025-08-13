@@ -1,9 +1,85 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: black
-  }
+  background: black;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  touch-action: none; /* Prevent scrolling and zooming on touch */
+  -webkit-touch-callout: none; /* Disable callout */
+  -webkit-user-select: none; /* Disable text selection */
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: Arial, sans-serif;
+}
+
 canvas {
-  display: block
+  display: block;
+  touch-action: none; /* Prevent default touch behaviors */
+}
+
+#instructions {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Don't interfere with canvas interactions */
+}
+
+#instructions:hover {
+  opacity: 0.6;
+}
+
+/* Show desktop instruction by default */
+.desktop-instruction {
+  display: block;
+}
+
+.mobile-instruction {
+  display: none;
+}
+
+/* Media query for mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  .desktop-instruction {
+    display: none;
   }
+
+  .mobile-instruction {
+    display: block;
+  }
+}
+
+/* Additional media query for small screens */
+@media (max-width: 768px) {
+  #instructions {
+    font-size: 12px;
+    top: 15px;
+  }
+}
+
+/* Fade out instructions after a delay */
+@keyframes fadeOut {
+  0% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+#instructions.fade-out {
+  animation: fadeOut 1s ease-in-out 5s forwards;
+}

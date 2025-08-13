@@ -1,13 +1,38 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const instructions = document.getElementById("instructions");
+
+// Auto-fade instructions after 5 seconds
+setTimeout(() => {
+  instructions.classList.add('fade-out');
+}, 5000);
+
+// Hide instructions temporarily when user interacts
+let instructionTimeout;
+function hideInstructionsTemporarily() {
+  instructions.style.opacity = '0.1';
+  clearTimeout(instructionTimeout);
+  instructionTimeout = setTimeout(() => {
+    instructions.style.opacity = '0.3';
+  }, 3000);
+}
 
 // Resize the canvas to fill the window.
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  // For mobile devices, use visual viewport if available, otherwise fall back to window dimensions
+  const width = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+  const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  
+  canvas.width = width;
+  canvas.height = height;
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
+
+// Handle visual viewport changes on mobile (for example, when virtual keyboard appears)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", resizeCanvas);
+}
 
 // Easing functions.
 // For movement: exponential ease-out.
@@ -39,11 +64,16 @@ let isMouseDown = false,
   clickX = 0,
   clickY = 0;
 
+// Track active touches for multi-touch support
+let activeTouches = new Map();
+
+// Mouse events
 canvas.addEventListener("mousedown", (e) => {
   isMouseDown = true;
   pressStartTime = Date.now();
   clickX = e.clientX;
   clickY = e.clientY;
+  hideInstructionsTemporarily();
 });
 
 canvas.addEventListener("mouseup", (e) => {
@@ -60,6 +90,52 @@ canvas.addEventListener("mouseleave", (e) => {
     let holdDuration = Date.now() - pressStartTime;
     spawnFireworks(clickX, clickY, holdDuration);
     isMouseDown = false;
+  }
+});
+
+// Touch events for mobile devices with multi-touch support
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // Prevent default touch behavior
+  const rect = canvas.getBoundingClientRect();
+  hideInstructionsTemporarily();
+  
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i];
+    activeTouches.set(touch.identifier, {
+      startTime: Date.now(),
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    });
+  }
+});
+
+canvas.addEventListener("touchend", (e) => {
+  e.preventDefault(); // Prevent default touch behavior
+  
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i];
+    const touchData = activeTouches.get(touch.identifier);
+    
+    if (touchData) {
+      let holdDuration = Date.now() - touchData.startTime;
+      spawnFireworks(touchData.x, touchData.y, holdDuration);
+      activeTouches.delete(touch.identifier);
+    }
+  }
+});
+
+canvas.addEventListener("touchcancel", (e) => {
+  e.preventDefault(); // Prevent default touch behavior
+  
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i];
+    const touchData = activeTouches.get(touch.identifier);
+    
+    if (touchData) {
+      let holdDuration = Date.now() - touchData.startTime;
+      spawnFireworks(touchData.x, touchData.y, holdDuration);
+      activeTouches.delete(touch.identifier);
+    }
   }
 });
 
