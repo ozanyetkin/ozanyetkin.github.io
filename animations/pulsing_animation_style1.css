@@ -1,17 +1,50 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background-color: #000;
   overflow: hidden;
-  height: 100%
-  }
+  height: 100%;
+  width: 100%;
+}
 body {
   display: flex;
   justify-content: center;
-  align-items: center
-  }
+  align-items: center;
+}
 canvas {
   background-color: #000;
   display: block;
-  border: none
+  border: none;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
   }
+
+  canvas {
+    object-fit: contain;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none;
+    max-height: none;
+  }
+}
+
+/* Prevent zoom on double tap for mobile */
+@media (hover: none) and (pointer: coarse) {
+  canvas {
+    touch-action: none;
+  }
+}
