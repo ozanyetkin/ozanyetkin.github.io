@@ -1,120 +1,421 @@
+:root {
+  --primary-bg: #f0f0f0;
+  --hover-bg: #e0e0e0;
+  --active-bg: #d0d0d0;
+  --border-color: #ccc;
+  --button-radius: 8px;
+  --font-size: 0.9rem;
+  --font-family: sans-serif;
+}
 
-        :root {
-            --primary-bg: #f0f0f0;
-            --hover-bg: #e0e0e0;
-            --active-bg: #d0d0d0;
-            --border-color: #ccc;
-            --button-radius: 8px;
-            --font-size: 0.9rem;
-            --font-family: sans-serif;
-        }
+body {
+  font: var(--font-size) var(--font-family);
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
 
-        body {
-            font: var(--font-size) var(--font-family);
-            margin: 0;
-            padding: 0;
-        }
+/* Overall container: diagram on left, fixed–width side pane on right */
+#container {
+  display: flex;
+  height: 100vh;
+  min-height: 100vh;
+}
 
-        /* Overall container: diagram on left, fixed–width side pane on right */
-        #container {
-            display: flex;
-            height: 100vh;
-        }
+/* Left side: chord diagram */
+#chart {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.8rem;
+}
 
-        /* Left side: chord diagram */
-        #chart {
-            flex: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            font-size: 0.8rem;
-        }
+/* Right side: data display and controls (fixed width) */
+#data {
+  flex: 0 0 480px;
+  overflow: hidden;
+  border-left: 1px solid var(--border-color);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
-        /* Right side: data display and controls (fixed width) */
-        #data {
-            flex: 0 0 420px;
-            overflow-y: auto;
-            border-left: 1px solid var(--border-color);
-            padding: 20px;
-            box-sizing: border-box;
-        }
+#controls {
+  flex-shrink: 0;
+  margin-bottom: 20px;
+}
 
-        /* Controls at the top */
-        #controls {
-            margin-bottom: 20px;
-        }
+#groupConnections {
+  flex-grow: 1;
+  overflow: hidden;
+}
 
-        button {
-            margin: 5px 0;
-            padding: 0.5rem 1rem;
-            font-size: var(--font-size);
-            border-radius: var(--button-radius);
-            width: 100%;
-            min-height: 50px;
-            box-sizing: border-box;
-            cursor: pointer;
-            background-color: var(--primary-bg);
-            border: 1px solid var(--border-color);
-            transition: background-color 0.2s, transform 0.1s;
-        }
+/* Controls at the top */
+#controls {
+  flex-shrink: 0;
+  margin-bottom: 20px;
+}
 
-        button:hover {
-            background-color: var(--hover-bg);
-        }
+#groupConnections {
+  flex-grow: 1;
+  overflow: hidden;
+}
 
-        button:active {
-            background-color: var(--active-bg);
-            transform: scale(0.98);
-        }
+/* Make buttons more compact on mobile */
+button {
+  margin: 5px 0;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size);
+  border-radius: var(--button-radius);
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s, transform 0.1s;
+  /* Better touch targets */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 
-        /* Group container in data display */
-        .group-container {
-            border: 1px solid var(--border-color);
-            border-left-width: 5px;
-            padding: 10px 10px 10px 15px;
-            margin-bottom: 10px;
-            border-radius: var(--button-radius);
-            position: relative;
-        }
+button:hover {
+  background-color: var(--hover-bg);
+}
 
-        .group-container h3 {
-            margin: 0 0 5px 0;
-            cursor: pointer;
-        }
+button:active {
+  background-color: var(--active-bg);
+  transform: scale(0.98);
+}
 
-        /* List items for chord connections */
-        li {
-            cursor: pointer;
-            padding: 2px 5px;
-            list-style-type: none;
-        }
+/* Group container in data display */
+.group-container {
+  border: 1px solid var(--border-color);
+  border-left-width: 5px;
+  padding: 10px 10px 10px 15px;
+  margin-bottom: 10px;
+  border-radius: var(--button-radius);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
-        /* Chord paths (we use inline style transitions) */
-        .chord {
-            cursor: pointer;
-        }
+.group-container h3 {
+  margin: 0 0 5px 0;
+  cursor: pointer;
+  /* Better touch targets for mobile */
+  padding: 8px 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
 
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 600px) {
-            #container {
-                flex-direction: column;
-            }
+.group-container ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: visible;
+}
 
-            #chart,
-            #data {
-                flex: none;
-                width: 100%;
-            }
+/* List items for chord connections - more compact */
+li {
+  cursor: pointer;
+  padding: 6px 4px;
+  list-style-type: none;
+  /* Better touch targets for mobile */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 3px;
+  margin: 1px 0;
+  line-height: 1.3;
+  flex: 1;
+}
 
-            #chart {
-                height: 50vh;
-            }
+/* Chord paths (we use inline style transitions) */
+.chord {
+  cursor: pointer;
+}
 
-            #data {
-                height: auto;
-                border-left: none;
-                border-top: 1px solid var(--border-color);
-            }
-        }
-    
+/* Desktop layout - single column */
+@media (min-width: 769px) {
+  #groupConnections {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    gap: 10px;
+  }
+
+  .group-container {
+    margin-bottom: 0;
+    min-height: auto;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .group-container ul {
+    display: flex;
+    flex-direction: column;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  #container {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #chart,
+  #data {
+    flex: none;
+    width: 100%;
+  }
+
+  #chart {
+    height: 40vh;
+    min-height: 180px;
+    flex-shrink: 0;
+  }
+
+  #data {
+    height: 60vh;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    padding: 8px 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #groupConnections {
+    flex-grow: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+  }
+
+  #groupConnections::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #groupConnections::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #groupConnections::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+  }
+
+  button {
+    min-height: 34px;
+    font-size: 0.85rem;
+    margin: 3px 0;
+    padding: 0.3rem 0.6rem;
+  }
+
+  /* 3-column layout for group connections */
+  #groupConnections {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: minmax(100px, auto);
+    gap: 6px;
+    align-items: stretch;
+    padding-right: 8px;
+  }
+
+  .group-container {
+    margin-bottom: 0;
+    padding: 6px 4px 6px 8px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100px;
+  }
+
+  .group-container ul {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  .group-container h3 {
+    font-size: 0.9rem;
+    padding: 4px 0;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+
+  .group-container ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    flex-grow: 1;
+    justify-content: flex-start;
+  }
+
+  li {
+    padding: 2px 1px;
+    font-size: 0.7rem;
+    margin: 0;
+    text-align: center;
+    word-break: break-word;
+    flex-shrink: 0;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  #chart {
+    height: 35vh;
+    min-height: 160px;
+  }
+
+  #data {
+    height: 65vh;
+    padding: 6px 16px;
+  }
+
+  :root {
+    --font-size: 0.8rem;
+  }
+
+  #controls {
+    margin-bottom: 6px;
+  }
+
+  button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 2px 0;
+    min-height: 32px;
+  }
+
+  /* Switch to 2-column layout for better fit with 6 groups */
+  #groupConnections {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(120px, auto);
+    gap: 4px;
+    align-items: stretch;
+    padding-right: 6px;
+  }
+
+  #groupConnections::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .group-container {
+    padding: 5px 3px 5px 6px;
+    margin-bottom: 0;
+    min-height: 120px;
+  }
+
+  .group-container ul {
+    overflow: visible;
+    max-height: 90px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .group-container ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .group-container h3 {
+    font-size: 0.8rem;
+    padding: 3px 0;
+    margin-bottom: 1px;
+  }
+
+  li {
+    font-size: 0.65rem;
+    padding: 1px 1px;
+    line-height: 1;
+    margin: 0;
+  }
+}
+
+@media (max-width: 320px) {
+  #chart {
+    height: 30vh;
+    min-height: 140px;
+  }
+
+  #data {
+    height: 70vh;
+    padding: 4px 12px;
+  }
+
+  :root {
+    --font-size: 0.75rem;
+  }
+
+  #controls {
+    margin-bottom: 4px;
+  }
+
+  button {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    margin: 1px 0;
+    min-height: 30px;
+  }
+
+  /* Keep 2-column layout for very small screens with 6 groups */
+  #groupConnections {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(110px, auto);
+    gap: 3px;
+    align-items: stretch;
+    padding-right: 4px;
+  }
+
+  #groupConnections::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .group-container {
+    padding: 4px 2px 4px 5px;
+    margin-bottom: 0;
+    min-height: 110px;
+  }
+
+  .group-container ul {
+    overflow: visible;
+    max-height: 85px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .group-container ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .group-container h3 {
+    font-size: 0.75rem;
+    padding: 2px 0;
+    margin-bottom: 1px;
+  }
+
+  li {
+    font-size: 0.6rem;
+    padding: 1px 0px;
+    line-height: 1;
+    margin: 0;
+  }
+}
