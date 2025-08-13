@@ -1,5 +1,6 @@
 /* Reset margins and use a pure black background */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background: #000;
@@ -7,20 +8,79 @@ html, body {
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center
-  }
-/* Define a 15×15 grid with gaps */
+  align-items: center;
+  overflow: hidden; /* Prevent scrolling */
+  /* Improve mobile performance */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Ensure content can expand for animations */
+  position: relative;
+}
+
+/* Define a responsive grid that adapts to screen size */
 #grid {
   display: grid;
-  grid-template-columns: repeat(15, 20px);
-  grid-gap: 4px
-  }
-/* Each cell is a 20×20 rectangle with its transform origin centered.
-           Adding will-change hints smoother animations by allowing the browser
-           to optimize the transform and background-color properties. */
+  grid-template-columns: repeat(15, var(--cell-size));
+  grid-gap: var(--grid-gap);
+  /* CSS custom properties for responsive sizing - increased sizes */
+  --cell-size: min(6vw, 6vh, 30px);
+  --grid-gap: max(2px, min(0.8vw, 0.8vh, 6px));
+  /* Add padding to accommodate cell expansion and movement */
+  padding: calc(var(--cell-size) * 0.5) calc(var(--cell-size) * 4);
+  /* Ensure grid doesn't exceed viewport with padding included */
+  max-width: calc(95vw - calc(var(--cell-size) * 8));
+  max-height: calc(95vh - var(--cell-size));
+  /* Center the grid content */
+  justify-content: center;
+  align-content: center;
+}
+
+/* Each cell is a square with its transform origin centered */
 .cell {
-  width: 20px;
-  height: 20px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   transform-origin: center;
-  will-change: transform, background-color
+  will-change: transform, background-color;
+  /* Improve mobile performance */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  /* Allow cells to expand beyond their container bounds */
+  overflow: visible;
+  /* Ensure cells can be seen when they transform */
+  z-index: 1;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  #grid {
+    /* Larger cells on mobile for better visibility */
+    --cell-size: min(5.5vw, 5.5vh, 28px);
+    --grid-gap: max(2px, min(0.7vw, 0.7vh, 5px));
+    /* Adjust padding for mobile */
+    padding: calc(var(--cell-size) * 0.4) calc(var(--cell-size) * 3.5);
+    max-width: calc(95vw - calc(var(--cell-size) * 7));
   }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 480px) {
+  #grid {
+    --cell-size: min(5vw, 5vh, 25px);
+    --grid-gap: max(2px, min(0.6vw, 0.6vh, 4px));
+    /* Smaller padding for very small screens */
+    padding: calc(var(--cell-size) * 0.3) calc(var(--cell-size) * 3);
+    max-width: calc(95vw - calc(var(--cell-size) * 6));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  #grid {
+    --cell-size: min(6vh, 4.5vw, 28px);
+    --grid-gap: max(2px, min(0.6vh, 0.5vw, 5px));
+    /* Adjust padding for landscape */
+    padding: calc(var(--cell-size) * 0.3) calc(var(--cell-size) * 3.5);
+    max-width: calc(95vw - calc(var(--cell-size) * 7));
+    max-height: calc(95vh - calc(var(--cell-size) * 0.6));
+  }
+}

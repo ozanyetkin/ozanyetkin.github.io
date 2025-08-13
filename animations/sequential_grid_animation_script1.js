@@ -3,6 +3,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const cells = [];
   const rows = 15,
     cols = 15;
+
+  // Mobile detection and responsive variables
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+  // Responsive sizing based on screen size
+  let cellSize = 30; // Increased from 20
+  let offsetFactorBase = 7; // Increased from 5
+
+  function updateResponsiveValues() {
+    const viewportMin = Math.min(window.innerWidth, window.innerHeight);
+
+    if (viewportMin < 480) {
+      // Extra small screens
+      cellSize = Math.max(20, viewportMin * 0.05); // Increased
+      offsetFactorBase = 5; // Increased from 3
+    } else if (viewportMin < 768) {
+      // Mobile screens
+      cellSize = Math.max(22, viewportMin * 0.055); // Increased
+      offsetFactorBase = 6; // Increased from 4
+    } else {
+      // Desktop screens
+      cellSize = 30; // Increased from 20
+      offsetFactorBase = 7; // Increased from 5
+    }
+  }
+
+  updateResponsiveValues();
+
   // Determine the center cell (for computing delays)
   const center = {
     r: Math.floor(rows / 2),
@@ -21,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxDist = Math.sqrt(center.r * center.r + center.c * center.c);
 
   // ----- Effect Configuration for Horizontal Motion -----
-  const offsetFactor = 5; // target horizontal shift = (column offset)*offsetFactor
+  let offsetFactor = offsetFactorBase; // Will be updated based on screen size
 
   // ----- Colors -----
   // Starting color (tomato) and an in‑between mix (a blend of indigo and turquoise)
@@ -36,6 +65,17 @@ document.addEventListener("DOMContentLoaded", () => {
     b: 167
   };
 
+  // Animation control variables
+  let animationId;
+  let isAnimating = true;
+  let animationSpeed = 1.0;
+  let lastFrameTime = 0;
+  let frameCount = 0;
+
+  // Performance optimization for mobile
+  const targetFPS = isMobile ? 30 : 60;
+  const frameInterval = 1000 / targetFPS;
+
   // Create the grid of cells and compute per‑cell properties.
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -46,15 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const dx = c - center.c;
       const dy = r - center.r;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      // Compute the cell’s target horizontal translation.
-      const targetX = dx * offsetFactor;
+      // Store base values for responsive updates
       cells.push({
         cell,
         dist,
-        targetX
+        dx,
+        dy,
+        targetX: dx * offsetFactorBase
       });
     }
   }
+
+  // Update offset factor for responsive design
+  function updateCellTargets() {
+    offsetFactor = offsetFactorBase * (cellSize / 30); // Updated base from 20 to 30
+    cells.forEach(cellData => {
+      cellData.targetX = cellData.dx * offsetFactor;
+    });
+  }
+
+  updateCellTargets();
 
   // ----- Easing Functions -----
   // easeInOutBack provides symmetric easing with an overshoot effect.
@@ -91,16 +142,99 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ----- Animation Loop -----
-  function animate() {
-    const now = performance.now() / 1000; // Current time in seconds
-    const globalTime = now % T_total; // Wrap time into one full cycle
+  // Touch interaction handlers
+  let touchStartTime = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
 
-    cells.forEach(({
-      cell,
-      dist,
-      targetX
-    }) => {
+  function handleTouchStart(event) {
+    event.preventDefault();
+    touchStartTime = Date.now();
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }
+
+  function handleTouchMove(event) {
+    event.preventDefault();
+  }
+
+  function handleTouchEnd(event) {
+    event.preventDefault();
+    const touchEndTime = Date.now();
+    const touchDuration = touchEndTime - touchStartTime;
+
+    if (touchDuration < 300) { // Quick tap
+      // Toggle animation speed or pause
+      if (isAnimating) {
+        animationSpeed = animationSpeed === 1.0 ? 0.5 : (animationSpeed === 0.5 ? 2.0 : 1.0);
+      } else {
+        isAnimating = true;
+        animate();
+      }
+    } else { // Long press
+      // Pause/resume animation
+      isAnimating = !isAnimating;
+      if (isAnimating) {
+        animate();
+      }
+    }
+  }
+
+  // Add touch event listeners
+  if (isTouch) {
+    grid.addEventListener('touchstart', handleTouchStart, { passive: false });
+    grid.addEventListener('touchmove', handleTouchMove, { passive: false });
+    grid.addEventListener('touchend', handleTouchEnd, { passive: false });
+  }
+
+  // Add click handler for desktop
+  grid.addEventListener('click', () => {
+    if (!isTouch) {
+      animationSpeed = animationSpeed === 1.0 ? 0.5 : (animationSpeed === 0.5 ? 2.0 : 1.0);
+    }
+  });
+
+  // Handle orientation changes and window resize
+  function handleResize() {
+    updateResponsiveValues();
+    updateCellTargets();
+  }
+
+  window.addEventListener('resize', handleResize);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleResize, 100); // Delay to ensure proper viewport dimensions
+  });
+
+  // Visibility API for performance optimization
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      isAnimating = false;
+    } else {
+      isAnimating = true;
+      animate();
+    }
+  }
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  // ----- Animation Loop -----
+  function animate(currentTime = performance.now()) {
+    if (!isAnimating) return;
+
+    // Frame rate limiting for mobile devices
+    if (currentTime - lastFrameTime < frameInterval) {
+      animationId = requestAnimationFrame(animate);
+      return;
+    }
+
+    lastFrameTime = currentTime;
+    frameCount++;
+
+    const now = currentTime / 1000; // Current time in seconds
+    const globalTime = (now * animationSpeed) % T_total; // Wrap time into one full cycle
+
+    cells.forEach(({ cell, dist, targetX }) => {
       // Compute a sine‑shaped delay based on distance.
       // Cells at the center (dist = 0) have no delay;
       // cells at the maximum distance are delayed by maxDelay.
@@ -158,8 +292,35 @@ document.addEventListener("DOMContentLoaded", () => {
       cell.style.backgroundColor = color;
     });
 
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
   }
 
+  // Start the animation
   animate();
+
+  // Add a simple UI indicator for mobile users (optional)
+  if (isMobile) {
+    const indicator = document.createElement('div');
+    indicator.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.7);
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 1000;
+    `;
+    indicator.innerHTML = 'Tap: Change Speed | Long Press: Pause/Resume';
+    document.body.appendChild(indicator);
+
+    // Hide indicator after 5 seconds
+    setTimeout(() => {
+      indicator.style.opacity = '0';
+      indicator.style.transition = 'opacity 1s ease-out';
+      setTimeout(() => indicator.remove(), 1000);
+    }, 5000);
+  }
 });
