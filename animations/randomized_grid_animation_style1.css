@@ -1,43 +1,83 @@
+/* Use CSS variables for easy tweaking of dimensions and colors */
+:root {
+  --grid-size: 17;
+  --square-size: 28px;
+  --bg-color: #000;
+  --tomato: 255, 85, 0;
+  --indigo: 85, 0, 255;
+  --grid-cols: 17;
+  --grid-rows: 17;
+}
 
-        /* Use CSS variables for easy tweaking of dimensions and colors */
-        :root {
-            --grid-size: 17;
-            --square-size: 20px;
-            --bg-color: #000;
-            --tomato: 255, 85, 0;
-            --indigo: 85, 0, 255;
-        }
+/* Reset and full-screen background */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg-color);
+  font-family: sans-serif;
+  overflow: hidden; /* Prevent scrolling */
+}
 
-        /* Reset and full-screen background */
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: var(--bg-color);
-            font-family: sans-serif;
-        }
+/* Center container flexibly */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-        /* Center container flexibly */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* The container is responsive based on grid parameters and screen size */
+#container {
+  position: relative;
+  width: calc(var(--grid-cols) * var(--square-size));
+  height: calc(var(--grid-rows) * var(--square-size));
+  max-width: 95vw;
+  max-height: 95vh;
+  transform-origin: center center;
+}
 
-        /* The container is responsive based on grid parameters */
-        #container {
-            position: relative;
-            width: calc(var(--grid-size) * var(--square-size));
-            height: calc(var(--grid-size) * var(--square-size));
-        }
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  :root {
+    --square-size: 22px;
+    --grid-cols: 12;
+    --grid-rows: 20;
+  }
 
-        /* Style for each square */
-        .square {
-            position: absolute;
-            width: var(--square-size);
-            height: var(--square-size);
-            box-sizing: border-box;
-            will-change: transform, background-color;
-        }
-    
+  #container {
+    max-width: 98vw;
+    max-height: 98vh;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --square-size: 18px;
+    --grid-cols: 10;
+    --grid-rows: 24;
+  }
+
+  #container {
+    max-width: 98vw;
+    max-height: 98vh;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  :root {
+    --square-size: 14px;
+    --grid-cols: 8;
+    --grid-rows: 28;
+  }
+}
+
+/* Style for each square */
+.square {
+  position: absolute;
+  width: var(--square-size);
+  height: var(--square-size);
+  box-sizing: border-box;
+  will-change: transform, background-color;
+}
