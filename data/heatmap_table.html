@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<title>Heatmap Table</title>
-<link href="heatmap_table_style1.css" rel="stylesheet"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Heatmap Table</title>
+    <link href="heatmap_table_style1.css" rel="stylesheet" />
 </head>
+
 <body>
-<table id="heatmap"></table>
-<script src="heatmap_table_script1.js" type="text/javascript"></script>
+    <div class="heatmap-container">
+        <div class="usage-instructions">
+            <h3>Interactive Heatmap</h3>
+            <div class="desktop-instructions">
+                <p>Mouse wheel to adjust values • Click and drag vertically • Click to edit directly</p>
+            </div>
+            <div class="mobile-instructions">
+                <p>Tap to increment • Double-tap to edit • Drag vertically to adjust</p>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table id="heatmap"></table>
+        </div>
+    </div>
+    <script src="heatmap_table_script1.js" type="text/javascript"></script>
 </body>
+
 </html>

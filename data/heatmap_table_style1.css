@@ -1,21 +1,74 @@
 /* Basic page styling */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  height: 100%
-  }
+  height: 100%;
+  overflow-x: auto;
+}
 body {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0
-  }
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Container for the table */
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Usage instructions */
+.usage-instructions {
+  max-width: 600px;
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+  padding: 15px;
+}
+
+.usage-instructions h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Desktop and mobile specific instructions */
+.desktop-instructions {
+  display: block;
+}
+
+.mobile-instructions {
+  display: none;
+}
+
+/* Table wrapper to handle centering with row labels */
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 /* Table styling */
 table {
   border-collapse: separate;
   border-spacing: 6px;
   /* Slightly increased for better separation */
-  }
+  width: auto;
+  /* Let table size itself based on content */
+  margin-left: -60px; /* Increased offset to center the 3rd column */
+}
+
 /* Default cell styling */
 td {
   width: 85px;
@@ -28,16 +81,22 @@ td {
   font-weight: bold;
   color: #fff;
   border-radius: 8px;
-  cursor: ns-resize;
+  cursor: pointer;
   user-select: none;
-  padding: 5px
-  }
+  padding: 5px;
+  /* Better touch targets */
+  min-height: 44px;
+  /* iOS recommended minimum touch target */
+  box-sizing: border-box;
+}
+
 /* Corner cell: Matches row number cell width */
 .corner-cell {
   width: 45px;
   /* Aligned with row number cells */
-  cursor: default
-  }
+  cursor: default;
+}
+
 /* Column header cells */
 .header-cell {
   color: #222;
@@ -45,10 +104,109 @@ td {
   font-weight: bold;
   background-color: transparent;
   cursor: default;
-  user-select: none
-  }
+  user-select: none;
+}
+
 /* Row number cells */
 .row-number-cell {
   width: 60px;
   /* Matches corner cell width */
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 10px;
+    overflow-x: auto;
+    align-items: flex-start;
   }
+
+  .heatmap-container {
+    gap: 15px;
+  }
+
+  .usage-instructions {
+    font-size: 12px;
+    padding: 12px;
+  }
+
+  .usage-instructions h3 {
+    font-size: 14px;
+  }
+
+  /* Show mobile instructions, hide desktop */
+  .desktop-instructions {
+    display: none;
+  }
+
+  .mobile-instructions {
+    display: block;
+  }
+
+  table {
+    border-spacing: 3px;
+    font-size: 14px;
+    margin-left: -40px; /* Adjusted offset for mobile centering */
+  }
+
+  td {
+    width: 60px;
+    height: 40px;
+    min-height: 40px;
+    padding: 3px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .corner-cell {
+    width: 35px;
+  }
+
+  .row-number-cell {
+    width: 45px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    padding: 5px;
+  }
+
+  .heatmap-container {
+    gap: 10px;
+  }
+
+  .usage-instructions {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  table {
+    border-spacing: 2px;
+    font-size: 12px;
+    margin-left: -30px; /* Adjusted offset for small mobile centering */
+  }
+
+  td {
+    width: 50px;
+    height: 35px;
+    min-height: 35px;
+    padding: 2px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .corner-cell {
+    width: 30px;
+  }
+
+  .row-number-cell {
+    width: 35px;
+  }
+}
+
+/* Touch feedback */
+td:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
