@@ -1,6 +1,17 @@
-const width = 600,
-  height = 600,
-  radius = Math.min(width, height) / 2;
+// Responsive dimensions
+function getResponsiveDimensions() {
+  const container = document.querySelector('.container');
+  const containerWidth = container.clientWidth;
+  const viewportHeight = window.innerHeight;
+  const size = Math.min(containerWidth - 20, viewportHeight - 100, 800);
+  return {
+    width: size,
+    height: size,
+    radius: size / 2
+  };
+}
+
+let { width, height, radius } = getResponsiveDimensions();
 
 // Slower animation timing constants (in ms)
 const innerDelay = 40,
@@ -9,17 +20,64 @@ const innerDelay = 40,
 // Threshold (in radians) below which arcs are considered too small for animation/labels.
 const minAngle = 0.1;
 
-// Append an SVG group centered in the view.
-const svg = d3.select("svg")
-  .attr("width", width)
-  .attr("height", height)
+// Create SVG with responsive sizing
+const svg = d3.select("#sunburst-chart")
+  .attr("viewBox", `0 0 ${width} ${height}`)
+  .attr("preserveAspectRatio", "xMidYMid meet")
   .append("g")
-  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
 // Global color scale for top-level categories.
 const color = d3.scaleOrdinal(d3.schemeTableau10);
 
 let root, currentFocus;
+
+// Handle window resize
+function handleResize() {
+  const newDimensions = getResponsiveDimensions();
+  width = newDimensions.width;
+  height = newDimensions.height;
+  radius = newDimensions.radius;
+
+  d3.select("#sunburst-chart")
+    .attr("viewBox", `0 0 ${width} ${height}`);
+
+  svg.attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+  if (root) {
+    updateVisualization();
+  }
+}
+
+// Debounced resize handler
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(handleResize, 150);
+});
+
+// Enhanced event handler for both mouse and touch
+function addClickHandler(element, callback) {
+  let touchStarted = false;
+
+  element
+    .on("touchstart", function (event) {
+      touchStarted = true;
+      event.preventDefault(); // Prevent mouse events from firing
+    })
+    .on("touchend", function (event) {
+      if (touchStarted) {
+        touchStarted = false;
+        event.preventDefault();
+        callback.call(this, event, event.target.__data__);
+      }
+    })
+    .on("click", function (event, d) {
+      if (!touchStarted) { // Only handle click if not a touch event
+        callback.call(this, event, d);
+      }
+    });
+}
 
 // For sub-categories, derive a slight variation from the parent's color.
 // This function only adjusts the lightness slightly so the hue and saturation remain the same.
@@ -66,12 +124,12 @@ d3.json("https://gist.githubusercontent.com/alexramo/9500294/raw/98a57d80f8bf306
 // Helper function for radial wipe (arc tween)
 function arcTween(arcGen, d) {
   const i = d3.interpolate({
-      startAngle: d.startAngle,
-      endAngle: d.startAngle
-    },
+    startAngle: d.startAngle,
+    endAngle: d.startAngle
+  },
     d
   );
-  return function(t) {
+  return function (t) {
     return arcGen(i(t));
   };
 }
@@ -89,17 +147,19 @@ function updateVisualization() {
 
   // Add a center (back) button if not at the root.
   if (currentFocus !== root) {
-    svg.append("circle")
+    const backButton = svg.append("circle")
       .attr("r", 0)
       .attr("fill", currentFocus.baseColor)
       .attr("stroke", "#fff")
       .attr("stroke-width", 1)
-      .style("cursor", "pointer")
-      .on("click", () => {
-        currentFocus = currentFocus.parent;
-        updateVisualization();
-      })
-      .transition()
+      .style("cursor", "pointer");
+
+    addClickHandler(backButton, () => {
+      currentFocus = currentFocus.parent;
+      updateVisualization();
+    });
+
+    backButton.transition()
       .duration(animationDuration)
       .attr("r", backButtonRadius);
 
@@ -135,17 +195,20 @@ function updateVisualization() {
       .outerRadius(innerRingOuter);
 
     const innerGroup = svg.append("g").attr("class", "innerRing");
-    innerGroup.selectAll("g.innerArc")
+    const innerSelection = innerGroup.selectAll("g.innerArc")
       .data(innerArcs)
       .enter()
       .append("g")
-      .attr("class", "arc")
-      .on("click", (event, d) => {
-        currentFocus = d.data;
-        updateVisualization();
-        event.stopPropagation();
-      })
-      .each(function(d, i) {
+      .attr("class", "arc");
+
+    addClickHandler(innerSelection, (event, d) => {
+      currentFocus = d.data;
+      updateVisualization();
+      event.stopPropagation();
+    });
+
+    innerSelection
+      .each(function (d, i) {
         const g = d3.select(this);
         const angle = d.endAngle - d.startAngle;
         // Use the assigned base color for consistency.
@@ -168,7 +231,7 @@ function updateVisualization() {
             .transition()
             .delay(i * innerDelay)
             .duration(animationDuration)
-            .attrTween("d", function(d) {
+            .attrTween("d", function (d) {
               return arcTween(innerArcGen, d);
             });
           g.append("text")
@@ -196,17 +259,20 @@ function updateVisualization() {
             .outerRadius(outerRingOuter);
           // Animate outer arcs relative to the inner arc.
           const outerGroup = svg.append("g").attr("class", "outerRing");
-          outerGroup.selectAll(null)
+          const outerSelection = outerGroup.selectAll(null)
             .data(outerArcs)
             .enter()
             .append("g")
-            .attr("class", "arc")
-            .on("click", (event, d) => {
-              currentFocus = d.data;
-              updateVisualization();
-              event.stopPropagation();
-            })
-            .each(function(d, j) {
+            .attr("class", "arc");
+
+          addClickHandler(outerSelection, (event, d) => {
+            currentFocus = d.data;
+            updateVisualization();
+            event.stopPropagation();
+          });
+
+          outerSelection
+            .each(function (d, j) {
               const delay = i * innerDelay + j * outerDelay;
               const gOuter = d3.select(this);
               const angle = d.endAngle - d.startAngle;
@@ -229,7 +295,7 @@ function updateVisualization() {
                   .transition()
                   .delay(delay)
                   .duration(animationDuration)
-                  .attrTween("d", function(d) {
+                  .attrTween("d", function (d) {
                     return arcTween(outerArcGen, d);
                   });
                 gOuter.append("text")
