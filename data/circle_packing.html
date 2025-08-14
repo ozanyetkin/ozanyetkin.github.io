@@ -1,27 +1,32 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<title>Circle Packing</title>
-<link href="circle_packing_style1.css" rel="stylesheet"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Circle Packing</title>
+    <link href="circle_packing_style1.css" rel="stylesheet" />
 </head>
+
 <body>
-<!-- Visualization Container -->
-<div id="visualization">
-<svg></svg>
-</div>
-<!-- Floating Buttons Panel (top–right) -->
-<div id="buttonContainer">
-<button id="shuffleButton">Shuffle</button>
-<button id="packButton">Pack</button>
-</div>
-<!-- Floating Data Panel (below buttons, no title) -->
-<div id="dataContainer">
-<div id="circle-data"></div>
-</div>
-<!-- Include D3.js from CDN -->
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="circle_packing_script1.js" type="text/javascript"></script>
+    <!-- Visualization Container -->
+    <div id="visualization">
+        <svg></svg>
+    </div>
+    <!-- Floating Buttons Panel (top–right) -->
+    <div id="buttonContainer">
+        <button id="shuffleButton">Shuffle</button>
+        <button id="packButton">Pack</button>
+        <button id="toggleDataButton" class="mobile-only">Data</button>
+    </div>
+    <!-- Floating Data Panel (below buttons, no title) -->
+    <div id="dataContainer">
+        <div id="circle-data"></div>
+    </div>
+    <!-- Include D3.js from CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="circle_packing_script1.js" type="text/javascript"></script>
 </body>
+
 </html>
