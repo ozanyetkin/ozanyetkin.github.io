@@ -1,102 +1,177 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<title>Treemap Chart</title>
-<!-- D3 from a CDN is acceptable as per instructions -->
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<link href="treemap_chart_style1.css" rel="stylesheet"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Treemap Chart</title>
+    <!-- D3 from a CDN is acceptable as per instructions -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="treemap_chart_style1.css" rel="stylesheet" />
 </head>
+
 <body>
-<div id="container">
-<!-- Treemap Container -->
-<div id="chart-container">
-<!-- SVG will be appended here by D3 -->
-<svg height="400" id="treemap-svg" width="600"></svg>
-</div>
-<!-- Table Container with two tables side by side -->
-<div id="table-container">
-<!-- First table (4 categories) -->
-<table id="data-table1">
-<thead>
-<tr>
-<th>Category</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category A</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category B</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category C</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category D</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-</tbody>
-</table>
-<!-- Second table (4 categories) -->
-<table id="data-table2">
-<thead>
-<tr>
-<th>Category</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category E</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category F</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category G</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-<tr>
-<td>
-<span class="color-circle"></span>
-<span class="category-name">Category H</span>
-</td>
-<td><input min="0" step="1" type="number"/></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<script src="treemap_chart_script1.js" type="text/javascript"></script>
+    <div id="container">
+        <!-- Treemap Container -->
+        <div id="chart-container">
+            <!-- SVG will be appended here by D3 -->
+            <svg height="400" id="treemap-svg" width="600"></svg>
+        </div>
+        <!-- Table Container with two tables side by side -->
+        <div id="table-container">
+            <!-- Desktop view: Two separate tables -->
+            <div class="desktop-tables">
+                <!-- First table (4 categories) -->
+                <table id="data-table1">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category A</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category B</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category C</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category D</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Second table (4 categories) -->
+                <table id="data-table2">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category E</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category F</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category G</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="color-circle"></span>
+                                <span class="category-name">Category H</span>
+                            </td>
+                            <td><input min="0" step="1" type="number" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile view: Single combined table -->
+            <table id="mobile-table" class="mobile-only">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category A</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category B</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category C</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category D</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category E</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category F</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category G</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="color-circle"></span>
+                            <span class="category-name">Category H</span>
+                        </td>
+                        <td><input min="0" step="1" type="number" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="treemap_chart_script1.js" type="text/javascript"></script>
 </body>
+
 </html>
