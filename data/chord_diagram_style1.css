@@ -183,13 +183,13 @@ li {
   }
 
   #chart {
-    height: 40vh;
-    min-height: 180px;
+    height: 50vh;
+    min-height: 200px;
     flex-shrink: 0;
   }
 
   #data {
-    height: 60vh;
+    height: 50vh;
     border-left: none;
     border-top: 1px solid var(--border-color);
     padding: 8px 20px;
@@ -225,12 +225,12 @@ li {
     padding: 0.3rem 0.6rem;
   }
 
-  /* 3-column layout for group connections */
+  /* 2-column layout for group connections on mobile (4 groups = 2x2 grid) */
   #groupConnections {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-auto-rows: minmax(100px, auto);
-    gap: 6px;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(80px, auto);
+    gap: 8px;
     align-items: stretch;
     padding-right: 8px;
   }
@@ -243,7 +243,7 @@ li {
     height: 100%;
     display: flex;
     flex-direction: column;
-    min-height: 100px;
+    min-height: 80px;
   }
 
   .group-container ul {
@@ -253,9 +253,9 @@ li {
   }
 
   .group-container h3 {
-    font-size: 0.9rem;
-    padding: 4px 0;
-    margin-bottom: 2px;
+    font-size: 0.8rem;
+    padding: 3px 0;
+    margin-bottom: 1px;
     text-align: center;
   }
 
@@ -280,12 +280,12 @@ li {
 
 @media (max-width: 480px) {
   #chart {
-    height: 35vh;
-    min-height: 160px;
+    height: 45vh;
+    min-height: 180px;
   }
 
   #data {
-    height: 65vh;
+    height: 45vh;
     padding: 6px 16px;
   }
 
@@ -304,10 +304,10 @@ li {
     min-height: 32px;
   }
 
-  /* Switch to 2-column layout for better fit with 6 groups */
+  /* Keep 2-column layout for very small screens with 4 groups */
   #groupConnections {
     grid-template-columns: 1fr 1fr;
-    grid-auto-rows: minmax(120px, auto);
+    grid-auto-rows: minmax(90px, auto);
     gap: 4px;
     align-items: stretch;
     padding-right: 6px;
@@ -318,14 +318,14 @@ li {
   }
 
   .group-container {
-    padding: 5px 3px 5px 6px;
+    padding: 6px 4px 6px 8px;
     margin-bottom: 0;
-    min-height: 120px;
+    min-height: 90px;
   }
 
   .group-container ul {
     overflow: visible;
-    max-height: 90px;
+    max-height: 70px;
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -342,21 +342,21 @@ li {
   }
 
   li {
-    font-size: 0.65rem;
-    padding: 1px 1px;
-    line-height: 1;
+    font-size: 0.7rem;
+    padding: 2px 1px;
+    line-height: 1.1;
     margin: 0;
   }
 }
 
 @media (max-width: 320px) {
   #chart {
-    height: 30vh;
-    min-height: 140px;
+    height: 40vh;
+    min-height: 160px;
   }
 
   #data {
-    height: 70vh;
+    height: 40vh;
     padding: 4px 12px;
   }
 
@@ -375,10 +375,10 @@ li {
     min-height: 30px;
   }
 
-  /* Keep 2-column layout for very small screens with 6 groups */
+  /* Keep 2-column layout for very small screens with 4 groups */
   #groupConnections {
     grid-template-columns: 1fr 1fr;
-    grid-auto-rows: minmax(110px, auto);
+    grid-auto-rows: minmax(80px, auto);
     gap: 3px;
     align-items: stretch;
     padding-right: 4px;
@@ -391,7 +391,7 @@ li {
   .group-container {
     padding: 4px 2px 4px 5px;
     margin-bottom: 0;
-    min-height: 110px;
+    min-height: 80px;
   }
 
   .group-container ul {

@@ -2,17 +2,21 @@
 // A color scale for the groups.
 const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-// Define 6 groups with names.
-const numGroups = 6;
-const groupNames = ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F"];
-const groupNamesShort = ["A", "B", "C", "D", "E", "F"]; // Shorter names for mobile
-
-// Global variable for the connection matrix.
-let matrixData = [];
-
 // Mobile detection
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
     ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+// Define groups based on screen size - 4 for mobile, 6 for desktop
+const numGroups = isMobile ? 4 : 6;
+const groupNames = isMobile ? 
+    ["Group A", "Group B", "Group C", "Group D"] : 
+    ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F"];
+const groupNamesShort = isMobile ? 
+    ["A", "B", "C", "D"] : 
+    ["A", "B", "C", "D", "E", "F"]; // Shorter names for mobile
+
+// Global variable for the connection matrix.
+let matrixData = [];
 
 // Touch event handling variables
 let touchTimeout;
