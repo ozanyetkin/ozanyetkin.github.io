@@ -3,8 +3,9 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif
-  }
+  font-family: Arial, sans-serif;
+}
+
 /* Center everything vertically and horizontally in the page */
 body {
   display: flex;
@@ -13,16 +14,39 @@ body {
   justify-content: center;
   background-color: #F5F5F5;
   /* Light background */
-  }
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 /* A simple white container style with shadow and padding */
 .whiteContainer {
   background-color: #fff;
   border-radius: 6px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 1040px;
-  /* Ensure all containers are aligned */
+  width: 100%;
+  max-width: 1040px;
+  box-sizing: border-box;
+}
+
+/* Desktop specific styling for proper alignment */
+@media screen and (min-width: 769px) {
+  #chartWrapper {
+    max-width: 1000px; /* Match the table container width */
+    width: 100%;
   }
+  
+  #tablesContainer {
+    width: 100%;
+    max-width: 1000px; /* Match the chart inner content width */
+  }
+  
+  #tableWrapper1, #tableWrapper2 {
+    width: calc(50% - 10px);
+    flex: none;
+    max-width: 490px; /* (1000px - 20px gap) / 2 */
+  }
+}
 /*
       We want the chart and tables to have the same total width: 1000px.
       We'll wrap each in a .whiteContainer of width 1000px, then style
@@ -31,16 +55,19 @@ body {
 #chartWrapper {
   margin-bottom: 20px;
   /* 20px gap at the bottom */
-  }
+}
+
 #chartContainer {
   position: relative;
   width: 100%;
   height: 300px;
   background-color: #fff;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: none;
   /* No border */
-  }
+  min-height: 280px;
+}
 /* Month lines and labels */
 .month-line {
   position: absolute;
@@ -64,8 +91,16 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0
+  bottom: 0;
+  min-width: 950px; /* Ensure minimum width for chart content (900px + 50px offset) */
+}
+
+/* Desktop: ensure chart content aligns with tables */
+@media screen and (min-width: 769px) {
+  #barsContainer {
+    min-width: 1000px; /* Match table container width in desktop */
   }
+}
 /* Each task bar */
 .bar {
   position: absolute;
@@ -80,7 +115,8 @@ body {
   /* Safari */
   -ms-user-select: none;
   /* IE 10+ */
-  }
+  touch-action: none; /* Prevent default touch actions */
+}
 /* Label inside bars */
 .bar span.label {
   position: absolute;
@@ -112,18 +148,25 @@ body {
 /* Tables side by side, total width = 1000px */
 #tablesContainer {
   display: flex;
-  gap: 20px
-  }
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 /* Each table container is half of 1000 minus the gap => 490px */
 #tableWrapper1, #tableWrapper2 {
-  width: 490px
-  }
+  flex: 1;
+  min-width: 300px;
+  overflow-x: auto;
+  /* Ensure tables align with chart edges in desktop */
+  width: calc(50% - 10px);
+}
 /* Table styling */
 table {
   border-collapse: collapse;
   width: 100%;
-  background-color: #fff
-  }
+  background-color: #fff;
+  min-width: 280px;
+}
 th, td {
   border: none;
   text-align: left;
@@ -157,4 +200,154 @@ select {
 select:focus {
   border-color: #C41E3A;
   /* Cardinal focus highlight */
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+  body {
+    justify-content: flex-start;
+    padding: 5px;
   }
+
+  .whiteContainer {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
+  #chartContainer {
+    height: 350px;
+    min-height: 350px;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  #barsContainer {
+    min-width: 950px; /* Ensure scrollable content */
+  }
+
+  #tablesContainer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #tableWrapper1, #tableWrapper2 {
+    width: 100%;
+    min-width: auto;
+    flex: none;
+  }
+
+  th, td {
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+
+  .month-label {
+    font-size: 10px;
+  }
+
+  .bar span.label {
+    font-size: 10px;
+  }
+
+  select {
+    padding: 2px;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+
+  /* Make handles much larger and more visible for touch */
+  .bar-handle {
+    width: 20px;
+    height: 24px;
+    background-color: #C41E3A;
+    border-radius: 2px;
+    opacity: 0.8;
+    z-index: 10;
+  }
+
+  .bar-handle-start {
+    transform: translateX(-10px);
+    top: -2px;
+  }
+
+  .bar-handle-end {
+    transform: translateX(10px);
+    top: -2px;
+  }
+
+  /* Make bars slightly taller for better touch target */
+  .bar {
+    height: 22px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    padding: 2px;
+  }
+
+  .whiteContainer {
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  #chartContainer {
+    height: 300px;
+    min-height: 300px;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  #barsContainer {
+    min-width: 950px; /* Ensure scrollable content */
+  }
+
+  #tableWrapper1, #tableWrapper2 {
+    flex: none;
+  }
+
+  th, td {
+    padding: 4px 2px;
+    font-size: 11px;
+  }
+
+  .month-label {
+    font-size: 9px;
+  }
+
+  .bar span.label {
+    font-size: 9px;
+    left: 2px;
+  }
+
+  select {
+    padding: 1px;
+    font-size: 11px;
+    margin-right: 2px;
+  }
+
+  /* Even larger handles for small screens */
+  .bar-handle {
+    width: 24px;
+    height: 26px;
+    background-color: #C41E3A;
+    border-radius: 3px;
+    opacity: 0.9;
+    z-index: 10;
+  }
+
+  .bar-handle-start {
+    transform: translateX(-12px);
+    top: -3px;
+  }
+
+  .bar-handle-end {
+    transform: translateX(12px);
+    top: -3px;
+  }
+
+  /* Adjust bar height for small screens */
+  .bar {
+    height: 20px;
+  }
+}

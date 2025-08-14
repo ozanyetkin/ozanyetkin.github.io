@@ -10,7 +10,25 @@ const totalDays = Math.round((chartEnd - chartStart) / MS_PER_DAY) + 1;
 /* We'll render the chart in a 900px wide region, offset 50px from the left
    so January's boundary is clearly visible. */
 const chartLeftOffset = 50;
-const chartInnerWidth = 900;
+let chartInnerWidth = 900;
+
+// Function to get current chart dimensions based on screen size
+function getChartDimensions() {
+  const container = document.getElementById("chartContainer");
+  const containerWidth = container.clientWidth;
+  
+  // Adjust chart dimensions for mobile
+  if (window.innerWidth <= 480) {
+    chartInnerWidth = Math.max(800, containerWidth - 100);
+  } else if (window.innerWidth <= 768) {
+    chartInnerWidth = Math.max(850, containerWidth - 100);
+  } else {
+    // Desktop: make chart content exactly 950px to align with 1000px total including offset
+    chartInnerWidth = 950;
+  }
+  
+  return chartInnerWidth;
+}
 
 /* 6 tasks total:
    - The first 3 appear in the first table (#taskTable1).
@@ -24,7 +42,7 @@ let tasks = [
     end: new Date(2023, 2, 10)
   }, // Jan 15 - Mar 10
   {
-    name: "Development Phase",
+    name: "Development",
     start: new Date(2023, 1, 1),
     end: new Date(2023, 5, 30)
   }, // Feb 1 - Jun 30
@@ -116,18 +134,20 @@ function clampDate(d) {
 
 /* Convert a date to an x-position in the chart (range 50..950) */
 function dateToX(date) {
+  const currentChartWidth = getChartDimensions();
   const diffDays = (date - chartStart) / MS_PER_DAY;
   const ratio = diffDays / totalDays;
-  return Math.round(ratio * chartInnerWidth) + chartLeftOffset;
+  return Math.round(ratio * currentChartWidth) + chartLeftOffset;
 }
 
 /* Convert an x-position in the chart back to a date */
 function xToDate(x) {
+  const currentChartWidth = getChartDimensions();
   let localX = x - chartLeftOffset;
   if (localX < 0) localX = 0;
-  if (localX > chartInnerWidth) localX = chartInnerWidth;
+  if (localX > currentChartWidth) localX = currentChartWidth;
 
-  const ratio = localX / chartInnerWidth;
+  const ratio = localX / currentChartWidth;
   const diff = ratio * totalDays;
   const newDate = new Date(chartStart.getTime() + diff * MS_PER_DAY);
   newDate.setHours(0, 0, 0, 0);
@@ -139,6 +159,9 @@ function renderMonthLines() {
   const container = document.getElementById("chartContainer");
   // Remove existing lines/labels except #barsContainer
   [...container.querySelectorAll(".month-line, .month-label")].forEach(el => el.remove());
+
+  // Update chart dimensions
+  getChartDimensions();
 
   for (let m = 0; m <= 12; m++) {
     const monthDate = new Date(2023, m, 1);
@@ -428,7 +451,8 @@ document.addEventListener("mousemove", (e) => {
   else if (dragMode === "bar") {
     const deltaX = offsetX - barOriginalMouseX;
     // Convert deltaX to days
-    const deltaDays = (deltaX / chartInnerWidth) * totalDays;
+    const currentChartWidth = getChartDimensions();
+    const deltaDays = (deltaX / currentChartWidth) * totalDays;
 
     // Shift the original start/end by deltaDays
     let newStart = new Date(barOriginalStart.getTime() + deltaDays * MS_PER_DAY);
@@ -460,6 +484,148 @@ document.addEventListener("mouseup", () => {
   dragMode = null;
   dragTaskIndex = null;
   dragEdge = null;
+});
+
+/* Touch event support for mobile devices */
+// Helper function to get touch position
+function getTouchPos(e) {
+  const rect = document.getElementById("chartContainer").getBoundingClientRect();
+  const touch = e.touches[0] || e.changedTouches[0];
+  return touch.clientX - rect.left;
+}
+
+// Track touch state
+let touchStartX = 0;
+let touchMoved = false;
+let touchThreshold = 5; // pixels to distinguish between tap and drag
+let initialTouchPos = 0; // Store initial touch position for handles
+
+// Touch start
+barsContainer.addEventListener("touchstart", (e) => {
+  const target = e.target;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchMoved = false;
+  initialTouchPos = getTouchPos(e);
+  
+  // 1) Endpoint handle touch
+  if (target.classList.contains("bar-handle")) {
+    e.preventDefault(); // Prevent scrolling when touching handles
+    isDragging = true;
+    dragMode = "handle";
+    dragTaskIndex = parseInt(target.dataset.taskIndex, 10);
+    dragEdge = target.dataset.edge;
+    // Don't jump - just start from current position
+  }
+  // 2) Bar touch
+  else if (target.classList.contains("bar")) {
+    // Don't prevent default immediately - wait to see if it's a drag
+    dragTaskIndex = parseInt(target.dataset.taskIndex, 10);
+    barOriginalMouseX = initialTouchPos;
+    barOriginalStart = new Date(tasks[dragTaskIndex].start);
+    barOriginalEnd = new Date(tasks[dragTaskIndex].end);
+  }
+}, { passive: false });
+
+// Touch move
+document.addEventListener("touchmove", (e) => {
+  const touch = e.touches[0];
+  const currentX = touch.clientX;
+  const moveDistance = Math.abs(currentX - touchStartX);
+  
+  // Check if this is a significant move (drag vs scroll)
+  if (moveDistance > touchThreshold) {
+    touchMoved = true;
+    
+    // If we're touching a bar and haven't started dragging yet, start now
+    const target = e.target;
+    if (!isDragging && dragTaskIndex !== null && 
+        (target.classList.contains("bar") || target.closest('.bar'))) {
+      e.preventDefault(); // Now prevent scrolling
+      isDragging = true;
+      dragMode = "bar";
+      // Reset the original position to current touch for smooth dragging
+      barOriginalMouseX = initialTouchPos;
+    }
+  }
+  
+  if (!isDragging) return;
+  e.preventDefault(); // Prevent scrolling only when dragging
+
+  const offsetX = getTouchPos(e);
+
+  // Dragging endpoints
+  if (dragMode === "handle") {
+    // Use the current touch position directly to avoid jumping
+    const newDate = xToDate(offsetX);
+    
+    if (dragEdge === "start") {
+      tasks[dragTaskIndex].start = newDate;
+      // Ensure start <= end
+      if (tasks[dragTaskIndex].start > tasks[dragTaskIndex].end) {
+        tasks[dragTaskIndex].end = new Date(newDate);
+      }
+    } else {
+      tasks[dragTaskIndex].end = newDate;
+      // Ensure start <= end
+      if (tasks[dragTaskIndex].end < tasks[dragTaskIndex].start) {
+        tasks[dragTaskIndex].start = new Date(newDate);
+      }
+    }
+  }
+  // Dragging the entire bar
+  else if (dragMode === "bar") {
+    const deltaX = offsetX - barOriginalMouseX;
+    // Convert deltaX to days with better precision
+    const currentChartWidth = getChartDimensions();
+    const deltaDays = (deltaX / currentChartWidth) * totalDays;
+
+    // Shift the original start/end by deltaDays
+    let newStart = new Date(barOriginalStart.getTime() + deltaDays * MS_PER_DAY);
+    let newEnd = new Date(barOriginalEnd.getTime() + deltaDays * MS_PER_DAY);
+
+    // Keep the bar fully within chart range
+    if (newStart < chartStart) {
+      const shift = chartStart - newStart;
+      newStart = new Date(newStart.getTime() + shift);
+      newEnd = new Date(newEnd.getTime() + shift);
+    }
+    if (newEnd > chartEnd) {
+      const shift = chartEnd - newEnd;
+      newStart = new Date(newStart.getTime() + shift);
+      newEnd = new Date(newEnd.getTime() + shift);
+    }
+
+    tasks[dragTaskIndex].start = newStart;
+    tasks[dragTaskIndex].end = newEnd;
+  }
+
+  renderBars();
+  renderTaskTables();
+}, { passive: false });
+
+// Touch end
+document.addEventListener("touchend", (e) => {
+  // Reset touch state
+  touchMoved = false;
+  touchStartX = 0;
+  initialTouchPos = 0;
+  
+  isDragging = false;
+  dragMode = null;
+  dragTaskIndex = null;
+  dragEdge = null;
+});
+
+/* Handle window resize to update chart dimensions */
+window.addEventListener("resize", () => {
+  // Debounce the resize event
+  clearTimeout(window.resizeTimeout);
+  window.resizeTimeout = setTimeout(() => {
+    renderMonthLines();
+    renderBars();
+    renderTaskTables();
+  }, 250);
 });
 
 /* Initialize the chart and tables */
