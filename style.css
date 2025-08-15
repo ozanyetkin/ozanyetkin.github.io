@@ -137,7 +137,8 @@ a:hover {
   justify-content: center;
 }
 @-moz-document url-prefix() {
-  .theme-toggle, .downloadbtn {
+  .theme-toggle,
+  .downloadbtn {
     font-size: 10px;
   }
 }
@@ -352,6 +353,23 @@ html {
   .item-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .contact-info {
+    text-align: left;
+    max-width: 300px;
+    font-size: 10px;
+  }
+  .contact-info br {
+    display: block;
+    content: "";
+    margin-top: 0.5em;
+  }
+  .contact-info a {
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
   }
   .item-header > *:last-child {
     /* let the date flow under the title */
