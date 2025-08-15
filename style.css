@@ -355,8 +355,6 @@ html {
     align-items: flex-start;
   }
   .contact-info {
-    text-align: left;
-    max-width: 300px;
     font-size: 10px;
   }
   .contact-info br {
