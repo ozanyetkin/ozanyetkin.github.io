@@ -3,7 +3,9 @@ from PIL import Image
 import numpy as np
 
 
-def change_image_colors(input_dir="./img", output_dir="./img/tritone", colors=None):
+def change_image_colors(
+    input_dir="./img", output_dir="./img/tritone", colors=None, contrast=1.5
+):
     """
     Apply color filter to images using specified colors while preserving transparency.
 
@@ -11,6 +13,7 @@ def change_image_colors(input_dir="./img", output_dir="./img/tritone", colors=No
         input_dir: Directory containing input images
         output_dir: Directory to save processed images
         colors: List of RGB tuples for the colors to use as filter
+        contrast: Contrast multiplier (1.0 = no change, >1.0 = more contrast)
     """
     if colors is None:
         # Default colors - you can change these
@@ -45,6 +48,11 @@ def change_image_colors(input_dir="./img", output_dir="./img/tritone", colors=No
 
                 # Normalize grayscale to 0-1 range
                 gray_normalized = gray / 255.0
+
+                # Apply contrast adjustment
+                gray_normalized = np.clip(
+                    (gray_normalized - 0.5) * contrast + 0.5, 0, 1
+                )
 
                 # Apply color mapping based on intensity
                 colored_img = np.zeros_like(img_array)
@@ -100,4 +108,4 @@ if __name__ == "__main__":
         (255, 217, 67),  # #ffd943
     ]
 
-    change_image_colors(colors=custom_colors)
+    change_image_colors(colors=custom_colors, contrast=1.5)
