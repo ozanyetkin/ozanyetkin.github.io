@@ -137,7 +137,7 @@ a:hover {
   justify-content: center;
 }
 @-moz-document url-prefix() {
-  .theme-toggle {
+  .theme-toggle, .downloadbtn {
     font-size: 10px;
   }
 }
@@ -157,7 +157,7 @@ a:hover {
   width: 50px;
   height: 50px;
   padding: 10px;
-  font-size: 25px;
+  font-size: 16px;
   border-radius: 50%;
 }
 .theme-toggle:hover,
