@@ -3,9 +3,10 @@
 [![Website](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fozanyetkin.com)](https://ozanyetkin.com)
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-blue)](https://pages.github.com/)
 
-Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and Designer pursuing a Ph.D. in Building Science at METU. This comprehensive web application serves as both a digital CV and an interactive showcase of computational design, 3D graphics, data visualization, and game development projects.
+Interactive portfolio website for Ozan Yetkin - Researcher, Developer, and Designer pursuing a Ph.D. in Building Science at METU. This comprehensive web application serves as both a digital CV and an interactive showcase of computational design, 3D graphics, data visualization, and game development projects.
+*-Basically, it has everything needed to procrastinate from actual research.*
 
-**Live Website**: [ozanyetkin.com](https://ozanyetkin.com)
+**See it in Action**: [ozanyetkin.com](https://ozanyetkin.com)
 
 ## Features
 
@@ -14,12 +15,12 @@ Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and De
 - **Responsive Design**: Optimized layout for all devices with mobile-first approach
 - **Theme System**: Dark/light theme toggle with persistent user preferences via localStorage
 - **Interactive Navigation**: Collapsible sidebar navigation with smooth animations
-- **ATS-Friendly PDF Export**: One-click CV generation using jsPDF for professional applications
+- **ATS-Friendly PDF Export**: One-click CV generation using jsPDF for professional applications. *-Because it seems like robots read resumes now... sigh*
 
 ### Portfolio Sections
 
 - **3D Visualizations**: Interactive Three.js scenes including procedural knots, city generation, noise-based sphere deformation, clipping planes, wave animations, and instanced geometry
-- **Mini Games**: Six playable browser games including Space Invaders, Tetris (Tetromino), Hangman, 2048, Whack-a-Mole, and Minesweeper
+- **Mini Games**: Six playable browser games including Space Invaders, Tetromino, Hangman, 2048, Whack-a-Mole, and Minesweeper. *-Disclaimer: I'm not responsible for any lost productivity here*
 - **2D Animations**: Canvas-based animations featuring procedural pipes, grid transformations, pulsing effects, rotations, randomized patterns, and fireworks
 - **Data Visualizations**: D3.js-powered interactive charts including circle packing, zoomable sunburst, chord diagrams, heatmaps, treemaps, and Gantt charts
 
@@ -34,7 +35,7 @@ Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and De
 ### Frontend Technologies
 
 - **HTML5 & CSS3**: Semantic markup with modern CSS features including custom properties, flexbox, and grid
-- **Vanilla JavaScript**: Core functionality without framework dependencies for optimal performance
+- **Vanilla JavaScript**: Core functionality without framework dependencies for optimal performance. *-Because who needs a JS that is 500 MB*
 - **CSS Custom Properties**: Dynamic theming system supporting dark/light modes
 
 ### Graphics & Visualization Libraries
@@ -46,7 +47,7 @@ Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and De
 ### Utilities & Tools
 
 - **jsPDF**: Client-side PDF generation for downloadable CV functionality
-- **Python (PIL/Pillow)**: Image processing utilities for consistent visual branding
+- **Python (PIL/Pillow)**: Image processing utilities for consistent visual identity
 - **GitHub Pages**: Static site hosting with custom domain support
 
 ### Development Environment
@@ -66,19 +67,19 @@ Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and De
    cd ozanyetkin.github.io
    ```
 
-2. **Serve locally** (choose one method):
+2. **Serve locally**:
 
    ```bash
    # Using Python 3
    python -m http.server 8000
 
-   # Using Python 2
+   # Using Python 2 (if you're living in the past)
    python -m SimpleHTTPServer 8000
 
-   # Using Node.js (if available)
+   # Using Node.js (if you have extra space to spare)
    npx serve .
 
-   # Using PHP (if available)
+   # Using PHP (if you enjoy suffering)
    php -S localhost:8000
    ```
 
@@ -86,7 +87,7 @@ Interactive portfolio website for Ozan Yetkin - AI Developer, Researcher, and De
 
 ### Image Processing Utility
 
-To regenerate project thumbnails with consistent branding:
+To regenerate project thumbnails with consistent color palette, -*hope you are as picky as I am about colors*:
 
 ```bash
 # Navigate to the project directory
@@ -142,14 +143,14 @@ ozanyetkin.github.io/
 │   ├── bump_chart.html                 # Ranking change visualization
 │   └── [script/style files]            # Associated JS and CSS files
 ├── img/                                # Project images and thumbnails
-│   └── tritone/                        # Processed tritone images for consistency
+│   └── tritone/                        # Processed tritone images
 └── utils/                              # Development utilities
-   └── tritone_maker.py                 # Image processing script for branding
+   └── tritone_maker.py                 # Image processing script
 ```
 
 ### Key Architecture Decisions
 
-- **Modular Structure**: Each portfolio item is self-contained with its own HTML, CSS, and JavaScript files
+- **Modular Structure**: Each portfolio item is self-contained with its own HTML, CSS, and JavaScript files *-because you need to keep your sanity*
 - **Zero Build Process**: Direct browser-compatible code without compilation or bundling
 - **Progressive Enhancement**: Core content accessible without JavaScript, enhanced with interactivity
 - **Semantic Organization**: Clear directory structure reflecting content categories
@@ -241,7 +242,7 @@ While this is a personal portfolio, contributions for bug fixes or feature impro
 
 ### Browser Compatibility
 
-- **Modern Browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Modern Browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ *-if you are still using Internet Explorer, we need to talk*
 - **WebGL Support**: Required for 3D visualizations
 - **ES6+ Features**: Uses modern JavaScript syntax
 - **CSS Grid/Flexbox**: Modern layout techniques
@@ -258,6 +259,8 @@ While this is a personal portfolio, contributions for bug fixes or feature impro
 This project is open source and available under the [MIT License](LICENSE).
 
 ## Contact
+
+*Assuming that you probably want to reach out to me since you survived all the drama and scrolled all the way down here, so choose wisely*:
 
 - **Website**: [ozanyetkin.com](https://ozanyetkin.com)
 - **Email**: [oyetkin@metu.edu.tr](mailto:oyetkin@metu.edu.tr)
