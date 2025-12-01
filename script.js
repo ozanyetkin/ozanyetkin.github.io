@@ -1,14 +1,45 @@
 function toggleNav() {
   var sidebar = document.getElementById("mySidebar");
   var mainContent = document.querySelector(".main-content");
+  var downloadBtn = document.querySelector(".downloadbtn");
+  var openBtn = document.querySelector(".openbtn");
 
-  if (window.innerWidth > 768) { // Only handle toggle if screen width is larger than 768px
+  if (window.innerWidth > 768) { // Desktop: toggle sidebar left/right
     if (sidebar.style.transform === "translateX(0px)" || sidebar.style.transform === "") {
       sidebar.style.transform = "translateX(-340px)";
       mainContent.style.marginLeft = "0";
+      // Delay showing download button to allow sidebar animation to complete (300ms)
+      setTimeout(() => {
+        downloadBtn.style.display = "flex";
+      }, 300);
     } else {
       sidebar.style.transform = "translateX(0px)";
       mainContent.style.marginLeft = "340px";
+      downloadBtn.style.display = "none";
+    }
+  } else { // Mobile: toggle sidebar top/down
+    if (sidebar.style.transform === "translateY(0px)") {
+      sidebar.style.transform = "translateY(-100%)";
+      sidebar.setAttribute('data-open', 'false');
+      openBtn.textContent = "■";
+      downloadBtn.style.display = "none";
+      // Re-enable body scroll
+      document.body.style.overflow = "";
+      // Delay hiding sidebar display to allow animation to complete
+      setTimeout(() => {
+        sidebar.style.display = "none";
+      }, 300);
+    } else {
+      sidebar.style.display = "block";
+      sidebar.setAttribute('data-open', 'true');
+      openBtn.textContent = "⨯";
+      downloadBtn.style.display = "flex";
+      // Prevent body scroll when sidebar is open
+      document.body.style.overflow = "hidden";
+      // Small delay to ensure display:block is applied before transform
+      setTimeout(() => {
+        sidebar.style.transform = "translateY(0px)";
+      }, 10);
     }
   }
 }
@@ -48,13 +79,25 @@ function initializeTheme() {
 function initializeSidebar() {
   var sidebar = document.getElementById("mySidebar");
   var mainContent = document.querySelector(".main-content");
+  var downloadBtn = document.querySelector(".downloadbtn");
+  var openBtn = document.querySelector(".openbtn");
 
   if (window.innerWidth > 768) { // On larger screens, ensure sidebar is open by default
+    sidebar.style.display = "block";
     sidebar.style.transform = "translateX(0px)";
+    sidebar.setAttribute('data-open', 'true');
     mainContent.style.marginLeft = "340px";
+    downloadBtn.style.display = "none";
+    openBtn.style.display = "flex";
+    openBtn.textContent = "■";
   } else { // On smaller screens, ensure sidebar is hidden
+    sidebar.style.display = "none";
     sidebar.style.transform = "translateY(-100%)";
+    sidebar.setAttribute('data-open', 'false');
     mainContent.style.marginLeft = "0";
+    downloadBtn.style.display = "none";
+    openBtn.style.display = "flex";
+    openBtn.textContent = "■";
   }
 }
 
@@ -65,17 +108,137 @@ initializeTheme();
 // Reinitialize the sidebar state on window resize
 window.onresize = initializeSidebar;
 
+// Swipe gesture handling for mobile sidebar
+let touchStartY = 0;
+let touchEndY = 0;
+
+function handleSwipeGesture() {
+  const swipeDistance = touchStartY - touchEndY;
+  const sidebar = document.getElementById("mySidebar");
+  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+
+  // Swipe up gesture (distance > 50px) when sidebar is open
+  if (swipeDistance > 50 && isSidebarOpen && window.innerWidth <= 768) {
+    toggleNav();
+  }
+}
+
+document.addEventListener('touchstart', (e) => {
+  const sidebar = document.getElementById("mySidebar");
+  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+
+  if (isSidebarOpen && window.innerWidth <= 768) {
+    touchStartY = e.changedTouches[0].screenY;
+  }
+}, false);
+
+document.addEventListener('touchend', (e) => {
+  const sidebar = document.getElementById("mySidebar");
+  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+
+  if (isSidebarOpen && window.innerWidth <= 768) {
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipeGesture();
+  }
+}, false);
+
+// Mobile scroll detection to hide/show buttons
+let lastScrollTop = 0;
+let scrollTimeout;
+
+window.addEventListener('scroll', () => {
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById("mySidebar");
+    const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+
+    // Don't hide buttons if sidebar is open
+    if (isSidebarOpen) {
+      return;
+    }
+
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    const themeToggle = document.querySelector('.theme-toggle');
+    const openBtn = document.querySelector('.openbtn');
+    const buttonBar = document.querySelector('.mobile-button-bar');
+
+    // Clear previous timeout
+    clearTimeout(scrollTimeout);
+
+    if (currentScroll > lastScrollTop && currentScroll > 50) {
+      // Scrolling down - hide buttons and bar
+      themeToggle.style.transform = 'translateY(-80px)';
+      openBtn.style.transform = 'translateY(-80px)';
+      if (buttonBar) buttonBar.style.transform = 'translateY(-80px)';
+    } else {
+      // Scrolling up - show buttons and bar
+      themeToggle.style.transform = 'translateY(0)';
+      openBtn.style.transform = 'translateY(0)';
+      if (buttonBar) buttonBar.style.transform = 'translateY(0)';
+    }
+
+    // Reset button position after scrolling stops for 1 second
+    scrollTimeout = setTimeout(() => {
+      themeToggle.style.transform = 'translateY(0)';
+      openBtn.style.transform = 'translateY(0)';
+      if (buttonBar) buttonBar.style.transform = 'translateY(0)';
+    }, 1000);
+
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  }
+}, false);
+
 document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('.section');
   const navLinks = document.querySelectorAll('.sidebar a');
 
+  // Auto-close sidebar when link is clicked on mobile
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById("mySidebar");
+        const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+        if (isSidebarOpen) {
+          e.preventDefault(); // Prevent immediate scroll
+
+          // Add visual feedback - highlight the clicked link
+          navLinks.forEach(l => l.style.background = '');
+          link.style.background = 'var(--accent-color)';
+          link.style.color = 'var(--bg-color)';
+
+          // Close sidebar after a brief delay to show selection
+          setTimeout(() => {
+            toggleNav();
+
+            // Scroll to target after sidebar is closed
+            setTimeout(() => {
+              const targetId = link.getAttribute('href');
+              const targetElement = document.querySelector(targetId);
+              if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+              // Reset link style
+              link.style.background = '';
+              link.style.color = '';
+            }, 350); // Wait for sidebar close animation
+          }, 300); // Show selection for 300ms
+        }
+      }
+    });
+  });
+
   window.addEventListener('scroll', () => {
     let current = '';
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Adjust offset based on screen size
+    const offset = window.innerWidth <= 768 ? 100 : 200;
 
     sections.forEach(section => {
       const sectionTop = section.offsetTop;
       const sectionHeight = section.clientHeight;
-      if (pageYOffset >= sectionTop - sectionHeight / 3) {
+
+      // Check if current scroll position is within this section
+      if (scrollPosition >= sectionTop - offset && scrollPosition < sectionTop + sectionHeight - offset) {
         current = section.getAttribute('id');
       }
     });
@@ -84,6 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.remove('active');
       if (link.getAttribute('href').substring(1) === current) {
         link.classList.add('active');
+
+        // Update mobile bar title on mobile devices
+        if (window.innerWidth <= 768) {
+          const mobileBarTitle = document.querySelector('.mobile-bar-title');
+          if (mobileBarTitle) {
+            const linkText = link.innerText.trim().replace(/^-\s*/, '');
+            mobileBarTitle.textContent = linkText || 'Ozan Yetkin';
+          }
+        }
       }
     });
   });
