@@ -318,11 +318,17 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Hide mobile button bar on desktop */
+.mobile-button-bar {
+  display: none;
+}
+
 /* ========================================
    Responsive Overrides (<768px)
    ======================================== */
 @media (max-width: 768px) {
   .mobile-button-bar {
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -331,7 +337,6 @@ html {
     background: var(--sidebar-bg);
     z-index: 5;
     transition: background var(--transition), transform 0.3s ease;
-    display: flex;
     align-items: center;
     justify-content: center;
   }
@@ -339,7 +344,7 @@ html {
   .mobile-bar-title {
     font-size: 14px;
     font-weight: bold;
-    color: var(--text-color);
+    color: var(--accent-color);
     transition: color var(--transition);
   }
 
