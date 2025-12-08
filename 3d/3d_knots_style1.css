@@ -96,19 +96,17 @@ body {
 
   #ui {
     position: fixed;
-    top: 0;
+    top: 75px;
     right: 0;
     width: 100%;
-    max-width: 350px;
-    height: 100vh;
-    background: rgba(30, 30, 30, 0.50);
-    backdrop-filter: blur(10px);
-    padding: 70px 20px 20px 20px;
+    max-width: 280px;
+    height: auto;
+    max-height: calc(100vh - 85px);
+    padding: 12px 15px 15px 15px;
     box-sizing: border-box;
     transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   #ui.show {
@@ -116,37 +114,37 @@ body {
   }
 
   .group {
-    margin-bottom: 20px;
-    padding: 12px;
+    margin-bottom: 8px;
+    padding: 8px;
   }
 
   .group label {
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 4px;
+    font-size: 12px;
   }
 
   #ui select,
   #ui input[type="range"] {
-    margin-top: 6px;
-    height: 40px;
+    margin-top: 2px;
+    height: 34px;
     font-size: 16px; /* Prevent zoom on iOS */
   }
 
   #ui input[type="range"] {
-    height: 30px;
+    height: 22px;
   }
 
   .checkbox-row {
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
   }
 
   .checkbox-row label {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 12px;
     box-sizing: border-box;
     word-wrap: break-word;
     overflow: hidden;
@@ -162,8 +160,10 @@ body {
 @media (max-width: 480px) {
   #ui {
     width: 100%;
-    max-width: none;
-    padding: 60px 15px 15px 15px;
+    max-width: 260px;
+    top: 65px;
+    max-height: calc(100vh - 75px);
+    padding: 10px 12px 12px 12px;
   }
 
   .ui-toggle {
@@ -175,10 +175,12 @@ body {
   }
 
   .group {
-    padding: 10px;
+    padding: 7px;
+    margin-bottom: 6px;
   }
 
   .group label {
-    font-size: 13px;
+    font-size: 11px;
+    margin-bottom: 3px;
   }
 }
