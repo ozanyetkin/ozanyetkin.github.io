@@ -84,6 +84,18 @@ p {
   color: var(--text-color);
 }
 
+.thesis-title {
+  display: block;
+  font-style: italic;
+  opacity: 0.85;
+  margin-top: 0.3em;
+  padding-left: 1em;
+  max-width: 800px;
+}
+.thesis-title::before {
+  content: "";
+}
+
 .item-header {
   display: flex;
   justify-content: space-between;
