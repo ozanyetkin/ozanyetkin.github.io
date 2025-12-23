@@ -309,13 +309,69 @@ window.addEventListener('DOMContentLoaded', () => {
   if (btn) btn.addEventListener('click', generateATS);
 });
 
-function generateATS() {
+// Preferred monospace font for jsPDF (fallbacks to 'courier' if not available)
+let MONO_FONT = 'courier';
+
+async function ensureMonospaceFont(doc) {
+  try {
+    const regularUrl = 'assets/fonts/JetBrainsMono-Regular.ttf';
+    const boldUrl = 'assets/fonts/JetBrainsMono-Bold.ttf';
+
+    const [regularB64, boldB64] = await Promise.all([
+      fetchFontAsBase64(regularUrl),
+      fetchFontAsBase64(boldUrl)
+    ]);
+
+    if (!regularB64) return; // graceful fallback to built-in 'courier'
+
+    const fontName = 'JetBrainsMono';
+    // Register regular
+    doc.addFileToVFS('JetBrainsMono-Regular.ttf', regularB64);
+    doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'normal');
+
+    // Register bold if available, otherwise fall back to regular mapping
+    if (boldB64) {
+      doc.addFileToVFS('JetBrainsMono-Bold.ttf', boldB64);
+      doc.addFont('JetBrainsMono-Bold.ttf', fontName, 'bold');
+    } else {
+      doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'bold');
+    }
+
+    MONO_FONT = fontName;
+  } catch (_) {
+    // ignore and keep default 'courier'
+  }
+}
+
+async function fetchFontAsBase64(url) {
+  try {
+    const res = await fetch(url, { cache: 'force-cache' });
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    return arrayBufferToBase64(buf);
+  } catch (_) {
+    return null;
+  }
+}
+
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+async function generateATS() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'A4' });
   const margin = 40;
   const lineHeight = 14;
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
+
+  // Attempt to load a simpler monospace font before rendering
+  await ensureMonospaceFont(doc);
 
   // Load and draw photo
   const imgEl = document.querySelector('.profile-header img');
@@ -343,12 +399,12 @@ function generateATS() {
     // Name
     const name = document.querySelector('#contact-info')?.innerText.trim() || '';
     if (name) {
-      doc.setTextColor('#1a73e8'); doc.setFont('courier', 'bold').setFontSize(12);
+      doc.setTextColor('#1a73e8'); doc.setFont(MONO_FONT, 'bold').setFontSize(12);
       doc.text(name, xStart, y);
       y += lineHeight * 1.2;
 
       // Title
-      doc.setFont('courier', 'bold').setFontSize(10);
+      doc.setFont(MONO_FONT, 'bold').setFontSize(10);
       const titleElement = document.querySelector('.profile-info h2');
       const title = titleElement ? titleElement.innerText.trim() : 'Researcher | Developer | Designer';
       doc.setTextColor('#000000');
@@ -360,19 +416,19 @@ function generateATS() {
 
 
     // Contact Info: bold labels, comma-separated, link colored & underlined
-    doc.setFont('courier', 'normal').setFontSize(8);
+    doc.setFont(MONO_FONT, 'normal').setFontSize(8);
     document.querySelectorAll('.contact-info span').forEach(span => {
       let x = xStart;
       const labelEl = span.querySelector('strong');
       if (labelEl) {
         const label = labelEl.innerText.replace(':', '').trim() + ': ';
-        doc.setFont('courier', 'bold'); doc.text(label, x, y);
+        doc.setFont(MONO_FONT, 'bold'); doc.text(label, x, y);
         x += doc.getTextWidth(label);
       }
       const links = Array.from(span.querySelectorAll('a'));
       links.forEach((a, i) => {
         const text = a.innerText.trim();
-        doc.setTextColor('#fe4f68').setFont('courier', 'normal');
+        doc.setTextColor('#fe4f68').setFont(MONO_FONT, 'normal');
         doc.textWithLink(text, x, y, { url: a.href.trim() });
         const w = doc.getTextWidth(text);
         doc.setDrawColor('#fe4f68').setLineWidth(0.5);
@@ -394,10 +450,10 @@ function generateATS() {
     const riEl = document.querySelector('#research-interests .section-content');
     const riText = riEl?.innerText.replace(/\s+/g, ' ').trim() || '';
     if (riText) {
-      doc.setTextColor('#1a73e8').setFont('courier', 'bold').setFontSize(10);
+      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
       doc.text('RESEARCH INTERESTS', margin, y);
       y += lineHeight;
-      doc.setTextColor('#000000').setFont('courier', 'bold').setFontSize(8);
+      doc.setTextColor('#000000').setFont(MONO_FONT, 'bold').setFontSize(8);
       const availW = pageWidth - 2 * margin;
       const lines = doc.splitTextToSize(riText, availW);
       doc.text(lines, margin, y);
@@ -437,9 +493,9 @@ function generateATS() {
 
       // Print section header once
       if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-      doc.setTextColor('#1a73e8').setFont('courier', 'bold').setFontSize(10);
+      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
       doc.text(standardTitle, margin, y); y += lineHeight;
-      doc.setTextColor('#000000').setFont('courier', 'normal').setFontSize(8);
+      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
 
       groupedSections[standardTitle].forEach(id => {
         const sec = document.getElementById(id); if (!sec) return;
@@ -458,14 +514,14 @@ function generateATS() {
             const bulletAndLabel = `- ${lbl}`;
             const commaAndEntity = entity ? `, ${entity}` : '';
 
-            doc.setFont('courier', 'bold');
+            doc.setFont(MONO_FONT, 'bold');
             const boldLines = doc.splitTextToSize(bulletAndLabel, availW);
 
             boldLines.forEach((ln, i) => {
               doc.text(ln, margin, y + i * lineHeight);
               if (i === boldLines.length - 1 && commaAndEntity) {
                 const boldWidth = doc.getTextWidth(ln);
-                doc.setFont('courier', 'normal');
+                doc.setFont(MONO_FONT, 'normal');
                 const normalLines = doc.splitTextToSize(commaAndEntity, availW - boldWidth);
                 doc.text(normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight);
                 if (normalLines.length > 1) {
@@ -477,7 +533,7 @@ function generateATS() {
             });
 
             if (date) {
-              doc.setFont('courier', 'bold');
+              doc.setFont(MONO_FONT, 'bold');
               doc.text(date, pageWidth - margin - dtW, y);
             }
 
@@ -492,11 +548,11 @@ function generateATS() {
           const col = (pageWidth - 2 * margin) / 2; const half = Math.ceil(arr.length / 2);
           for (let i = 0; i < half; i++) {
             if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-            doc.setFont('courier', 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
-            doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+            doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
+            doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
             if (arr[i + half]) {
-              doc.setFont('courier', 'bold'); doc.text(`- ${arr[i + half].name}`, margin + col, y);
-              doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y);
+              doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i + half].name}`, margin + col, y);
+              doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y);
             } y += lineHeight;
           } y += lineHeight; return;
         }
@@ -505,17 +561,17 @@ function generateATS() {
           sec.querySelectorAll('.section-content-computer-literacy').forEach(gr => {
             const sub = gr.querySelector('h3')?.innerText.trim();
             if (sub) {
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold').setFontSize(9);
-              doc.text(sub, margin, y); y += lineHeight; doc.setFont('courier', 'normal').setFontSize(8);
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold').setFontSize(9);
+              doc.text(sub, margin, y); y += lineHeight; doc.setFont(MONO_FONT, 'normal').setFontSize(8);
             }
             const arr = Array.from(gr.querySelectorAll('.item')).map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
             const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(arr.length / 2);
             for (let i = 0; i < half2; i++) {
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont('courier', 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
-              doc.setFont('courier', 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
+              doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
               if (arr[i + half2]) {
-                doc.setFont('courier', 'bold'); doc.text(`- ${arr[i + half2].name}`, margin + col2, y);
-                doc.setFont('courier', 'normal'); doc.text(`: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y);
+                doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i + half2].name}`, margin + col2, y);
+                doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y);
               } y += lineHeight;
             } y += lineHeight;
           }); return;
@@ -525,12 +581,12 @@ function generateATS() {
           if (y > pageHeight - margin) { doc.addPage(); y = margin; }
           const [lblEl, dateEl] = item.querySelectorAll('.item-header span'); const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
           const dtW = date ? doc.getTextWidth(date) : 0; const availW = pageWidth - 2 * margin - dtW - 20;
-          doc.setFont('courier', 'bold'); const lines = doc.splitTextToSize(`- ${lbl}`, availW);
+          doc.setFont(MONO_FONT, 'bold'); const lines = doc.splitTextToSize(`- ${lbl}`, availW);
           lines.forEach((ln, i) => doc.text(ln, margin, y + i * lineHeight));
-          if (date) { doc.setFont('courier', 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
+          if (date) { doc.setFont(MONO_FONT, 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
           y += lines.length * lineHeight;
           const detail = item.querySelector(':scope > span')?.innerText.trim() || '';
-          if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont('courier', 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
+          if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont(MONO_FONT, 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
           y += lineHeight * 0.5;
         }); y += lineHeight;
       });
@@ -540,9 +596,9 @@ function generateATS() {
     const portfolio = document.getElementById('portfolio');
     if (portfolio) {
       if (y > pageHeight - margin - 100) { doc.addPage(); y = margin; }
-      doc.setTextColor('#1a73e8').setFont('courier', 'bold').setFontSize(10);
+      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
       doc.text('PORTFOLIO', margin, y); y += lineHeight;
-      doc.setTextColor('#000000').setFont('courier', 'normal').setFontSize(8);
+      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
       const message = 'Thank you for your time, please click the link or scan the QR code to enjoy some of my works';
       const availW = pageWidth - 2 * margin - 120; const msgLines = doc.splitTextToSize(message, availW);
       doc.text(msgLines, margin, y);
@@ -552,11 +608,11 @@ function generateATS() {
       const qrImg = new Image(); qrImg.crossOrigin = 'Anonymous'; qrImg.src = qrUrl;
       qrImg.onload = () => {
         doc.addImage(qrImg, 'PNG', pageWidth - margin - 50, y - 20, 50, 50);
-        doc.setTextColor('#000000').setFont('courier', 'normal');
+        doc.setTextColor('#000000').setFont(MONO_FONT, 'normal');
         const msgLines = doc.splitTextToSize(message, availW);
         doc.text(msgLines, margin, y);
         y += msgLines.length * lineHeight + lineHeight * 0.5;
-        doc.setTextColor('#fe4f68').setFont('courier', 'bold');
+        doc.setTextColor('#fe4f68').setFont(MONO_FONT, 'bold');
         doc.textWithLink('View Portfolio', margin, y, { url: link });
         doc.setTextColor('#000000'); doc.save('Ozan_Yetkin_CV_ATS.pdf');
       };
