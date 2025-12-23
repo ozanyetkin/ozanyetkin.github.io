@@ -281,6 +281,12 @@ a:hover {
   margin-top: 10px;
 }
 
+/* Force contact info into 4 clear lines (web, email, social, office) */
+.contact-info span {
+  display: block;
+  margin: 2px 0;
+}
+
 /* ========================================
    Grids: Computer Literacy & Languages
    ======================================== */
@@ -447,6 +453,10 @@ html {
   }
   .profile-info {
     text-align: center;
+  }
+  /* Keep contact block left-aligned on mobile */
+  .profile-info .contact-info {
+    text-align: left;
   }
 
   .item-header {
