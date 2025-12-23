@@ -4,9 +4,15 @@
  */
 
 // Constants
-const rootStyles = getComputedStyle(document.documentElement);
-const sidebarWidthVar = rootStyles.getPropertyValue('--sidebar-width').trim();
-const SIDEBAR_WIDTH = parseInt(sidebarWidthVar || '340', 10);
+let _sidebarWidth = null;
+const SIDEBAR_WIDTH = (() => {
+  if (_sidebarWidth === null) {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const sidebarWidthVar = rootStyles.getPropertyValue('--sidebar-width').trim();
+    _sidebarWidth = parseInt(sidebarWidthVar || '340', 10);
+  }
+  return _sidebarWidth;
+});
 
 // Keep in sync with CSS transition duration (e.g. `--transition: 0.3s ease` in the stylesheet)
 // If you change this value, update the corresponding CSS transition so animations stay aligned.
@@ -32,14 +38,14 @@ function toggleNav() {
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop: toggle sidebar left/right
     if (sidebar.style.transform === "translateX(0px)" || sidebar.style.transform === "") {
-      sidebar.style.transform = `translateX(-${SIDEBAR_WIDTH}px)`;
+      sidebar.style.transform = `translateX(-${SIDEBAR_WIDTH()}px)`;
       mainContent.style.marginLeft = "0";
       setTimeout(() => {
         downloadBtn.style.display = "flex";
       }, ANIMATION_DURATION);
     } else {
       sidebar.style.transform = "translateX(0px)";
-      mainContent.style.marginLeft = `${SIDEBAR_WIDTH}px`;
+      mainContent.style.marginLeft = `${SIDEBAR_WIDTH()}px`;
       downloadBtn.style.display = "none";
     }
   } else {
@@ -119,7 +125,7 @@ function initializeSidebar() {
     sidebar.style.display = "block";
     sidebar.style.transform = "translateX(0px)";
     sidebar.setAttribute('data-open', 'true');
-    mainContent.style.marginLeft = `${SIDEBAR_WIDTH}px`;
+    mainContent.style.marginLeft = `${SIDEBAR_WIDTH()}px`;
     downloadBtn.style.display = "none";
     openBtn.style.display = "flex";
     openBtn.textContent = "■";
