@@ -4,8 +4,16 @@
  */
 
 // Constants
-const SIDEBAR_WIDTH = 340;
+const rootStyles = getComputedStyle(document.documentElement);
+const sidebarWidthVar = rootStyles.getPropertyValue('--sidebar-width').trim();
+const SIDEBAR_WIDTH = parseInt(sidebarWidthVar || '340', 10);
+
+// Keep in sync with CSS transition duration (e.g. `--transition: 0.3s ease` in the stylesheet)
+// If you change this value, update the corresponding CSS transition so animations stay aligned.
 const ANIMATION_DURATION = 300;
+
+// Keep in sync with CSS media queries that use the same breakpoint (e.g. `@media (max-width: 768px)`).
+// If you change this value, update the CSS media query breakpoint to match.
 const MOBILE_BREAKPOINT = 768;
 const SWIPE_THRESHOLD = 50;
 const SCROLL_HIDE_TIMEOUT = 1000;
@@ -79,8 +87,8 @@ function toggleTheme() {
 }
 
 /**
- * Toggle between light and dark theme
- * Persists choice to localStorage
+ * Initialize theme from saved preference
+ * Loads theme from localStorage and applies it on page load
  */
 function initializeTheme() {
   const savedTheme = localStorage.getItem('theme');
@@ -101,10 +109,10 @@ function initializeTheme() {
  * Mobile: sidebar hidden off-screen
  */
 function initializeSidebar() {
-  var sidebar = document.getElementById("mySidebar");
-  var mainContent = document.querySelector(".main-content");
-  var downloadBtn = document.querySelector(".downloadbtn");
-  var openBtn = document.querySelector(".openbtn");
+  const sidebar = document.getElementById("mySidebar");
+  const mainContent = document.querySelector(".main-content");
+  const downloadBtn = document.querySelector(".downloadbtn");
+  const openBtn = document.querySelector(".openbtn");
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop layout: sidebar visible on left
