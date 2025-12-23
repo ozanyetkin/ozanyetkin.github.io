@@ -34,18 +34,19 @@ function toggleNav() {
   const mainContent = document.querySelector(".main-content");
   const downloadBtn = document.querySelector(".downloadbtn");
   const openBtn = document.querySelector(".openbtn");
+  const sidebarWidth = SIDEBAR_WIDTH();
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop: toggle sidebar left/right
     if (sidebar.style.transform === "translateX(0px)" || sidebar.style.transform === "") {
-      sidebar.style.transform = `translateX(-${SIDEBAR_WIDTH()}px)`;
+      sidebar.style.transform = `translateX(-${sidebarWidth}px)`;
       mainContent.style.marginLeft = "0";
       setTimeout(() => {
         downloadBtn.style.display = "flex";
       }, ANIMATION_DURATION);
     } else {
       sidebar.style.transform = "translateX(0px)";
-      mainContent.style.marginLeft = `${SIDEBAR_WIDTH()}px`;
+      mainContent.style.marginLeft = `${sidebarWidth}px`;
       downloadBtn.style.display = "none";
     }
   } else {
@@ -119,13 +120,14 @@ function initializeSidebar() {
   const mainContent = document.querySelector(".main-content");
   const downloadBtn = document.querySelector(".downloadbtn");
   const openBtn = document.querySelector(".openbtn");
+  const sidebarWidth = SIDEBAR_WIDTH();
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop layout: sidebar visible on left
     sidebar.style.display = "block";
     sidebar.style.transform = "translateX(0px)";
     sidebar.setAttribute('data-open', 'true');
-    mainContent.style.marginLeft = `${SIDEBAR_WIDTH()}px`;
+    mainContent.style.marginLeft = `${sidebarWidth}px`;
     downloadBtn.style.display = "none";
     openBtn.style.display = "flex";
     openBtn.textContent = "■";
