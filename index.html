@@ -4,10 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ozan Yetkin</title>
+  <meta name="description" content="Ozan Yetkin - Researcher, Developer, Designer specializing in computational design, generative systems, and data visualization." />
+  <meta name="theme-color" content="#000" />
+  <title>Ozan Yetkin - Researcher | Developer | Designer</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/gif" href="favicon.ico" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 </head>
 
 <body>
@@ -21,9 +23,8 @@
     <span id="theme-icon">⬤</span>
   </button>
 
-  <div id="mySidebar" class="sidebar">
-    <h1> <span>></span></span> hello
-      world!</h1>
+  <nav id="mySidebar" class="sidebar" role="navigation" aria-label="Main navigation">
+    <h1> <span>></span> hello world!</h1>
     <a href="#contact-info"> - Contact Info</a>
     <a href="#research-interests"> - Research Interests</a>
     <a href="#education"> - Education</a>
@@ -36,13 +37,13 @@
     <a href="#languages"> - Languages</a>
     <a href="#computer-literacy"> - Computer Literacy & Tools</a>
     <a href="#portfolio"> - Portfolio</a>
-  </div>
+  </nav>
 
   <span class="openbtn" onclick="toggleNav()">■</span>
   <button id="ats-toggle-btn" class="downloadbtn">▼</button>
   <div id="main" class="main-content">
     <div class="profile-header">
-      <img src="/img/avatar.png" alt="Ozan Yetkin" style="width: 160px; height: 160px;" />
+      <img src="/img/avatar.png" alt="Profile photo of Ozan Yetkin" loading="lazy" style="width: 160px; height: 160px;" />
       <div class="profile-info">
         <h1 id="contact-info">Ozan Yetkin</h1>
         <br />
@@ -52,22 +53,19 @@
           <span>Designer</span>
         </h2>
         <div class="contact-info">
-          <span><strong>web: </strong><a href="http://ozanyetkin.com" target="_blank"">ozanyetkin.com</a> | <a
-              href=" http://dds.archweb.metu.edu.tr" target="_blank">dds.archweb.metu.edu.tr</a>
+          <span><strong>web: </strong><a href="http://ozanyetkin.com" target="_blank" rel="noopener noreferrer">ozanyetkin.com</a> | <a
+              href="http://dds.archweb.metu.edu.tr" target="_blank" rel="noopener noreferrer">dds.archweb.metu.edu.tr</a>
           </span>
-          </br>
           <span><strong>e-mail: </strong><a href="mailto:oyetkin@metu.edu.tr">oyetkin@metu.edu.tr</a> | <a
               href="mailto:ozan.yetkin@metu.edu.tr">ozan.yetkin@metu.edu.tr</a></span>
-          </br>
-          <span> <strong>social: </strong><a href="https://linkedin.com/in/ozan-yetkin/">LinkedIn</a> | <a
-              href="https://github.com/ozanyetkin/">GitHub</a> | <a
-              href="https://researchgate.net/profile/Ozan-Yetkin">ResearchGate</a> | <a
-              href="https://scholar.google.com/citations?user=ZmK_a4EAAAAJ">Scholar</a></span>
-          </br>
-          <span><strong>office: </strong><a href="https://maps.app.goo.gl/FymNDt9nyXz2W9AK9" target="_blank">METU
+          <span><strong>social: </strong><a href="https://linkedin.com/in/ozan-yetkin/" target="_blank" rel="noopener noreferrer">LinkedIn</a> | <a
+              href="https://github.com/ozanyetkin/" target="_blank" rel="noopener noreferrer">GitHub</a> | <a
+              href="https://researchgate.net/profile/Ozan-Yetkin" target="_blank" rel="noopener noreferrer">ResearchGate</a> | <a
+              href="https://scholar.google.com/citations?user=ZmK_a4EAAAAJ" target="_blank" rel="noopener noreferrer">Scholar</a></span>
+          <span><strong>office: </strong><a href="https://maps.app.goo.gl/FymNDt9nyXz2W9AK9" target="_blank" rel="noopener noreferrer">METU
               Digital Design Studio</a>
             |
-            <a href="https://maps.app.goo.gl/yDvWbpzhS4C9CQ8C6" target="_blank">METU Technopolis
+            <a href="https://maps.app.goo.gl/yDvWbpzhS4C9CQ8C6" target="_blank" rel="noopener noreferrer">METU Technopolis
               CoZone</a>
           </span>
         </div>
@@ -665,10 +663,10 @@
             <span>Intermediate</span>
           </div>
         </div>
-        <a href="https://github.com/ozanyetkin" target="_blank">
+        <a href="https://github.com/ozanyetkin" target="_blank" rel="noopener noreferrer">
           <img
             src="https://raw.githubusercontent.com/ozanyetkin/ozanyetkin/refs/heads/main/profile-3d-contrib/profile-custom-normal-without-bg.svg"
-            alt="Programming Languages" style="width: 90%;" />
+            alt="GitHub contribution graph" loading="lazy" style="width: 90%;" />
         </a>
         <div class="section-content-computer-literacy">
           <h3>Tools</h3>
@@ -929,9 +927,8 @@
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </div>
-  <div id="ats-cv" style="display:none"></div>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 /* ========================================
-   Variables
+   Variables & Theme System
    ======================================== */
 :root {
   /* Dark theme (default) */
@@ -12,6 +12,13 @@
   --button-bg: #3166d9;
   --button-hover: #ffd944;
   --transition: 0.3s ease;
+  --section-margin: 2em;
+  --padding-standard: 40px;
+  --sidebar-width: 340px;
+  --font-family: monospace;
+  --font-size-base: 13px;
+  --font-size-section-title: 16px;
+  --border-radius-button: 8px;
 }
 
 [data-theme="light"] {
@@ -41,7 +48,7 @@ body {
   align-items: flex-start;
   background: var(--bg-color);
   color: var(--text-color);
-  font-family: monospace;
+  font-family: var(--font-family);
   overflow-x: hidden;
   transition: background var(--transition), color var(--transition);
 }
@@ -56,15 +63,16 @@ h1 {
 }
 
 p {
-  font-size: 13px;
+  font-size: var(--font-size-base);
 }
 
 .section {
-  margin-bottom: 2em;
+  margin-bottom: var(--section-margin);
 }
+
 .section-title {
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--font-size-section-title);
   color: var(--accent-color);
   margin-bottom: 0.5em;
 }
@@ -136,6 +144,7 @@ a:hover {
   transition: background var(--transition), transform 0.2s ease,
     box-shadow var(--transition);
 }
+
 .theme-toggle {
   top: 40px;
   right: 40px;
@@ -148,11 +157,13 @@ a:hover {
   align-items: center;
   justify-content: center;
 }
+
 @-moz-document url-prefix() {
   .theme-toggle {
     font-size: 10px;
   }
 }
+
 .openbtn {
   bottom: 40px;
   left: 40px;
@@ -164,6 +175,7 @@ a:hover {
   border-radius: 20%;
   z-index: 2;
 }
+
 .downloadbtn {
   top: 40px;
   left: 40px;
@@ -174,13 +186,16 @@ a:hover {
   line-height: 50px;
   border-radius: 50%;
   z-index: 4;
+  display: none;
 }
+
 @-moz-document url-prefix() {
   .openbtn,
   .downloadbtn {
     font-size: 16px;
   }
 }
+
 .theme-toggle:hover,
 .openbtn:hover,
 .downloadbtn:hover {
@@ -189,14 +204,14 @@ a:hover {
 }
 
 /* ========================================
-   Sidebar
+   Sidebar & Navigation
    ======================================== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
-  width: 340px;
+  width: var(--sidebar-width);
   padding: 50px 0 0 40px;
   background: var(--sidebar-bg);
   color: var(--text-color);
@@ -206,6 +221,7 @@ a:hover {
   transform: translateX(0);
   z-index: 1;
 }
+
 .sidebar a {
   display: block;
   padding: 10px 20px;
@@ -214,20 +230,22 @@ a:hover {
   font-weight: bold;
   color: var(--text-color);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-button);
   transition: background var(--transition);
 }
+
 .sidebar a:hover {
   background: var(--hover-color);
   color: var(--bg-color);
 }
+
 .sidebar a.active {
   background: #fe4f68;
   color: var(--bg-color);
 }
 
 /* ========================================
-   Main Content
+   Main Content Area
    ======================================== */
 .main-content {
   position: relative;
@@ -235,7 +253,7 @@ a:hover {
   width: 100%;
   max-width: 1000px;
   margin-left: 0;
-  padding: 40px;
+  padding: var(--padding-standard);
   background: var(--bg-color);
   color: var(--text-color);
   transition: margin-left var(--transition), background var(--transition),
