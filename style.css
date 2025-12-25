@@ -35,7 +35,7 @@
   --padding-standard: 40px;
   --sidebar-width: 340px;
   --font-family: "JetBrains Mono", monospace;
-  --font-size-base: 13px;
+  --font-size-base: 14px;
   --font-size-section-title: 16px;
   --font-size-hero-name: 20px;
   --border-radius-button: 8px;
@@ -389,6 +389,10 @@ h3 {
 .thumbnails .thumbnail-title::before {
   content: "• ";
   color: var(--text-color);
+}
+
+#research-interests .item span::before {
+  content: " ";
 }
 
 /* ========================================
