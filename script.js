@@ -330,27 +330,28 @@ let MONO_FONT = 'courier';
 
 async function ensureMonospaceFont(doc) {
   try {
-    const regularUrl = 'assets/fonts/JetBrainsMono-Regular.ttf';
-    const boldUrl = 'assets/fonts/JetBrainsMono-Bold.ttf';
+    const regularUrl = 'assets/fonts/JetBrainsMono-VariableFont_wght.ttf';
+    const italicUrl = 'assets/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf';
 
-    const [regularB64, boldB64] = await Promise.all([
+    const [regularB64, italicB64] = await Promise.all([
       fetchFontAsBase64(regularUrl),
-      fetchFontAsBase64(boldUrl)
+      fetchFontAsBase64(italicUrl)
     ]);
 
     if (!regularB64) return; // graceful fallback to built-in 'courier'
 
     const fontName = 'JetBrainsMono';
     // Register regular
-    doc.addFileToVFS('JetBrainsMono-Regular.ttf', regularB64);
-    doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'normal');
+    doc.addFileToVFS('JetBrainsMono-VariableFont_wght.ttf', regularB64);
+    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'normal');
 
-    // Register bold if available, otherwise fall back to regular mapping
-    if (boldB64) {
-      doc.addFileToVFS('JetBrainsMono-Bold.ttf', boldB64);
-      doc.addFont('JetBrainsMono-Bold.ttf', fontName, 'bold');
-    } else {
-      doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'bold');
+    // Register bold using the same regular font
+    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'bold');
+
+    // Register italic if available
+    if (italicB64) {
+      doc.addFileToVFS('JetBrainsMono-Italic-VariableFont_wght.ttf', italicB64);
+      doc.addFont('JetBrainsMono-Italic-VariableFont_wght.ttf', fontName, 'italic');
     }
 
     MONO_FONT = fontName;
