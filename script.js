@@ -330,28 +330,16 @@ let MONO_FONT = 'courier';
 
 async function ensureMonospaceFont(doc) {
   try {
-    const regularUrl = 'assets/fonts/JetBrainsMono-Regular.ttf';
-    const boldUrl = 'assets/fonts/JetBrainsMono-Bold.ttf';
-
-    const [regularB64, boldB64] = await Promise.all([
-      fetchFontAsBase64(regularUrl),
-      fetchFontAsBase64(boldUrl)
-    ]);
+    const regularUrl = 'assets/fonts/JetBrainsMono-VariableFont_wght.ttf';
+    const regularB64 = await fetchFontAsBase64(regularUrl);
 
     if (!regularB64) return; // graceful fallback to built-in 'courier'
 
     const fontName = 'JetBrainsMono';
-    // Register regular
-    doc.addFileToVFS('JetBrainsMono-Regular.ttf', regularB64);
-    doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'normal');
-
-    // Register bold if available, otherwise fall back to regular mapping
-    if (boldB64) {
-      doc.addFileToVFS('JetBrainsMono-Bold.ttf', boldB64);
-      doc.addFont('JetBrainsMono-Bold.ttf', fontName, 'bold');
-    } else {
-      doc.addFont('JetBrainsMono-Regular.ttf', fontName, 'bold');
-    }
+    // Register regular and map bold to the same font file
+    doc.addFileToVFS('JetBrainsMono-VariableFont_wght.ttf', regularB64);
+    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'normal');
+    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'bold');
 
     MONO_FONT = fontName;
   } catch (_) {
@@ -422,7 +410,7 @@ async function generateATS() {
       // Title
       doc.setFont(MONO_FONT, 'bold').setFontSize(10);
       const titleElement = document.querySelector('.profile-info h2');
-      const title = titleElement ? titleElement.innerText.trim() : 'Researcher | Developer | Designer';
+      const title = titleElement ? titleElement.innerText.trim() : 'Araştırmacı | Geliştirici | Tasarımcı';
       doc.setTextColor('#000000');
       doc.text(title, xStart, y);
       y += lineHeight * 1.2;
@@ -467,7 +455,7 @@ async function generateATS() {
     const riText = riEl?.innerText.replace(/\s+/g, ' ').trim() || '';
     if (riText) {
       doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      doc.text('RESEARCH INTERESTS', margin, y);
+      doc.text('ARAŞTIRMA İLGİ ALANLARI', margin, y);
       y += lineHeight;
       doc.setTextColor('#000000').setFont(MONO_FONT, 'bold').setFontSize(8);
       const availW = pageWidth - 2 * margin;
@@ -478,15 +466,15 @@ async function generateATS() {
 
     // ATS-friendly unique section mapping
     const sectionMapping = {
-      'education': 'EDUCATION',
-      'work-experience': 'PROFESSIONAL EXPERIENCE',
-      'research-experience': 'RESEARCH PROJECTS',
-      'publications': 'PUBLICATIONS',
-      'organized-events': 'LEADERSHIP & EVENTS',
-      'assisted-courses': 'TEACHING EXPERIENCE',
-      'workshops-certificates': 'CERTIFICATIONS',
-      'languages': 'LANGUAGES',
-      'computer-literacy': 'TECHNICAL SKILLS'
+      'education': 'EĞİTİM',
+      'work-experience': 'İŞ DENEYİMİ',
+      'research-experience': 'ARAŞTIRMA PROJELERİ',
+      'publications': 'YAYINLAR',
+      'organized-events': 'LİDERLİK VE ETKİNLİKLER',
+      'assisted-courses': 'ÖĞRETİM DENEYİMİ',
+      'workshops-certificates': 'SERTİFİKALAR',
+      'languages': 'DİLLER',
+      'computer-literacy': 'TEKNİK BECERİLER'
     };
 
     // Group sections by standard titles
@@ -502,7 +490,7 @@ async function generateATS() {
     });
 
     // Render sections in standard order
-    const standardOrder = ['EDUCATION', 'PROFESSIONAL EXPERIENCE', 'RESEARCH PROJECTS', 'PUBLICATIONS', 'LEADERSHIP & EVENTS', 'TEACHING EXPERIENCE', 'CERTIFICATIONS', 'LANGUAGES', 'TECHNICAL SKILLS'];
+    const standardOrder = ['EĞİTİM', 'İŞ DENEYİMİ', 'ARAŞTIRMA PROJELERİ', 'YAYINLAR', 'LİDERLİK VE ETKİNLİKLER', 'ÖĞRETİM DENEYİMİ', 'SERTİFİKALAR', 'DİLLER', 'TEKNİK BECERİLER'];
 
     standardOrder.forEach(standardTitle => {
       if (!groupedSections[standardTitle]) return;
@@ -602,7 +590,19 @@ async function generateATS() {
           if (date) { doc.setFont(MONO_FONT, 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
           y += lines.length * lineHeight;
           const detail = item.querySelector(':scope > span')?.innerText.trim() || '';
-          if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont(MONO_FONT, 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
+          if (detail) {
+            const dls = doc.splitTextToSize(detail, availW - 20);
+            doc.setFont(MONO_FONT, 'normal');
+            doc.text(dls, margin + 20, y);
+            y += dls.length * lineHeight;
+          }
+          const thesis = item.querySelector('.thesis-title')?.innerText.trim() || '';
+          if (thesis) {
+            const tls = doc.splitTextToSize(thesis, availW - 20);
+            doc.setFont(MONO_FONT, 'normal');
+            doc.text(tls, margin + 20, y);
+            y += tls.length * lineHeight;
+          }
           y += lineHeight * 0.5;
         }); y += lineHeight;
       });
@@ -613,9 +613,9 @@ async function generateATS() {
     if (portfolio) {
       if (y > pageHeight - margin - 100) { doc.addPage(); y = margin; }
       doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      doc.text('PORTFOLIO', margin, y); y += lineHeight;
+      doc.text('PORTFÖY', margin, y); y += lineHeight;
       doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
-      const message = 'Thank you for your time, please click the link or scan the QR code to enjoy some of my works';
+      const message = 'Zamanınız için teşekkürler, bağlantıya tıklayarak ya da QR kodunu okutarak çalışmalarımın bazılarını inceleyebilirsiniz';
       const availW = pageWidth - 2 * margin - 120; const msgLines = doc.splitTextToSize(message, availW);
       doc.text(msgLines, margin, y);
       // QR on right
@@ -629,11 +629,11 @@ async function generateATS() {
         doc.text(msgLines, margin, y);
         y += msgLines.length * lineHeight + lineHeight * 0.5;
         doc.setTextColor('#fe4f68').setFont(MONO_FONT, 'bold');
-        doc.textWithLink('View Portfolio', margin, y, { url: link });
-        doc.setTextColor('#000000'); doc.save('Ozan_Yetkin_CV_ATS.pdf');
+        doc.textWithLink('Portföyü Gör', margin, y, { url: link });
+        doc.setTextColor('#000000'); doc.save('Ozan_Yetkin_CV_TR_ATS.pdf');
       };
     } else {
-      doc.save('Ozan_Yetkin_CV.pdf');
+      doc.save('Ozan_Yetkin_CV_TR.pdf');
     }
   }
 }
