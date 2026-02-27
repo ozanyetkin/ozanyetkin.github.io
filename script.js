@@ -602,8 +602,10 @@ async function generateATS() {
           lines.forEach((ln, i) => doc.text(ln, margin, y + i * lineHeight));
           if (date) { doc.setFont(MONO_FONT, 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
           y += lines.length * lineHeight;
-          const detail = item.querySelector(':scope > span')?.innerText.trim() || '';
+          const detail = item.querySelector(':scope > span:not(.thesis-title)')?.innerText.trim() || '';
           if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont(MONO_FONT, 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
+          const thesisTitle = item.querySelector('.thesis-title')?.innerText.trim() || '';
+          if (thesisTitle) { const tls = doc.splitTextToSize(thesisTitle, availW - 20); doc.setFont(MONO_FONT, 'italic'); doc.text(tls, margin + 20, y); y += tls.length * lineHeight; }
           y += lineHeight * 0.5;
         }); y += lineHeight;
       });
