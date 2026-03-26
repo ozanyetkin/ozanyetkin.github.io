@@ -520,6 +520,42 @@ async function generateATS() {
     // Render sections in standard order
     const standardOrder = ['EDUCATION', 'PROFESSIONAL EXPERIENCE', 'RESEARCH PROJECTS', 'PUBLICATIONS', 'LEADERSHIP & EVENTS', 'TEACHING EXPERIENCE', 'CERTIFICATIONS', 'LANGUAGES', 'TECHNICAL SKILLS'];
 
+    function renderStandardItem(item) {
+      if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+      const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
+      const lbl = lblEl?.innerText.trim() || '';
+      const date = dateEl?.innerText.trim() || '';
+      const dtW = date ? doc.getTextWidth(date) : 0;
+      const availW = pageWidth - 2 * margin - dtW - 20;
+
+      doc.setFont(MONO_FONT, 'bold');
+      const lines = doc.splitTextToSize(`- ${lbl}`, availW);
+      drawLinesWithWeight(doc, lines, margin, y, lineHeight, 'bold');
+      if (date) {
+        doc.setFont(MONO_FONT, 'bold');
+        drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold');
+      }
+      y += lines.length * lineHeight;
+
+      const detailSpans = Array.from(item.querySelectorAll(':scope > span'));
+      detailSpans.forEach(span => {
+        const detail = span.innerText.trim();
+        if (!detail) return;
+        const dls = doc.splitTextToSize(detail, availW - 20);
+        const isSecondaryDetail = span.classList.contains('item-description') || span.classList.contains('thesis-title');
+        doc.setFont(MONO_FONT, isSecondaryDetail ? 'italic' : 'normal');
+        doc.setFontSize(isSecondaryDetail ? 7 : 8);
+        doc.setTextColor(isSecondaryDetail ? '#666666' : '#000000');
+        drawLinesWithWeight(doc, dls, margin + 20, y, lineHeight, 'normal');
+        y += dls.length * lineHeight;
+      });
+
+      doc.setFont(MONO_FONT, 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor('#000000');
+      y += itemGap;
+    }
+
     standardOrder.forEach(standardTitle => {
       if (!groupedSections[standardTitle]) return;
 
@@ -609,31 +645,33 @@ async function generateATS() {
           }); return;
         }
 
-        sec.querySelectorAll('.item').forEach(item => {
-          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-          const [lblEl, dateEl] = item.querySelectorAll('.item-header span'); const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
-          const dtW = date ? doc.getTextWidth(date) : 0; const availW = pageWidth - 2 * margin - dtW - 20;
-          doc.setFont(MONO_FONT, 'bold'); const lines = doc.splitTextToSize(`- ${lbl}`, availW);
-          drawLinesWithWeight(doc, lines, margin, y, lineHeight, 'bold');
-          if (date) { doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold'); }
-          y += lines.length * lineHeight;
-          const detailSpans = Array.from(item.querySelectorAll(':scope > span'));
-          detailSpans.forEach(span => {
-            const detail = span.innerText.trim();
-            if (!detail) return;
-            const dls = doc.splitTextToSize(detail, availW - 20);
-            const isSecondaryDetail = span.classList.contains('item-description') || span.classList.contains('thesis-title');
-            doc.setFont(MONO_FONT, isSecondaryDetail ? 'italic' : 'normal');
-            doc.setFontSize(isSecondaryDetail ? 7 : 8);
-            doc.setTextColor(isSecondaryDetail ? '#666666' : '#000000');
-            drawLinesWithWeight(doc, dls, margin + 20, y, lineHeight, 'normal');
-            y += dls.length * lineHeight;
+        if (id === 'publications') {
+          const pubContent = sec.querySelector('.section-content');
+          if (!pubContent) return;
+
+          const publicationSubheadingTopGap = 3;
+          const publicationSubheadingBottomGap = 3;
+
+          const blocks = pubContent.querySelectorAll(':scope > h3, :scope > .item');
+          blocks.forEach(block => {
+            if (block.tagName.toLowerCase() === 'h3') {
+              y += publicationSubheadingTopGap;
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+              doc.setFont(MONO_FONT, 'bold').setFontSize(9).setTextColor('#000000');
+              drawTextWithWeight(doc, block.innerText.trim(), margin, y, 'bold');
+              y += lineHeight + publicationSubheadingBottomGap;
+              doc.setFont(MONO_FONT, 'normal').setFontSize(8);
+            } else {
+              renderStandardItem(block);
+            }
           });
-          doc.setFont(MONO_FONT, 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor('#000000');
-          y += itemGap;
-        }); y += sectionGap;
+
+          y += sectionGap;
+          return;
+        }
+
+        sec.querySelectorAll('.item').forEach(item => renderStandardItem(item));
+        y += sectionGap;
       });
     });
 
@@ -642,7 +680,7 @@ async function generateATS() {
     if (portfolio) {
       if (y > pageHeight - margin - 100) { doc.addPage(); y = margin; }
       doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      doc.text('PORTFOLIO', margin, y); y += lineHeight;
+      drawTextWithWeight(doc, 'PORTFOLIO', margin, y, 'bold'); y += lineHeight;
       doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
       const message = 'Thank you for your time, please click the link or scan the QR code to enjoy some of my works';
       const availW = pageWidth - 2 * margin - 120; const msgLines = doc.splitTextToSize(message, availW);

@@ -133,6 +133,10 @@ p {
   content: "";
 }
 
+#publications .item > span:first-of-type {
+  padding-left: 1em;
+}
+
 .item-header {
   display: flex;
   justify-content: space-between;
