@@ -5,7 +5,7 @@
 
 // Constants
 let _sidebarWidth = null;
-const SIDEBAR_WIDTH = () => {
+const getSidebarWidth = () => {
   if (_sidebarWidth === null) {
     const rootStyles = getComputedStyle(document.documentElement);
     const sidebarWidthVar = rootStyles
@@ -36,7 +36,7 @@ function toggleNav() {
   const mainContent = document.querySelector(".main-content");
   const downloadBtn = document.querySelector(".downloadbtn");
   const openBtn = document.querySelector(".openbtn");
-  const sidebarWidth = SIDEBAR_WIDTH();
+  const sidebarWidth = getSidebarWidth();
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop: toggle sidebar left/right
@@ -107,7 +107,7 @@ function initializeTheme() {
   const themeIcon = document.getElementById("theme-icon");
 
   if (savedTheme === "light") {
-    document.body.setAttribute("data-theme", "dark");
+    document.body.setAttribute("data-theme", "light");
     themeIcon.textContent = "⬤";
   } else {
     document.body.removeAttribute("data-theme");
@@ -125,7 +125,7 @@ function initializeSidebar() {
   const mainContent = document.querySelector(".main-content");
   const downloadBtn = document.querySelector(".downloadbtn");
   const openBtn = document.querySelector(".openbtn");
-  const sidebarWidth = SIDEBAR_WIDTH();
+  const sidebarWidth = getSidebarWidth();
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop layout: sidebar visible on left
