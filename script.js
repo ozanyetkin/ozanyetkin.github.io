@@ -379,11 +379,26 @@ function arrayBufferToBase64(buffer) {
   return btoa(binary);
 }
 
+function drawTextWithWeight(doc, text, x, y, weight = 'normal') {
+  doc.text(text, x, y);
+  if (weight === 'bold') {
+    doc.text(text, x + 0.25, y);
+  }
+}
+
+function drawLinesWithWeight(doc, lines, x, startY, lineHeight, weight = 'normal') {
+  lines.forEach((line, index) => {
+    drawTextWithWeight(doc, line, x, startY + index * lineHeight, weight);
+  });
+}
+
 async function generateATS() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'A4' });
   const margin = 40;
   const lineHeight = 14;
+  const itemGap = 4;
+  const sectionGap = 8;
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
 
@@ -417,7 +432,7 @@ async function generateATS() {
     const name = document.querySelector('#contact-info')?.innerText.trim() || '';
     if (name) {
       doc.setTextColor('#1a73e8'); doc.setFont(MONO_FONT, 'bold').setFontSize(12);
-      doc.text(name, xStart, y);
+      drawTextWithWeight(doc, name, xStart, y, 'bold');
       y += lineHeight * 1.2;
 
       // Title
@@ -468,13 +483,13 @@ async function generateATS() {
     const riText = riEl?.innerText.replace(/\s+/g, ' ').trim() || '';
     if (riText) {
       doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      doc.text('RESEARCH INTERESTS', margin, y);
+      drawTextWithWeight(doc, 'RESEARCH INTERESTS', margin, y, 'bold');
       y += lineHeight;
-      doc.setTextColor('#000000').setFont(MONO_FONT, 'bold').setFontSize(8);
+      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
       const availW = pageWidth - 2 * margin;
       const lines = doc.splitTextToSize(riText, availW);
       doc.text(lines, margin, y);
-      y += lines.length * lineHeight + lineHeight;
+      y += lines.length * lineHeight + sectionGap;
     }
 
     // ATS-friendly unique section mapping
@@ -511,7 +526,7 @@ async function generateATS() {
       // Print section header once
       if (y > pageHeight - margin) { doc.addPage(); y = margin; }
       doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      doc.text(standardTitle, margin, y); y += lineHeight;
+      drawTextWithWeight(doc, standardTitle, margin, y, 'bold'); y += lineHeight;
       doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
 
       groupedSections[standardTitle].forEach(id => {
@@ -535,15 +550,15 @@ async function generateATS() {
             const boldLines = doc.splitTextToSize(bulletAndLabel, availW);
 
             boldLines.forEach((ln, i) => {
-              doc.text(ln, margin, y + i * lineHeight);
+              drawTextWithWeight(doc, ln, margin, y + i * lineHeight, 'bold');
               if (i === boldLines.length - 1 && commaAndEntity) {
                 const boldWidth = doc.getTextWidth(ln);
                 doc.setFont(MONO_FONT, 'normal');
                 const normalLines = doc.splitTextToSize(commaAndEntity, availW - boldWidth);
-                doc.text(normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight);
+                drawTextWithWeight(doc, normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight, 'normal');
                 if (normalLines.length > 1) {
                   normalLines.slice(1).forEach((normalLn, j) => {
-                    doc.text(normalLn, margin, y + (i + j + 1) * lineHeight);
+                    drawTextWithWeight(doc, normalLn, margin, y + (i + j + 1) * lineHeight, 'normal');
                   });
                 }
               }
@@ -551,12 +566,12 @@ async function generateATS() {
 
             if (date) {
               doc.setFont(MONO_FONT, 'bold');
-              doc.text(date, pageWidth - margin - dtW, y);
+              drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold');
             }
 
             const totalLines = boldLines.length + (commaAndEntity && boldLines.length > 0 ? Math.max(0, doc.splitTextToSize(commaAndEntity, availW - doc.getTextWidth(boldLines[boldLines.length - 1])).length - 1) : 0);
-            y += totalLines * lineHeight + lineHeight * 0.5;
-          }); y += lineHeight; return;
+            y += totalLines * lineHeight + itemGap;
+          }); y += sectionGap; return;
         }
 
         if (id === 'languages') {
@@ -565,13 +580,13 @@ async function generateATS() {
           const col = (pageWidth - 2 * margin) / 2; const half = Math.ceil(arr.length / 2);
           for (let i = 0; i < half; i++) {
             if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-            doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
-            doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+            doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, 'bold');
+            doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y, 'normal');
             if (arr[i + half]) {
-              doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i + half].name}`, margin + col, y);
-              doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y);
+              doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i + half].name}`, margin + col, y, 'bold');
+              doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y, 'normal');
             } y += lineHeight;
-          } y += lineHeight; return;
+          } y += sectionGap; return;
         }
 
         if (id === 'computer-literacy') {
@@ -579,18 +594,18 @@ async function generateATS() {
             const sub = gr.querySelector('h3')?.innerText.trim();
             if (sub) {
               if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold').setFontSize(9);
-              doc.text(sub, margin, y); y += lineHeight; doc.setFont(MONO_FONT, 'normal').setFontSize(8);
+              drawTextWithWeight(doc, sub, margin, y, 'bold'); y += lineHeight; doc.setFont(MONO_FONT, 'normal').setFontSize(8);
             }
             const arr = Array.from(gr.querySelectorAll('.item')).map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
             const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(arr.length / 2);
             for (let i = 0; i < half2; i++) {
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i].name}`, margin, y);
-              doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y);
+              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, 'bold');
+              doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y, 'normal');
               if (arr[i + half2]) {
-                doc.setFont(MONO_FONT, 'bold'); doc.text(`- ${arr[i + half2].name}`, margin + col2, y);
-                doc.setFont(MONO_FONT, 'normal'); doc.text(`: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y);
+                doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i + half2].name}`, margin + col2, y, 'bold');
+                doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y, 'normal');
               } y += lineHeight;
-            } y += lineHeight;
+            } y += sectionGap;
           }); return;
         }
 
@@ -599,15 +614,26 @@ async function generateATS() {
           const [lblEl, dateEl] = item.querySelectorAll('.item-header span'); const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
           const dtW = date ? doc.getTextWidth(date) : 0; const availW = pageWidth - 2 * margin - dtW - 20;
           doc.setFont(MONO_FONT, 'bold'); const lines = doc.splitTextToSize(`- ${lbl}`, availW);
-          lines.forEach((ln, i) => doc.text(ln, margin, y + i * lineHeight));
-          if (date) { doc.setFont(MONO_FONT, 'bold'); doc.text(date, pageWidth - margin - dtW, y); }
+          drawLinesWithWeight(doc, lines, margin, y, lineHeight, 'bold');
+          if (date) { doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold'); }
           y += lines.length * lineHeight;
-          const detail = item.querySelector(':scope > span:not(.thesis-title)')?.innerText.trim() || '';
-          if (detail) { const dls = doc.splitTextToSize(detail, availW - 20); doc.setFont(MONO_FONT, 'normal'); doc.text(dls, margin + 20, y); y += dls.length * lineHeight; }
-          const thesisTitle = item.querySelector('.thesis-title')?.innerText.trim() || '';
-          if (thesisTitle) { const tls = doc.splitTextToSize(thesisTitle, availW - 20); doc.setFont(MONO_FONT, 'italic'); doc.text(tls, margin + 20, y); y += tls.length * lineHeight; }
-          y += lineHeight * 0.5;
-        }); y += lineHeight;
+          const detailSpans = Array.from(item.querySelectorAll(':scope > span'));
+          detailSpans.forEach(span => {
+            const detail = span.innerText.trim();
+            if (!detail) return;
+            const dls = doc.splitTextToSize(detail, availW - 20);
+            const isSecondaryDetail = span.classList.contains('item-description') || span.classList.contains('thesis-title');
+            doc.setFont(MONO_FONT, isSecondaryDetail ? 'italic' : 'normal');
+            doc.setFontSize(isSecondaryDetail ? 7 : 8);
+            doc.setTextColor(isSecondaryDetail ? '#666666' : '#000000');
+            drawLinesWithWeight(doc, dls, margin + 20, y, lineHeight, 'normal');
+            y += dls.length * lineHeight;
+          });
+          doc.setFont(MONO_FONT, 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor('#000000');
+          y += itemGap;
+        }); y += sectionGap;
       });
     });
 
