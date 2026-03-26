@@ -255,8 +255,7 @@ a:hover {
   overflow-y: auto;
   transition:
     transform var(--transition),
-    background var(--transition),
-    display var(--transition);
+    background var(--transition);
   transform: translateX(0);
   z-index: 1;
 }
