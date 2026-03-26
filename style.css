@@ -70,7 +70,9 @@ body {
   color: var(--text-color);
   font-family: var(--font-family);
   overflow-x: hidden;
-  transition: background var(--transition), color var(--transition);
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
 
 h1 {
@@ -174,7 +176,9 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition), transform 0.2s ease,
+  transition:
+    background var(--transition),
+    transform 0.2s ease,
     box-shadow var(--transition);
 }
 
@@ -249,7 +253,9 @@ a:hover {
   background: var(--sidebar-bg);
   color: var(--text-color);
   overflow-y: auto;
-  transition: transform var(--transition), background var(--transition),
+  transition:
+    transform var(--transition),
+    background var(--transition),
     display var(--transition);
   transform: translateX(0);
   z-index: 1;
@@ -289,7 +295,9 @@ a:hover {
   padding: var(--padding-standard);
   background: var(--bg-color);
   color: var(--text-color);
-  transition: margin-left var(--transition), background var(--transition),
+  transition:
+    margin-left var(--transition),
+    background var(--transition),
     color var(--transition);
 }
 
@@ -425,7 +433,9 @@ html {
     height: 60px;
     background: var(--sidebar-bg);
     z-index: 5;
-    transition: background var(--transition), transform 0.3s ease;
+    transition:
+      background var(--transition),
+      transform 0.3s ease;
     align-items: center;
     justify-content: center;
   }
@@ -447,7 +457,10 @@ html {
     align-items: center;
     justify-content: center;
     padding-bottom: 3px;
-    transition: transform 0.3s ease, background var(--transition), top 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      background var(--transition),
+      top 0.3s ease;
     z-index: 11;
   }
 
@@ -475,7 +488,10 @@ html {
     line-height: 40px;
     font-weight: bold;
     z-index: 11;
-    transition: transform 0.3s ease, background var(--transition), top 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      background var(--transition),
+      top 0.3s ease;
   }
 
   .sidebar {

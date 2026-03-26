@@ -5,14 +5,16 @@
 
 // Constants
 let _sidebarWidth = null;
-const SIDEBAR_WIDTH = (() => {
+const SIDEBAR_WIDTH = () => {
   if (_sidebarWidth === null) {
     const rootStyles = getComputedStyle(document.documentElement);
-    const sidebarWidthVar = rootStyles.getPropertyValue('--sidebar-width').trim();
-    _sidebarWidth = parseInt(sidebarWidthVar || '340', 10);
+    const sidebarWidthVar = rootStyles
+      .getPropertyValue("--sidebar-width")
+      .trim();
+    _sidebarWidth = parseInt(sidebarWidthVar || "340", 10);
   }
   return _sidebarWidth;
-});
+};
 
 // Keep in sync with CSS transition duration (e.g. `--transition: 0.3s ease` in the stylesheet)
 // If you change this value, update the corresponding CSS transition so animations stay aligned.
@@ -38,7 +40,10 @@ function toggleNav() {
 
   if (window.innerWidth > MOBILE_BREAKPOINT) {
     // Desktop: toggle sidebar left/right
-    if (sidebar.style.transform === "translateX(0px)" || sidebar.style.transform === "") {
+    if (
+      sidebar.style.transform === "translateX(0px)" ||
+      sidebar.style.transform === ""
+    ) {
       sidebar.style.transform = `translateX(-${sidebarWidth}px)`;
       mainContent.style.marginLeft = "0";
       setTimeout(() => {
@@ -53,7 +58,7 @@ function toggleNav() {
     // Mobile: toggle sidebar up/down
     if (sidebar.style.transform === "translateY(0px)") {
       sidebar.style.transform = "translateY(-100%)";
-      sidebar.setAttribute('data-open', 'false');
+      sidebar.setAttribute("data-open", "false");
       openBtn.textContent = "■";
       downloadBtn.style.display = "none";
       document.body.style.overflow = "";
@@ -62,7 +67,7 @@ function toggleNav() {
       }, ANIMATION_DURATION);
     } else {
       sidebar.style.display = "block";
-      sidebar.setAttribute('data-open', 'true');
+      sidebar.setAttribute("data-open", "true");
       openBtn.textContent = "⨯";
       downloadBtn.style.display = "flex";
       document.body.style.overflow = "hidden";
@@ -79,17 +84,17 @@ function toggleNav() {
  */
 function toggleTheme() {
   const body = document.body;
-  const themeIcon = document.getElementById('theme-icon');
-  const currentTheme = body.getAttribute('data-theme');
+  const themeIcon = document.getElementById("theme-icon");
+  const currentTheme = body.getAttribute("data-theme");
 
-  if (currentTheme === 'light') {
-    body.removeAttribute('data-theme');
-    themeIcon.textContent = '⬤';
-    localStorage.setItem('theme', 'dark');
+  if (currentTheme === "light") {
+    body.removeAttribute("data-theme");
+    themeIcon.textContent = "⬤";
+    localStorage.setItem("theme", "dark");
   } else {
-    body.setAttribute('data-theme', 'light');
-    themeIcon.textContent = '⬤';
-    localStorage.setItem('theme', 'light');
+    body.setAttribute("data-theme", "light");
+    themeIcon.textContent = "⬤";
+    localStorage.setItem("theme", "light");
   }
 }
 
@@ -98,15 +103,15 @@ function toggleTheme() {
  * Loads theme from localStorage and applies it on page load
  */
 function initializeTheme() {
-  const savedTheme = localStorage.getItem('theme');
-  const themeIcon = document.getElementById('theme-icon');
+  const savedTheme = localStorage.getItem("theme");
+  const themeIcon = document.getElementById("theme-icon");
 
-  if (savedTheme === 'light') {
-    document.body.setAttribute('data-theme', 'dark');
-    themeIcon.textContent = '⬤';
+  if (savedTheme === "light") {
+    document.body.setAttribute("data-theme", "dark");
+    themeIcon.textContent = "⬤";
   } else {
-    document.body.removeAttribute('data-theme');
-    themeIcon.textContent = '⬤';
+    document.body.removeAttribute("data-theme");
+    themeIcon.textContent = "⬤";
   }
 }
 
@@ -126,7 +131,7 @@ function initializeSidebar() {
     // Desktop layout: sidebar visible on left
     sidebar.style.display = "block";
     sidebar.style.transform = "translateX(0px)";
-    sidebar.setAttribute('data-open', 'true');
+    sidebar.setAttribute("data-open", "true");
     mainContent.style.marginLeft = `${sidebarWidth}px`;
     downloadBtn.style.display = "none";
     openBtn.style.display = "flex";
@@ -135,7 +140,7 @@ function initializeSidebar() {
     // Mobile layout: sidebar hidden above viewport
     sidebar.style.display = "none";
     sidebar.style.transform = "translateY(-100%)";
-    sidebar.setAttribute('data-open', 'false');
+    sidebar.setAttribute("data-open", "false");
     mainContent.style.marginLeft = "0";
     downloadBtn.style.display = "none";
     openBtn.style.display = "flex";
@@ -160,32 +165,44 @@ let touchEndY = 0;
 function handleSwipeGesture() {
   const swipeDistance = touchStartY - touchEndY;
   const sidebar = document.getElementById("mySidebar");
-  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+  const isSidebarOpen = sidebar.getAttribute("data-open") === "true";
 
   // Swipe up gesture (distance > threshold) when sidebar is open
-  if (swipeDistance > SWIPE_THRESHOLD && isSidebarOpen && window.innerWidth <= MOBILE_BREAKPOINT) {
+  if (
+    swipeDistance > SWIPE_THRESHOLD &&
+    isSidebarOpen &&
+    window.innerWidth <= MOBILE_BREAKPOINT
+  ) {
     toggleNav();
   }
 }
 
-document.addEventListener('touchstart', (e) => {
-  const sidebar = document.getElementById("mySidebar");
-  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    const sidebar = document.getElementById("mySidebar");
+    const isSidebarOpen = sidebar.getAttribute("data-open") === "true";
 
-  if (isSidebarOpen && window.innerWidth <= MOBILE_BREAKPOINT) {
-    touchStartY = e.changedTouches[0].screenY;
-  }
-}, false);
+    if (isSidebarOpen && window.innerWidth <= MOBILE_BREAKPOINT) {
+      touchStartY = e.changedTouches[0].screenY;
+    }
+  },
+  false,
+);
 
-document.addEventListener('touchend', (e) => {
-  const sidebar = document.getElementById("mySidebar");
-  const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+document.addEventListener(
+  "touchend",
+  (e) => {
+    const sidebar = document.getElementById("mySidebar");
+    const isSidebarOpen = sidebar.getAttribute("data-open") === "true";
 
-  if (isSidebarOpen && window.innerWidth <= MOBILE_BREAKPOINT) {
-    touchEndY = e.changedTouches[0].screenY;
-    handleSwipeGesture();
-  }
-}, false);
+    if (isSidebarOpen && window.innerWidth <= MOBILE_BREAKPOINT) {
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipeGesture();
+    }
+  },
+  false,
+);
 
 /**
  * Hide/show UI buttons on scroll for mobile devices
@@ -194,66 +211,71 @@ document.addEventListener('touchend', (e) => {
 let lastScrollTop = 0;
 let scrollTimeout;
 
-window.addEventListener('scroll', () => {
-  if (window.innerWidth <= MOBILE_BREAKPOINT) {
-    const sidebar = document.getElementById("mySidebar");
-    const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+window.addEventListener(
+  "scroll",
+  () => {
+    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+      const sidebar = document.getElementById("mySidebar");
+      const isSidebarOpen = sidebar.getAttribute("data-open") === "true";
 
-    // Don't hide buttons if sidebar is open
-    if (isSidebarOpen) {
-      return;
+      // Don't hide buttons if sidebar is open
+      if (isSidebarOpen) {
+        return;
+      }
+
+      const currentScroll =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const themeToggle = document.querySelector(".theme-toggle");
+      const openBtn = document.querySelector(".openbtn");
+      const buttonBar = document.querySelector(".mobile-button-bar");
+
+      clearTimeout(scrollTimeout);
+
+      if (currentScroll > lastScrollTop && currentScroll > 50) {
+        // Scrolling down - hide buttons and bar
+        themeToggle.style.transform = "translateY(-80px)";
+        openBtn.style.transform = "translateY(-80px)";
+        if (buttonBar) buttonBar.style.transform = "translateY(-80px)";
+      } else {
+        // Scrolling up - show buttons and bar
+        themeToggle.style.transform = "translateY(0)";
+        openBtn.style.transform = "translateY(0)";
+        if (buttonBar) buttonBar.style.transform = "translateY(0)";
+      }
+
+      // Reset button position after scrolling stops
+      scrollTimeout = setTimeout(() => {
+        themeToggle.style.transform = "translateY(0)";
+        openBtn.style.transform = "translateY(0)";
+        if (buttonBar) buttonBar.style.transform = "translateY(0)";
+      }, SCROLL_HIDE_TIMEOUT);
+
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
     }
+  },
+  false,
+);
 
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-    const themeToggle = document.querySelector('.theme-toggle');
-    const openBtn = document.querySelector('.openbtn');
-    const buttonBar = document.querySelector('.mobile-button-bar');
-
-    clearTimeout(scrollTimeout);
-
-    if (currentScroll > lastScrollTop && currentScroll > 50) {
-      // Scrolling down - hide buttons and bar
-      themeToggle.style.transform = 'translateY(-80px)';
-      openBtn.style.transform = 'translateY(-80px)';
-      if (buttonBar) buttonBar.style.transform = 'translateY(-80px)';
-    } else {
-      // Scrolling up - show buttons and bar
-      themeToggle.style.transform = 'translateY(0)';
-      openBtn.style.transform = 'translateY(0)';
-      if (buttonBar) buttonBar.style.transform = 'translateY(0)';
-    }
-
-    // Reset button position after scrolling stops
-    scrollTimeout = setTimeout(() => {
-      themeToggle.style.transform = 'translateY(0)';
-      openBtn.style.transform = 'translateY(0)';
-      if (buttonBar) buttonBar.style.transform = 'translateY(0)';
-    }, SCROLL_HIDE_TIMEOUT);
-
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-  }
-}, false);
-
-document.addEventListener('DOMContentLoaded', () => {
-  const sections = document.querySelectorAll('.section');
-  const navLinks = document.querySelectorAll('.sidebar a');
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll(".section");
+  const navLinks = document.querySelectorAll(".sidebar a");
 
   /**
    * Auto-close sidebar when navigation link is clicked on mobile
    * Provides smooth scroll to target section
    */
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
       if (window.innerWidth <= MOBILE_BREAKPOINT) {
         const sidebar = document.getElementById("mySidebar");
-        const isSidebarOpen = sidebar.getAttribute('data-open') === 'true';
+        const isSidebarOpen = sidebar.getAttribute("data-open") === "true";
         if (isSidebarOpen) {
           e.preventDefault();
 
           // Add visual feedback - highlight the clicked link
-          navLinks.forEach(l => l.style.background = '');
-          link.style.background = 'var(--accent-color)';
-          link.style.color = 'var(--bg-color)';
+          navLinks.forEach((l) => (l.style.background = ""));
+          link.style.background = "var(--accent-color)";
+          link.style.color = "var(--bg-color)";
 
           // Close sidebar after a brief delay to show selection
           setTimeout(() => {
@@ -261,14 +283,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Scroll to target after sidebar is closed
             setTimeout(() => {
-              const targetId = link.getAttribute('href');
+              const targetId = link.getAttribute("href");
               const targetElement = document.querySelector(targetId);
               if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                targetElement.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
               }
               // Reset link style
-              link.style.background = '';
-              link.style.color = '';
+              link.style.background = "";
+              link.style.color = "";
             }, ANIMATION_DURATION + 50);
           }, ANIMATION_DURATION);
         }
@@ -280,33 +305,37 @@ document.addEventListener('DOMContentLoaded', () => {
    * Update active navigation link based on scroll position
    * Highlights which section is currently in view
    */
-  window.addEventListener('scroll', () => {
-    let current = '';
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+  window.addEventListener("scroll", () => {
+    let current = "";
+    const scrollPosition =
+      window.pageYOffset || document.documentElement.scrollTop;
 
     // Adjust offset based on screen size for better UX
     const offset = window.innerWidth <= MOBILE_BREAKPOINT ? 100 : 200;
 
-    sections.forEach(section => {
+    sections.forEach((section) => {
       const sectionTop = section.offsetTop;
       const sectionHeight = section.clientHeight;
 
-      if (scrollPosition >= sectionTop - offset && scrollPosition < sectionTop + sectionHeight - offset) {
-        current = section.getAttribute('id');
+      if (
+        scrollPosition >= sectionTop - offset &&
+        scrollPosition < sectionTop + sectionHeight - offset
+      ) {
+        current = section.getAttribute("id");
       }
     });
 
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').substring(1) === current) {
-        link.classList.add('active');
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+      if (link.getAttribute("href").substring(1) === current) {
+        link.classList.add("active");
 
         // Update mobile bar title on mobile devices
         if (window.innerWidth <= MOBILE_BREAKPOINT) {
-          const mobileBarTitle = document.querySelector('.mobile-bar-title');
+          const mobileBarTitle = document.querySelector(".mobile-bar-title");
           if (mobileBarTitle) {
-            const linkText = link.innerText.trim().replace(/^-\s*/, '');
-            mobileBarTitle.textContent = linkText || 'Ozan Yetkin';
+            const linkText = link.innerText.trim().replace(/^-\s*/, "");
+            mobileBarTitle.textContent = linkText || "Ozan Yetkin";
           }
         }
       }
@@ -320,38 +349,42 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 // Generate ATS-friendly PDF for CV using jsPDF
-window.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('ats-toggle-btn');
-  if (btn) btn.addEventListener('click', generateATS);
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("ats-toggle-btn");
+  if (btn) btn.addEventListener("click", generateATS);
 });
 
 // Preferred monospace font for jsPDF (fallbacks to 'courier' if not available)
-let MONO_FONT = 'courier';
+let MONO_FONT = "courier";
 
 async function ensureMonospaceFont(doc) {
   try {
-    const regularUrl = 'assets/fonts/JetBrainsMono-VariableFont_wght.ttf';
-    const italicUrl = 'assets/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf';
+    const regularUrl = "assets/fonts/JetBrainsMono-VariableFont_wght.ttf";
+    const italicUrl = "assets/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf";
 
     const [regularB64, italicB64] = await Promise.all([
       fetchFontAsBase64(regularUrl),
-      fetchFontAsBase64(italicUrl)
+      fetchFontAsBase64(italicUrl),
     ]);
 
     if (!regularB64) return; // graceful fallback to built-in 'courier'
 
-    const fontName = 'JetBrainsMono';
+    const fontName = "JetBrainsMono";
     // Register regular
-    doc.addFileToVFS('JetBrainsMono-VariableFont_wght.ttf', regularB64);
-    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'normal');
+    doc.addFileToVFS("JetBrainsMono-VariableFont_wght.ttf", regularB64);
+    doc.addFont("JetBrainsMono-VariableFont_wght.ttf", fontName, "normal");
 
     // Register bold using the same regular font
-    doc.addFont('JetBrainsMono-VariableFont_wght.ttf', fontName, 'bold');
+    doc.addFont("JetBrainsMono-VariableFont_wght.ttf", fontName, "bold");
 
     // Register italic if available
     if (italicB64) {
-      doc.addFileToVFS('JetBrainsMono-Italic-VariableFont_wght.ttf', italicB64);
-      doc.addFont('JetBrainsMono-Italic-VariableFont_wght.ttf', fontName, 'italic');
+      doc.addFileToVFS("JetBrainsMono-Italic-VariableFont_wght.ttf", italicB64);
+      doc.addFont(
+        "JetBrainsMono-Italic-VariableFont_wght.ttf",
+        fontName,
+        "italic",
+      );
     }
 
     MONO_FONT = fontName;
@@ -362,7 +395,7 @@ async function ensureMonospaceFont(doc) {
 
 async function fetchFontAsBase64(url) {
   try {
-    const res = await fetch(url, { cache: 'force-cache' });
+    const res = await fetch(url, { cache: "force-cache" });
     if (!res.ok) return null;
     const buf = await res.arrayBuffer();
     return arrayBufferToBase64(buf);
@@ -372,21 +405,28 @@ async function fetchFontAsBase64(url) {
 }
 
 function arrayBufferToBase64(buffer) {
-  let binary = '';
+  let binary = "";
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
   for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 }
 
-function drawTextWithWeight(doc, text, x, y, weight = 'normal') {
+function drawTextWithWeight(doc, text, x, y, weight = "normal") {
   doc.text(text, x, y);
-  if (weight === 'bold') {
+  if (weight === "bold") {
     doc.text(text, x + 0.25, y);
   }
 }
 
-function drawLinesWithWeight(doc, lines, x, startY, lineHeight, weight = 'normal') {
+function drawLinesWithWeight(
+  doc,
+  lines,
+  x,
+  startY,
+  lineHeight,
+  weight = "normal",
+) {
   lines.forEach((line, index) => {
     drawTextWithWeight(doc, line, x, startY + index * lineHeight, weight);
   });
@@ -394,7 +434,7 @@ function drawLinesWithWeight(doc, lines, x, startY, lineHeight, weight = 'normal
 
 async function generateATS() {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'A4' });
+  const doc = new jsPDF({ unit: "pt", format: "A4" });
   const margin = 40;
   const lineHeight = 14;
   const itemGap = 4;
@@ -406,18 +446,22 @@ async function generateATS() {
   await ensureMonospaceFont(doc);
 
   // Load and draw photo
-  const imgEl = document.querySelector('.profile-header img');
+  const imgEl = document.querySelector(".profile-header img");
   if (imgEl) {
-    const img = new Image(); img.crossOrigin = 'Anonymous'; img.src = imgEl.src;
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imgEl.src;
     img.onload = () => {
       const imgH = lineHeight * 5.4;
       const imgW = (img.width / img.height) * imgH;
       const imgX = margin;
       const imgY = margin;
-      const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height;
-      canvas.getContext('2d').drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL('image/png');
-      doc.addImage(dataURL, 'PNG', imgX, imgY, imgW, imgH);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext("2d").drawImage(img, 0, 0);
+      const dataURL = canvas.toDataURL("image/png");
+      doc.addImage(dataURL, "PNG", imgX, imgY, imgW, imgH);
       buildText(imgW + 10);
     };
   } else {
@@ -429,63 +473,67 @@ async function generateATS() {
     let y = margin;
 
     // Name
-    const name = document.querySelector('#contact-info')?.innerText.trim() || '';
+    const name =
+      document.querySelector("#contact-info")?.innerText.trim() || "";
     if (name) {
-      doc.setTextColor('#1a73e8'); doc.setFont(MONO_FONT, 'bold').setFontSize(12);
-      drawTextWithWeight(doc, name, xStart, y, 'bold');
+      doc.setTextColor("#1a73e8");
+      doc.setFont(MONO_FONT, "bold").setFontSize(12);
+      drawTextWithWeight(doc, name, xStart, y, "bold");
       y += lineHeight * 1.2;
 
       // Title
-      doc.setFont(MONO_FONT, 'bold').setFontSize(10);
-      const titleElement = document.querySelector('.profile-info h2');
-      const title = titleElement ? titleElement.innerText.trim() : 'Researcher | Developer | Designer';
-      doc.setTextColor('#000000');
+      doc.setFont(MONO_FONT, "bold").setFontSize(10);
+      const titleElement = document.querySelector(".profile-info h2");
+      const title = titleElement
+        ? titleElement.innerText.trim()
+        : "Researcher | Developer | Designer";
+      doc.setTextColor("#000000");
       doc.text(title, xStart, y);
       y += lineHeight * 1.2;
 
-      doc.setTextColor('#000000');
+      doc.setTextColor("#000000");
     }
 
-
     // Contact Info: bold labels, comma-separated, link colored & underlined
-    doc.setFont(MONO_FONT, 'normal').setFontSize(8);
-    document.querySelectorAll('.contact-info span').forEach(span => {
+    doc.setFont(MONO_FONT, "normal").setFontSize(8);
+    document.querySelectorAll(".contact-info span").forEach((span) => {
       let x = xStart;
-      const labelEl = span.querySelector('strong');
+      const labelEl = span.querySelector("strong");
       if (labelEl) {
-        const label = labelEl.innerText.replace(':', '').trim() + ': ';
-        doc.setFont(MONO_FONT, 'bold'); doc.text(label, x, y);
+        const label = labelEl.innerText.replace(":", "").trim() + ": ";
+        doc.setFont(MONO_FONT, "bold");
+        doc.text(label, x, y);
         x += doc.getTextWidth(label);
       }
-      const links = Array.from(span.querySelectorAll('a'));
+      const links = Array.from(span.querySelectorAll("a"));
       links.forEach((a, i) => {
         const text = a.innerText.trim();
-        doc.setTextColor('#fe4f68').setFont(MONO_FONT, 'normal');
+        doc.setTextColor("#fe4f68").setFont(MONO_FONT, "normal");
         doc.textWithLink(text, x, y, { url: a.href.trim() });
         const w = doc.getTextWidth(text);
-        doc.setDrawColor('#fe4f68').setLineWidth(0.5);
+        doc.setDrawColor("#fe4f68").setLineWidth(0.5);
         doc.line(x, y + 1, x + w, y + 1);
         x += w;
         if (i < links.length - 1) {
-          const sep = ', ';
-          doc.setTextColor('#000000');
+          const sep = ", ";
+          doc.setTextColor("#000000");
           doc.text(sep, x, y);
           x += doc.getTextWidth(sep);
         }
-        doc.setTextColor('#000000');
+        doc.setTextColor("#000000");
       });
       y += lineHeight;
     });
     y += lineHeight;
 
     // Research Interests: wrap
-    const riEl = document.querySelector('#research-interests .section-content');
-    const riText = riEl?.innerText.replace(/\s+/g, ' ').trim() || '';
+    const riEl = document.querySelector("#research-interests .section-content");
+    const riText = riEl?.innerText.replace(/\s+/g, " ").trim() || "";
     if (riText) {
-      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      drawTextWithWeight(doc, 'RESEARCH INTERESTS', margin, y, 'bold');
+      doc.setTextColor("#1a73e8").setFont(MONO_FONT, "bold").setFontSize(10);
+      drawTextWithWeight(doc, "RESEARCH INTERESTS", margin, y, "bold");
       y += lineHeight;
-      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
+      doc.setTextColor("#000000").setFont(MONO_FONT, "normal").setFontSize(8);
       const availW = pageWidth - 2 * margin;
       const lines = doc.splitTextToSize(riText, availW);
       doc.text(lines, margin, y);
@@ -494,22 +542,32 @@ async function generateATS() {
 
     // ATS-friendly unique section mapping
     const sectionMapping = {
-      'education': 'EDUCATION',
-      'work-experience': 'PROFESSIONAL EXPERIENCE',
-      'research-experience': 'RESEARCH PROJECTS',
-      'publications': 'PUBLICATIONS',
-      'organized-events': 'LEADERSHIP & EVENTS',
-      'assisted-courses': 'TEACHING EXPERIENCE',
-      'workshops-certificates': 'CERTIFICATIONS',
-      'languages': 'LANGUAGES',
-      'computer-literacy': 'TECHNICAL SKILLS'
+      education: "EDUCATION",
+      "work-experience": "PROFESSIONAL EXPERIENCE",
+      "research-experience": "RESEARCH PROJECTS",
+      publications: "PUBLICATIONS",
+      "organized-events": "LEADERSHIP & EVENTS",
+      "assisted-courses": "TEACHING EXPERIENCE",
+      "workshops-certificates": "CERTIFICATIONS",
+      languages: "LANGUAGES",
+      "computer-literacy": "TECHNICAL SKILLS",
     };
 
     // Group sections by standard titles
     const groupedSections = {};
-    const sections = ['education', 'work-experience', 'research-experience', 'publications', 'organized-events', 'assisted-courses', 'workshops-certificates', 'languages', 'computer-literacy'];
+    const sections = [
+      "education",
+      "work-experience",
+      "research-experience",
+      "publications",
+      "organized-events",
+      "assisted-courses",
+      "workshops-certificates",
+      "languages",
+      "computer-literacy",
+    ];
 
-    sections.forEach(id => {
+    sections.forEach((id) => {
       const standardTitle = sectionMapping[id];
       if (!groupedSections[standardTitle]) {
         groupedSections[standardTitle] = [];
@@ -518,149 +576,301 @@ async function generateATS() {
     });
 
     // Render sections in standard order
-    const standardOrder = ['EDUCATION', 'PROFESSIONAL EXPERIENCE', 'RESEARCH PROJECTS', 'PUBLICATIONS', 'LEADERSHIP & EVENTS', 'TEACHING EXPERIENCE', 'CERTIFICATIONS', 'LANGUAGES', 'TECHNICAL SKILLS'];
+    const standardOrder = [
+      "EDUCATION",
+      "PROFESSIONAL EXPERIENCE",
+      "RESEARCH PROJECTS",
+      "PUBLICATIONS",
+      "LEADERSHIP & EVENTS",
+      "TEACHING EXPERIENCE",
+      "CERTIFICATIONS",
+      "LANGUAGES",
+      "TECHNICAL SKILLS",
+    ];
 
     function renderStandardItem(item) {
-      if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-      const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
-      const lbl = lblEl?.innerText.trim() || '';
-      const date = dateEl?.innerText.trim() || '';
+      if (y > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      const [lblEl, dateEl] = item.querySelectorAll(".item-header span");
+      const lbl = lblEl?.innerText.trim() || "";
+      const date = dateEl?.innerText.trim() || "";
       const dtW = date ? doc.getTextWidth(date) : 0;
       const availW = pageWidth - 2 * margin - dtW - 20;
 
-      doc.setFont(MONO_FONT, 'bold');
+      doc.setFont(MONO_FONT, "bold");
       const lines = doc.splitTextToSize(`- ${lbl}`, availW);
-      drawLinesWithWeight(doc, lines, margin, y, lineHeight, 'bold');
+      drawLinesWithWeight(doc, lines, margin, y, lineHeight, "bold");
       if (date) {
-        doc.setFont(MONO_FONT, 'bold');
-        drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold');
+        doc.setFont(MONO_FONT, "bold");
+        drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, "bold");
       }
       y += lines.length * lineHeight;
 
-      const detailSpans = Array.from(item.querySelectorAll(':scope > span'));
-      detailSpans.forEach(span => {
+      const detailSpans = Array.from(item.querySelectorAll(":scope > span"));
+      detailSpans.forEach((span) => {
         const detail = span.innerText.trim();
         if (!detail) return;
         const dls = doc.splitTextToSize(detail, availW - 20);
-        const isSecondaryDetail = span.classList.contains('item-description') || span.classList.contains('thesis-title');
-        doc.setFont(MONO_FONT, isSecondaryDetail ? 'italic' : 'normal');
+        const isSecondaryDetail =
+          span.classList.contains("item-description") ||
+          span.classList.contains("thesis-title");
+        doc.setFont(MONO_FONT, isSecondaryDetail ? "italic" : "normal");
         doc.setFontSize(isSecondaryDetail ? 7 : 8);
-        doc.setTextColor(isSecondaryDetail ? '#666666' : '#000000');
-        drawLinesWithWeight(doc, dls, margin + 20, y, lineHeight, 'normal');
+        doc.setTextColor(isSecondaryDetail ? "#666666" : "#000000");
+        drawLinesWithWeight(doc, dls, margin + 20, y, lineHeight, "normal");
         y += dls.length * lineHeight;
       });
 
-      doc.setFont(MONO_FONT, 'normal');
+      doc.setFont(MONO_FONT, "normal");
       doc.setFontSize(8);
-      doc.setTextColor('#000000');
+      doc.setTextColor("#000000");
       y += itemGap;
     }
 
-    standardOrder.forEach(standardTitle => {
+    standardOrder.forEach((standardTitle) => {
       if (!groupedSections[standardTitle]) return;
 
       // Print section header once
-      if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      drawTextWithWeight(doc, standardTitle, margin, y, 'bold'); y += lineHeight;
-      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
+      if (y > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.setTextColor("#1a73e8").setFont(MONO_FONT, "bold").setFontSize(10);
+      drawTextWithWeight(doc, standardTitle, margin, y, "bold");
+      y += lineHeight;
+      doc.setTextColor("#000000").setFont(MONO_FONT, "normal").setFontSize(8);
 
-      groupedSections[standardTitle].forEach(id => {
-        const sec = document.getElementById(id); if (!sec) return;
+      groupedSections[standardTitle].forEach((id) => {
+        const sec = document.getElementById(id);
+        if (!sec) return;
 
-        if (id === 'workshops-certificates') {
-          sec.querySelectorAll('.item').forEach(item => {
-            if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-            const [lblEl, dateEl] = item.querySelectorAll('.item-header span');
-            const lbl = lblEl?.innerText.trim() || ''; const date = dateEl?.innerText.trim() || '';
-            const entity = item.querySelector(':scope>span')?.innerText.trim() || '';
+        if (id === "workshops-certificates") {
+          sec.querySelectorAll(".item").forEach((item) => {
+            if (y > pageHeight - margin) {
+              doc.addPage();
+              y = margin;
+            }
+            const [lblEl, dateEl] = item.querySelectorAll(".item-header span");
+            const lbl = lblEl?.innerText.trim() || "";
+            const date = dateEl?.innerText.trim() || "";
+            const entity =
+              item.querySelector(":scope>span")?.innerText.trim() || "";
 
             const dtW = date ? doc.getTextWidth(date) : 0;
             const availW = pageWidth - 2 * margin - dtW;
 
             // Split text to handle bold formatting
             const bulletAndLabel = `- ${lbl}`;
-            const commaAndEntity = entity ? `, ${entity}` : '';
+            const commaAndEntity = entity ? `, ${entity}` : "";
 
-            doc.setFont(MONO_FONT, 'bold');
+            doc.setFont(MONO_FONT, "bold");
             const boldLines = doc.splitTextToSize(bulletAndLabel, availW);
 
             boldLines.forEach((ln, i) => {
-              drawTextWithWeight(doc, ln, margin, y + i * lineHeight, 'bold');
+              drawTextWithWeight(doc, ln, margin, y + i * lineHeight, "bold");
               if (i === boldLines.length - 1 && commaAndEntity) {
                 const boldWidth = doc.getTextWidth(ln);
-                doc.setFont(MONO_FONT, 'normal');
-                const normalLines = doc.splitTextToSize(commaAndEntity, availW - boldWidth);
-                drawTextWithWeight(doc, normalLines[0] || commaAndEntity, margin + boldWidth, y + i * lineHeight, 'normal');
+                doc.setFont(MONO_FONT, "normal");
+                const normalLines = doc.splitTextToSize(
+                  commaAndEntity,
+                  availW - boldWidth,
+                );
+                drawTextWithWeight(
+                  doc,
+                  normalLines[0] || commaAndEntity,
+                  margin + boldWidth,
+                  y + i * lineHeight,
+                  "normal",
+                );
                 if (normalLines.length > 1) {
                   normalLines.slice(1).forEach((normalLn, j) => {
-                    drawTextWithWeight(doc, normalLn, margin, y + (i + j + 1) * lineHeight, 'normal');
+                    drawTextWithWeight(
+                      doc,
+                      normalLn,
+                      margin,
+                      y + (i + j + 1) * lineHeight,
+                      "normal",
+                    );
                   });
                 }
               }
             });
 
             if (date) {
-              doc.setFont(MONO_FONT, 'bold');
-              drawTextWithWeight(doc, date, pageWidth - margin - dtW, y, 'bold');
+              doc.setFont(MONO_FONT, "bold");
+              drawTextWithWeight(
+                doc,
+                date,
+                pageWidth - margin - dtW,
+                y,
+                "bold",
+              );
             }
 
-            const totalLines = boldLines.length + (commaAndEntity && boldLines.length > 0 ? Math.max(0, doc.splitTextToSize(commaAndEntity, availW - doc.getTextWidth(boldLines[boldLines.length - 1])).length - 1) : 0);
+            const totalLines =
+              boldLines.length +
+              (commaAndEntity && boldLines.length > 0
+                ? Math.max(
+                    0,
+                    doc.splitTextToSize(
+                      commaAndEntity,
+                      availW -
+                        doc.getTextWidth(boldLines[boldLines.length - 1]),
+                    ).length - 1,
+                  )
+                : 0);
             y += totalLines * lineHeight + itemGap;
-          }); y += sectionGap; return;
+          });
+          y += sectionGap;
+          return;
         }
 
-        if (id === 'languages') {
-          const items = Array.from(sec.querySelectorAll('.section-content-languages .item'));
-          const arr = items.map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
-          const col = (pageWidth - 2 * margin) / 2; const half = Math.ceil(arr.length / 2);
+        if (id === "languages") {
+          const items = Array.from(
+            sec.querySelectorAll(".section-content-languages .item"),
+          );
+          const arr = items.map((it) => ({
+            name: it.querySelectorAll("span")[0].innerText.trim(),
+            level: it.querySelectorAll("span")[2].innerText.trim(),
+          }));
+          const col = (pageWidth - 2 * margin) / 2;
+          const half = Math.ceil(arr.length / 2);
           for (let i = 0; i < half; i++) {
-            if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-            doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, 'bold');
-            doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y, 'normal');
-            if (arr[i + half]) {
-              doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i + half].name}`, margin + col, y, 'bold');
-              doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i + half].level}`, margin + col + doc.getTextWidth(`- ${arr[i + half].name}`), y, 'normal');
-            } y += lineHeight;
-          } y += sectionGap; return;
-        }
-
-        if (id === 'computer-literacy') {
-          sec.querySelectorAll('.section-content-computer-literacy').forEach(gr => {
-            const sub = gr.querySelector('h3')?.innerText.trim();
-            if (sub) {
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold').setFontSize(9);
-              drawTextWithWeight(doc, sub, margin, y, 'bold'); y += lineHeight; doc.setFont(MONO_FONT, 'normal').setFontSize(8);
+            if (y > pageHeight - margin) {
+              doc.addPage();
+              y = margin;
             }
-            const arr = Array.from(gr.querySelectorAll('.item')).map(it => ({ name: it.querySelectorAll('span')[0].innerText.trim(), level: it.querySelectorAll('span')[2].innerText.trim() }));
-            const col2 = (pageWidth - 2 * margin) / 2; const half2 = Math.ceil(arr.length / 2);
-            for (let i = 0; i < half2; i++) {
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; } doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, 'bold');
-              doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i].level}`, margin + doc.getTextWidth(`- ${arr[i].name}`), y, 'normal');
-              if (arr[i + half2]) {
-                doc.setFont(MONO_FONT, 'bold'); drawTextWithWeight(doc, `- ${arr[i + half2].name}`, margin + col2, y, 'bold');
-                doc.setFont(MONO_FONT, 'normal'); drawTextWithWeight(doc, `: ${arr[i + half2].level}`, margin + col2 + doc.getTextWidth(`- ${arr[i + half2].name}`), y, 'normal');
-              } y += lineHeight;
-            } y += sectionGap;
-          }); return;
+            doc.setFont(MONO_FONT, "bold");
+            drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, "bold");
+            doc.setFont(MONO_FONT, "normal");
+            drawTextWithWeight(
+              doc,
+              `: ${arr[i].level}`,
+              margin + doc.getTextWidth(`- ${arr[i].name}`),
+              y,
+              "normal",
+            );
+            if (arr[i + half]) {
+              doc.setFont(MONO_FONT, "bold");
+              drawTextWithWeight(
+                doc,
+                `- ${arr[i + half].name}`,
+                margin + col,
+                y,
+                "bold",
+              );
+              doc.setFont(MONO_FONT, "normal");
+              drawTextWithWeight(
+                doc,
+                `: ${arr[i + half].level}`,
+                margin + col + doc.getTextWidth(`- ${arr[i + half].name}`),
+                y,
+                "normal",
+              );
+            }
+            y += lineHeight;
+          }
+          y += sectionGap;
+          return;
         }
 
-        if (id === 'publications') {
-          const pubContent = sec.querySelector('.section-content');
+        if (id === "computer-literacy") {
+          sec
+            .querySelectorAll(".section-content-computer-literacy")
+            .forEach((gr) => {
+              const sub = gr.querySelector("h3")?.innerText.trim();
+              if (sub) {
+                if (y > pageHeight - margin) {
+                  doc.addPage();
+                  y = margin;
+                }
+                doc.setFont(MONO_FONT, "bold").setFontSize(9);
+                drawTextWithWeight(doc, sub, margin, y, "bold");
+                y += lineHeight;
+                doc.setFont(MONO_FONT, "normal").setFontSize(8);
+              }
+              const arr = Array.from(gr.querySelectorAll(".item")).map(
+                (it) => ({
+                  name: it.querySelectorAll("span")[0].innerText.trim(),
+                  level: it.querySelectorAll("span")[2].innerText.trim(),
+                }),
+              );
+              const col2 = (pageWidth - 2 * margin) / 2;
+              const half2 = Math.ceil(arr.length / 2);
+              for (let i = 0; i < half2; i++) {
+                if (y > pageHeight - margin) {
+                  doc.addPage();
+                  y = margin;
+                }
+                doc.setFont(MONO_FONT, "bold");
+                drawTextWithWeight(doc, `- ${arr[i].name}`, margin, y, "bold");
+                doc.setFont(MONO_FONT, "normal");
+                drawTextWithWeight(
+                  doc,
+                  `: ${arr[i].level}`,
+                  margin + doc.getTextWidth(`- ${arr[i].name}`),
+                  y,
+                  "normal",
+                );
+                if (arr[i + half2]) {
+                  doc.setFont(MONO_FONT, "bold");
+                  drawTextWithWeight(
+                    doc,
+                    `- ${arr[i + half2].name}`,
+                    margin + col2,
+                    y,
+                    "bold",
+                  );
+                  doc.setFont(MONO_FONT, "normal");
+                  drawTextWithWeight(
+                    doc,
+                    `: ${arr[i + half2].level}`,
+                    margin +
+                      col2 +
+                      doc.getTextWidth(`- ${arr[i + half2].name}`),
+                    y,
+                    "normal",
+                  );
+                }
+                y += lineHeight;
+              }
+              y += sectionGap;
+            });
+          return;
+        }
+
+        if (id === "publications") {
+          const pubContent = sec.querySelector(".section-content");
           if (!pubContent) return;
 
           const publicationSubheadingTopGap = 3;
           const publicationSubheadingBottomGap = 3;
 
-          const blocks = pubContent.querySelectorAll(':scope > h3, :scope > .item');
-          blocks.forEach(block => {
-            if (block.tagName.toLowerCase() === 'h3') {
+          const blocks = pubContent.querySelectorAll(
+            ":scope > h3, :scope > .item",
+          );
+          blocks.forEach((block) => {
+            if (block.tagName.toLowerCase() === "h3") {
               y += publicationSubheadingTopGap;
-              if (y > pageHeight - margin) { doc.addPage(); y = margin; }
-              doc.setFont(MONO_FONT, 'bold').setFontSize(9).setTextColor('#000000');
-              drawTextWithWeight(doc, block.innerText.trim(), margin, y, 'bold');
+              if (y > pageHeight - margin) {
+                doc.addPage();
+                y = margin;
+              }
+              doc
+                .setFont(MONO_FONT, "bold")
+                .setFontSize(9)
+                .setTextColor("#000000");
+              drawTextWithWeight(
+                doc,
+                block.innerText.trim(),
+                margin,
+                y,
+                "bold",
+              );
               y += lineHeight + publicationSubheadingBottomGap;
-              doc.setFont(MONO_FONT, 'normal').setFontSize(8);
+              doc.setFont(MONO_FONT, "normal").setFontSize(8);
             } else {
               renderStandardItem(block);
             }
@@ -670,37 +880,48 @@ async function generateATS() {
           return;
         }
 
-        sec.querySelectorAll('.item').forEach(item => renderStandardItem(item));
+        sec
+          .querySelectorAll(".item")
+          .forEach((item) => renderStandardItem(item));
         y += sectionGap;
       });
     });
 
     // Portfolio at bottom: QR to right, text
-    const portfolio = document.getElementById('portfolio');
+    const portfolio = document.getElementById("portfolio");
     if (portfolio) {
-      if (y > pageHeight - margin - 100) { doc.addPage(); y = margin; }
-      doc.setTextColor('#1a73e8').setFont(MONO_FONT, 'bold').setFontSize(10);
-      drawTextWithWeight(doc, 'PORTFOLIO', margin, y, 'bold'); y += lineHeight;
-      doc.setTextColor('#000000').setFont(MONO_FONT, 'normal').setFontSize(8);
-      const message = 'Thank you for your time, please click the link or scan the QR code to enjoy some of my works';
-      const availW = pageWidth - 2 * margin - 120; const msgLines = doc.splitTextToSize(message, availW);
+      if (y > pageHeight - margin - 100) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.setTextColor("#1a73e8").setFont(MONO_FONT, "bold").setFontSize(10);
+      drawTextWithWeight(doc, "PORTFOLIO", margin, y, "bold");
+      y += lineHeight;
+      doc.setTextColor("#000000").setFont(MONO_FONT, "normal").setFontSize(8);
+      const message =
+        "Thank you for your time, please click the link or scan the QR code to enjoy some of my works";
+      const availW = pageWidth - 2 * margin - 120;
+      const msgLines = doc.splitTextToSize(message, availW);
       doc.text(msgLines, margin, y);
       // QR on right
-      const link = 'https://ozanyetkin.com/#portfolio';
+      const link = "https://ozanyetkin.com/#portfolio";
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(link)}`;
-      const qrImg = new Image(); qrImg.crossOrigin = 'Anonymous'; qrImg.src = qrUrl;
+      const qrImg = new Image();
+      qrImg.crossOrigin = "Anonymous";
+      qrImg.src = qrUrl;
       qrImg.onload = () => {
-        doc.addImage(qrImg, 'PNG', pageWidth - margin - 50, y - 20, 50, 50);
-        doc.setTextColor('#000000').setFont(MONO_FONT, 'normal');
+        doc.addImage(qrImg, "PNG", pageWidth - margin - 50, y - 20, 50, 50);
+        doc.setTextColor("#000000").setFont(MONO_FONT, "normal");
         const msgLines = doc.splitTextToSize(message, availW);
         doc.text(msgLines, margin, y);
         y += msgLines.length * lineHeight + lineHeight * 0.5;
-        doc.setTextColor('#fe4f68').setFont(MONO_FONT, 'bold');
-        doc.textWithLink('View Portfolio', margin, y, { url: link });
-        doc.setTextColor('#000000'); doc.save('Ozan_Yetkin_CV_ATS.pdf');
+        doc.setTextColor("#fe4f68").setFont(MONO_FONT, "bold");
+        doc.textWithLink("View Portfolio", margin, y, { url: link });
+        doc.setTextColor("#000000");
+        doc.save("Ozan_Yetkin_CV_ATS.pdf");
       };
     } else {
-      doc.save('Ozan_Yetkin_CV.pdf');
+      doc.save("Ozan_Yetkin_CV.pdf");
     }
   }
 }
