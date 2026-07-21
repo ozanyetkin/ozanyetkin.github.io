@@ -27,6 +27,7 @@
   <nav id="mySidebar" class="sidebar" role="navigation" aria-label="Main navigation">
     <h1> <span>></span> hello world!</h1>
     <a href="#contact-info"> - Contact Info</a>
+    <a href="#featured-work"> - Featured Work</a>
     <a href="#research-interests"> - Research Interests</a>
     <a href="#education"> - Education</a>
     <a href="#work-experience"> - Work Experience</a>
@@ -43,7 +44,9 @@
   <span class="openbtn" onclick="toggleNav()">■</span>
   <button id="ats-toggle-btn" class="downloadbtn">▼</button>
   <div id="main" class="main-content">
-    <div class="profile-header">
+    <div class="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="profile-header">
       <img src="/img/avatar.png" alt="Profile photo of Ozan Yetkin" loading="lazy"
         style="width: 160px; height: 160px;" />
       <div class="profile-info">
@@ -75,6 +78,61 @@
               Technopolis
               CoZone</a>
           </span>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="section" id="featured-work">
+      <div class="section-title">Featured Work</div>
+      <div class="section-content">
+        <div class="featured-grid">
+          <a class="featured-card" href="https://optio-bimmade-production.up.railway.app/" target="_blank"
+            rel="noopener noreferrer">
+            <div class="featured-card-logo">
+              <img src="./img/demo/optio.png" alt="Optio design automation platform" loading="lazy" />
+            </div>
+            <div class="featured-card-body">
+              <p class="featured-card-title">Optio</p>
+              <p class="featured-card-desc">Generates and compares design alternatives from
+                constraints.</p>
+              <p class="featured-card-tags">Co-Founder · AECTech</p>
+            </div>
+          </a>
+          <a class="featured-card" href="https://web-production-af5cd.up.railway.app/" target="_blank"
+            rel="noopener noreferrer">
+            <div class="featured-card-logo">
+              <img src="./img/demo/megscope.png" alt="Megscope digital pathology platform" loading="lazy" />
+            </div>
+            <div class="featured-card-body">
+              <p class="featured-card-title">Megscope</p>
+              <p class="featured-card-desc">AI-assisted diagnostic and imaging software for digital pathology.</p>
+              <p class="featured-card-tags">Co-Founder · MedTech</p>
+            </div>
+          </a>
+          <a class="featured-card" href="https://develad-web-production.up.railway.app/" target="_blank"
+            rel="noopener noreferrer">
+            <div class="featured-card-logo">
+              <img src="./img/demo/develad.png" alt="Develad AR/XR sports platform" loading="lazy" />
+            </div>
+            <div class="featured-card-body">
+              <p class="featured-card-title">Develad</p>
+              <p class="featured-card-desc">AR/XR platform bringing real-time mixed reality to stadium audiences.
+              </p>
+              <p class="featured-card-tags">Technical Lead · AR/XR</p>
+            </div>
+          </a>
+          <a class="featured-card" href="https://www.cobot-ai.co/" target="_blank" rel="noopener noreferrer">
+            <div class="featured-card-logo">
+              <img src="./img/demo/cobot.png" alt="Cobot AI platform for construction and defense" loading="lazy" />
+            </div>
+            <div class="featured-card-body">
+              <p class="featured-card-title">Cobot</p>
+              <p class="featured-card-desc">AI platform for tender scanning, takeoffs, BOQ.
+              </p>
+              <p class="featured-card-tags">Technical Lead · AI</p>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -630,16 +688,19 @@
             <span><strong>Turkish</strong></span>
             <span><strong>:</strong></span>
             <span>Native</span>
+            <span class="skill-bar" data-level="native" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>English</strong></span>
             <span><strong>:</strong></span>
             <span>Fluent</span>
+            <span class="skill-bar" data-level="fluent" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>German</strong></span>
             <span><strong>:</strong></span>
             <span>Beginner</span>
+            <span class="skill-bar" data-level="beginner" aria-hidden="true"></span>
           </div>
         </div>
       </div>
@@ -654,61 +715,73 @@
             <span><strong>Python</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>JavaScript</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>HTML/CSS</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>C#</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>C++</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>C</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>R</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Dart</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Rust</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Go</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Lua</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Java</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
         </div>
         <a href="https://github.com/ozanyetkin" target="_blank" rel="noopener noreferrer">
@@ -722,61 +795,73 @@
             <span><strong>Rhinoceros</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Grasshopper</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
-          </div>
-          <div class="item">
-            <span><strong>RhinoScriptSyntax</strong></span>
-            <span><strong>:</strong></span>
-            <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Blender</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
+          </div>
+          <div class="item">
+            <span><strong>OpenSCAD</strong></span>
+            <span><strong>:</strong></span>
+            <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Revit</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Dynamo</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
-            <span><strong>Autodesk DesignScript</strong></span>
+            <span><strong>Processing</strong></span>
             <span><strong>:</strong></span>
             <span>Advanced</span>
+            <span class="skill-bar" data-level="advanced" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Fusion 360</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Unity</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
-            <span><strong>Unreal Engine</strong></span>
+            <span><strong>Unreal</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Illustrator</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
           <div class="item">
             <span><strong>Photoshop</strong></span>
             <span><strong>:</strong></span>
             <span>Intermediate</span>
+            <span class="skill-bar" data-level="intermediate" aria-hidden="true"></span>
           </div>
         </div>
 
@@ -792,39 +877,45 @@
           <h3 class="subsection-title">3D Scenes</h3>
           <div class="thumbnails">
             <div class="thumbnail">
-              <p class="thumbnail-title">Knots</p>
-              <a href="3d/3d_knots.html" target="_blank">
-                <img src="./img/tritone/3d_knots.png" alt="3D Knots" />
+              <a href="3d/3d_knots.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_knots.png" alt="3D Knots" loading="lazy" />
+                <p class="thumbnail-title">Knots</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">City</p>
-              <a href="3d/3d_city.html" target="_blank">
-                <img src="./img/tritone/3d_city.png" alt="City" />
+              <a href="3d/3d_city.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_city.png" alt="City" loading="lazy" />
+                <p class="thumbnail-title">City</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Instancing</p>
-              <a href="3d/3d_instance_rotation.html" target="_blank">
-                <img src="./img/tritone/3d_instance_rotation.png" alt="Instancing" />
+              <a href="3d/3d_instance_rotation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_instance_rotation.png" alt="Instancing" loading="lazy" />
+                <p class="thumbnail-title">Instancing</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Noise</p>
-              <a href="3d/3d_noisy_sphere.html" target="_blank">
-                <img src="./img/tritone/3d_noisy_sphere.png" alt="Noise" />
+              <a href="3d/3d_noisy_sphere.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_noisy_sphere.png" alt="Noise" loading="lazy" />
+                <p class="thumbnail-title">Noise</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Clipping</p>
-              <a href="3d/3d_clipping_intersection.html" target="_blank">
-                <img src="./img/tritone/3d_clipping_intersection.png" alt="Clipping" />
+              <a href="3d/3d_clipping_intersection.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_clipping_intersection.png" alt="Clipping" loading="lazy" />
+                <p class="thumbnail-title">Clipping</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Waves</p>
-              <a href="3d/3d_wave.html" target="_blank">
-                <img src="./img/tritone/3d_waves.png" alt="Waves" />
+              <a href="3d/3d_wave.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/3d_waves.png" alt="Waves" loading="lazy" />
+                <p class="thumbnail-title">Waves</p>
+                <p class="thumbnail-tags">Three.js · WebGL</p>
               </a>
             </div>
           </div>
@@ -835,39 +926,45 @@
           <h3 class="subsection-title">Mini Games</h3>
           <div class="thumbnails">
             <div class="thumbnail">
-              <p class="thumbnail-title">Invaders</p>
-              <a href="/games/space_invaders_game.html" target="_blank">
-                <img src="./img/tritone/game_space_invaders.png" alt="Space Invaders" />
+              <a href="/games/space_invaders_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_space_invaders.png" alt="Space Invaders" loading="lazy" />
+                <p class="thumbnail-title">Invaders</p>
+                <p class="thumbnail-tags">Canvas · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Tetris</p>
-              <a href="games/tetromino_game.html" target="_blank">
-                <img src="./img/tritone/game_tetromino.png" alt="Tetromino" />
+              <a href="games/tetromino_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_tetromino.png" alt="Tetromino" loading="lazy" />
+                <p class="thumbnail-title">Tetris</p>
+                <p class="thumbnail-tags">Canvas · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Hangman</p>
-              <a href="games/hangman_game.html" target="_blank">
-                <img src="./img/tritone/game_hangman.png" alt="Hangman" />
+              <a href="games/hangman_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_hangman.png" alt="Hangman" loading="lazy" />
+                <p class="thumbnail-title">Hangman</p>
+                <p class="thumbnail-tags">DOM · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">2048</p>
-              <a href="games/2048_game.html" target="_blank">
-                <img src="./img/tritone/game_2048.png" alt="2048" />
+              <a href="games/2048_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_2048.png" alt="2048" loading="lazy" />
+                <p class="thumbnail-title">2048</p>
+                <p class="thumbnail-tags">DOM · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Whack-a-Mole</p>
-              <a href="games/whack_a_mole_game.html" target="_blank">
-                <img src="./img/tritone/game_whack_a_mole.png" alt="Whack-a-Mole" />
+              <a href="games/whack_a_mole_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_whack_a_mole.png" alt="Whack-a-Mole" loading="lazy" />
+                <p class="thumbnail-title">Whack-a-Mole</p>
+                <p class="thumbnail-tags">DOM · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Minesweeper</p>
-              <a href="games/minesweeper_game.html" target="_blank">
-                <img src="./img/tritone/game_minesweeper.png" alt="Minesweeper" />
+              <a href="games/minesweeper_game.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/game_minesweeper.png" alt="Minesweeper" loading="lazy" />
+                <p class="thumbnail-title">Minesweeper</p>
+                <p class="thumbnail-tags">DOM · JS</p>
               </a>
             </div>
           </div>
@@ -878,39 +975,45 @@
           <h3 class="subsection-title">2D Animations</h3>
           <div class="thumbnails">
             <div class="thumbnail">
-              <p class="thumbnail-title">Pipes</p>
-              <a href="/animations/animated_pipes.html" target="_blank">
-                <img src="./img/tritone/2d_pipes.png" alt="Pipes" />
+              <a href="/animations/animated_pipes.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_pipes.png" alt="Pipes" loading="lazy" />
+                <p class="thumbnail-title">Pipes</p>
+                <p class="thumbnail-tags">Canvas · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Scale</p>
-              <a href="animations/sequential_grid_animation.html" target="_blank">
-                <img src="./img/tritone/2d_scale.png" alt="Scale" />
+              <a href="animations/sequential_grid_animation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_scale.png" alt="Scale" loading="lazy" />
+                <p class="thumbnail-title">Scale</p>
+                <p class="thumbnail-tags">DOM · CSS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Pulse</p>
-              <a href="animations/pulsing_animation.html" target="_blank">
-                <img src="./img/tritone/2d_pulse.png" alt="Pulse" />
+              <a href="animations/pulsing_animation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_pulse.png" alt="Pulse" loading="lazy" />
+                <p class="thumbnail-title">Pulse</p>
+                <p class="thumbnail-tags">Canvas · JS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Rotation</p>
-              <a href="animations/rotating_grid_animation.html" target="_blank">
-                <img src="./img/tritone/2d_rotation.png" alt="Rotation" />
+              <a href="animations/rotating_grid_animation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_rotation.png" alt="Rotation" loading="lazy" />
+                <p class="thumbnail-title">Rotation</p>
+                <p class="thumbnail-tags">DOM · CSS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Random</p>
-              <a href="animations/randomized_grid_animation.html" target="_blank">
-                <img src="./img/tritone/2d_random.png" alt="Random" />
+              <a href="animations/randomized_grid_animation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_random.png" alt="Random" loading="lazy" />
+                <p class="thumbnail-title">Random</p>
+                <p class="thumbnail-tags">DOM · CSS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Explosion</p>
-              <a href="animations/fireworks_animation.html" target="_blank">
-                <img src="./img/tritone/2d_fireworks.png" alt="Explosion" />
+              <a href="animations/fireworks_animation.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/2d_fireworks.png" alt="Explosion" loading="lazy" />
+                <p class="thumbnail-title">Explosion</p>
+                <p class="thumbnail-tags">Canvas · JS</p>
               </a>
             </div>
           </div>
@@ -920,39 +1023,45 @@
           <h3 class="subsection-title">Data Visualization</h3>
           <div class="thumbnails">
             <div class="thumbnail">
-              <p class="thumbnail-title">Circle</p>
-              <a href="data/circle_packing.html" target="_blank">
-                <img src="./img/tritone/data_circle.png" alt="Circle" />
+              <a href="data/circle_packing.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_circle.png" alt="Circle" loading="lazy" />
+                <p class="thumbnail-title">Circle</p>
+                <p class="thumbnail-tags">D3.js · SVG</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Sunburst</p>
-              <a href="data/zoomable_sunburst_chart.html" target="_blank">
-                <img src="./img/tritone/data_sunburst.png" alt="Sunburst" />
+              <a href="data/zoomable_sunburst_chart.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_sunburst.png" alt="Sunburst" loading="lazy" />
+                <p class="thumbnail-title">Sunburst</p>
+                <p class="thumbnail-tags">D3.js · SVG</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Chord</p>
-              <a href="data/chord_diagram.html" target="_blank">
-                <img src="./img/tritone/data_chord.png" alt="Chord" />
+              <a href="data/chord_diagram.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_chord.png" alt="Chord" loading="lazy" />
+                <p class="thumbnail-title">Chord</p>
+                <p class="thumbnail-tags">D3.js · SVG</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Heatmap</p>
-              <a href="data/heatmap_table.html" target="_blank">
-                <img src="./img/tritone/data_heatmap.png" alt="Heatmap" />
+              <a href="data/heatmap_table.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_heatmap.png" alt="Heatmap" loading="lazy" />
+                <p class="thumbnail-title">Heatmap</p>
+                <p class="thumbnail-tags">DOM · CSS</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Treemap</p>
-              <a href="data/treemap_chart.html" target="_blank">
-                <img src="./img/tritone/data_treemap.png" alt="Bump" />
+              <a href="data/treemap_chart.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_treemap.png" alt="Bump" loading="lazy" />
+                <p class="thumbnail-title">Treemap</p>
+                <p class="thumbnail-tags">D3.js · SVG</p>
               </a>
             </div>
             <div class="thumbnail">
-              <p class="thumbnail-title">Gantt</p>
-              <a href="data/gantt_chart.html" target="_blank">
-                <img src="./img/tritone/data_gantt.png" alt="Gantt" />
+              <a href="data/gantt_chart.html" target="_blank" rel="noopener noreferrer">
+                <img src="./img/tritone/data_gantt.png" alt="Gantt" loading="lazy" />
+                <p class="thumbnail-title">Gantt</p>
+                <p class="thumbnail-tags">DOM · JS</p>
               </a>
             </div>
           </div>

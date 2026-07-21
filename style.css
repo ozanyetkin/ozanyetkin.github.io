@@ -301,9 +301,38 @@ a:hover {
 }
 
 /* ========================================
+   Hero (profile header + generative canvas backdrop)
+   ======================================== */
+.hero {
+  position: relative;
+}
+
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 100% at 20% 40%,
+    #000 0%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 70% 100% at 20% 40%,
+    #000 0%,
+    transparent 75%
+  );
+}
+
+/* ========================================
    Profile Header
    ======================================== */
 .profile-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   margin: 30px 0;
@@ -359,6 +388,61 @@ a:hover {
 .section-content-computer-literacy li {
   padding: 5px 0;
 }
+
+/* Skill items keep their normal text flow (so long labels still wrap
+   naturally); the decorative bar is pinned to the top-right corner via
+   absolute positioning, out of flow entirely, so it can never trigger a
+   CSS "float drop" onto a new line when a label is too long for the
+   remaining space on its line (as `float: right` did). Right padding
+   reserves room so text never runs under it. */
+.section-content-computer-literacy .item,
+.section-content-languages .item {
+  position: relative;
+  padding-right: 56px;
+}
+
+/* ========================================
+   Skill Bars (decorative proficiency indicator)
+   The visible text label is the source of truth; this bar is a purely
+   visual, aria-hidden reinforcement of the same value.
+   ======================================== */
+.skill-bar {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  width: 44px;
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--text-color) 15%, transparent);
+  overflow: hidden;
+}
+.skill-bar::before {
+  content: none;
+}
+.skill-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--fill, 50%);
+  border-radius: 3px;
+  background: var(--accent-color);
+  transition: width var(--transition);
+}
+.skill-bar[data-level="native"] {
+  --fill: 100%;
+}
+.skill-bar[data-level="advanced"],
+.skill-bar[data-level="fluent"] {
+  --fill: 85%;
+}
+.skill-bar[data-level="intermediate"] {
+  --fill: 60%;
+}
+.skill-bar[data-level="beginner"] {
+  --fill: 30%;
+}
 .section-content-computer-literacy li::before {
   content: "• ";
   color: var(--text-color);
@@ -370,6 +454,106 @@ h3 {
 }
 .section-content-computer-literacy p {
   margin: 0;
+}
+
+/* ========================================
+   Featured Work
+   ======================================== */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.featured-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-button);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text-color);
+  background: color-mix(in srgb, var(--text-color) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.featured-card:hover,
+.featured-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--text-color) 15%, transparent);
+  color: var(--text-color);
+}
+
+/* The thumbnail itself (logo + hero headline + hero visual, composited from
+   the live site's own rendered elements) is a fully transparent PNG. Text
+   and logo colors were normalized to a mid-range HSL lightness at capture
+   time so they read on both a white and a black backdrop, which means the
+   image can simply sit on the card's own themed background instead of
+   needing a fixed per-brand chip color. */
+.featured-card-logo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--transition);
+}
+
+.featured-card:hover img,
+.featured-card:focus-visible img {
+  transform: scale(1.06);
+}
+
+.featured-card-body {
+  padding: 10px 12px 14px;
+}
+
+.featured-card-title {
+  margin: 0 0 4px;
+  font-weight: bold;
+  font-size: var(--font-size-base);
+}
+
+.featured-card-desc {
+  margin: 0 0 6px;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.featured-card-tags {
+  margin: 0;
+  font-size: 0.75em;
+  letter-spacing: 0.02em;
+  color: var(--accent-color);
+}
+
+.featured-more {
+  margin: 14px 0 0;
+  font-size: var(--font-size-base);
+}
+
+@media (max-width: 900px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ========================================
@@ -388,23 +572,81 @@ h3 {
   margin-top: 0.5em;
   color: var(--text-color);
 }
+.thumbnail a {
+  display: block;
+  padding: 6px;
+  border-radius: var(--border-radius-button);
+  text-decoration: none;
+  color: var(--text-color);
+  border: 1px solid transparent;
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    background var(--transition);
+}
+.thumbnail a:hover,
+.thumbnail a:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--text-color) 4%, transparent);
+  color: var(--text-color);
+}
 .thumbnails img {
   width: 100%;
   height: auto;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
+  border-radius: calc(var(--border-radius-button) - 2px);
   transition: transform var(--transition);
 }
-.thumbnails img:hover {
-  transform: scale(1.1);
+.thumbnail a:hover img,
+.thumbnail a:focus-visible img {
+  transform: scale(1.06);
+}
+.thumbnails .thumbnail-title {
+  margin: 0.5em 0 0;
 }
 .thumbnails .thumbnail-title::before {
   content: "• ";
   color: var(--text-color);
 }
+.thumbnails .thumbnail-tags {
+  margin: 2px 0 0;
+  font-weight: normal;
+  font-size: 0.75em;
+  opacity: 0.7;
+  letter-spacing: 0.02em;
+}
 
 #research-interests .item span::before {
   content: " ";
+}
+
+/* ========================================
+   Scroll Reveal
+   Restrained fade/slide-in as elements enter the viewport (see script.js).
+   Elements only get the `.reveal` class when JS + IntersectionObserver are
+   available and motion isn't reduced, so this never gates visibility.
+   ======================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ========================================

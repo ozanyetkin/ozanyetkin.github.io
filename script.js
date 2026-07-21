@@ -96,6 +96,10 @@ function toggleTheme() {
     themeIcon.textContent = "⬤";
     localStorage.setItem("theme", "light");
   }
+
+  // Recolor the hero canvas immediately (matters most when motion is reduced
+  // and there's no animation loop to pick up the new theme colors on its own)
+  if (typeof renderHeroFrame === "function") renderHeroFrame();
 }
 
 /**
@@ -342,6 +346,163 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+/**
+ * Generative hero canvas
+ * Draws a slowly drifting node network behind the profile header as a decorative
+ * nod to the generative-systems/data-viz work in the portfolio. Colors are read
+ * live from the current theme's CSS variables. When the visitor prefers reduced
+ * motion, a single static frame is rendered instead of looping.
+ */
+const HERO_NODE_COUNT = 42;
+const HERO_LINK_DISTANCE = 120;
+
+let heroCanvas = null;
+let heroCtx = null;
+let heroNodes = [];
+let heroWidth = 0;
+let heroHeight = 0;
+let heroAnimationId = null;
+const heroPrefersReducedMotion =
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function getHeroColors() {
+  const styles = getComputedStyle(document.body);
+  return {
+    dot: styles.getPropertyValue("--accent-color").trim() || "#ffd943",
+    line: styles.getPropertyValue("--link-color").trim() || "#76a1ff",
+  };
+}
+
+function resizeHeroCanvas() {
+  const rect = heroCanvas.parentElement.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  heroWidth = rect.width;
+  heroHeight = rect.height;
+  heroCanvas.width = heroWidth * dpr;
+  heroCanvas.height = heroHeight * dpr;
+  heroCanvas.style.width = `${heroWidth}px`;
+  heroCanvas.style.height = `${heroHeight}px`;
+  heroCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function createHeroNodes() {
+  heroNodes = Array.from({ length: HERO_NODE_COUNT }, () => ({
+    x: Math.random() * heroWidth,
+    y: Math.random() * heroHeight,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.25,
+  }));
+}
+
+function renderHeroFrame() {
+  if (!heroCanvas || !heroCtx || !heroWidth || !heroHeight) return;
+  const { dot, line } = getHeroColors();
+  heroCtx.clearRect(0, 0, heroWidth, heroHeight);
+
+  if (!heroPrefersReducedMotion) {
+    heroNodes.forEach((n) => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > heroWidth) n.vx *= -1;
+      if (n.y < 0 || n.y > heroHeight) n.vy *= -1;
+    });
+  }
+
+  for (let i = 0; i < heroNodes.length; i++) {
+    for (let j = i + 1; j < heroNodes.length; j++) {
+      const a = heroNodes[i];
+      const b = heroNodes[j];
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < HERO_LINK_DISTANCE) {
+        heroCtx.strokeStyle = line;
+        heroCtx.globalAlpha = 1 - dist / HERO_LINK_DISTANCE;
+        heroCtx.lineWidth = 1;
+        heroCtx.beginPath();
+        heroCtx.moveTo(a.x, a.y);
+        heroCtx.lineTo(b.x, b.y);
+        heroCtx.stroke();
+      }
+    }
+  }
+
+  heroCtx.globalAlpha = 1;
+  heroNodes.forEach((n) => {
+    heroCtx.fillStyle = dot;
+    heroCtx.beginPath();
+    heroCtx.arc(n.x, n.y, 1.8, 0, Math.PI * 2);
+    heroCtx.fill();
+  });
+
+  if (!heroPrefersReducedMotion) {
+    heroAnimationId = requestAnimationFrame(renderHeroFrame);
+  }
+}
+
+function initHeroCanvas() {
+  heroCanvas = document.getElementById("hero-canvas");
+  if (!heroCanvas) return;
+  heroCtx = heroCanvas.getContext("2d");
+
+  resizeHeroCanvas();
+  createHeroNodes();
+
+  if (heroAnimationId) cancelAnimationFrame(heroAnimationId);
+  renderHeroFrame();
+
+  window.addEventListener("resize", () => {
+    resizeHeroCanvas();
+    if (heroPrefersReducedMotion) renderHeroFrame();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initHeroCanvas);
+
+/**
+ * Scroll-reveal micro-interactions
+ * Fades/slides content into place as it enters the viewport. Restrained by
+ * design: short duration, small travel distance, one-time per element, and a
+ * no-op under prefers-reduced-motion (everything is simply visible immediately).
+ */
+function initScrollReveal() {
+  const revealTargets = document.querySelectorAll(
+    ".section, .featured-card, .thumbnail",
+  );
+  if (!revealTargets.length) return;
+
+  if (
+    heroPrefersReducedMotion ||
+    typeof IntersectionObserver === "undefined"
+  ) {
+    revealTargets.forEach((el) => el.classList.add("is-visible"));
+    return;
+  }
+
+  revealTargets.forEach((el) => el.classList.add("reveal"));
+
+  // threshold: 0 fires on the first pixel of overlap. A higher threshold looks
+  // nicer for small cards, but breaks for elements taller than the viewport
+  // (e.g. the Portfolio section on mobile) since their intersection ratio can
+  // never reach it — they'd stay permanently hidden.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0 },
+  );
+
+  revealTargets.forEach((el) => observer.observe(el));
+}
+
+document.addEventListener("DOMContentLoaded", initScrollReveal);
 
 /**
  * Generate ATS-friendly PDF CV
