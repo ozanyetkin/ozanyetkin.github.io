@@ -14,6 +14,21 @@
 </head>
 
 <body>
+  <!-- Boot Splash: terminal-style intro animation. Visible by default via
+       CSS so it never flashes the page underneath before script.js takes
+       over; the <noscript> rule hides it when JS (the only thing that ever
+       dismisses it) is unavailable. -->
+  <div id="boot-overlay" class="boot-overlay" aria-hidden="true">
+    <pre id="boot-text" class="boot-text"><span class="boot-prompt">&gt;</span> <span id="boot-input"></span></pre>
+  </div>
+  <noscript>
+    <style>
+      .boot-overlay {
+        display: none !important;
+      }
+    </style>
+  </noscript>
+
   <!-- Mobile Button Bar -->
   <div class="mobile-button-bar">
     <span class="mobile-bar-title">hello world!</span>
@@ -45,41 +60,40 @@
   <button id="ats-toggle-btn" class="downloadbtn">▼</button>
   <div id="main" class="main-content">
     <div class="hero">
-      <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="profile-header">
-      <img src="/img/avatar.png" alt="Profile photo of Ozan Yetkin" loading="lazy"
-        style="width: 160px; height: 160px;" />
-      <div class="profile-info">
-        <h1 id="contact-info">Ozan Yetkin</h1>
-        <br />
-        <h2>
-          <span>Researcher</span> |
-          <span>Developer</span> |
-          <span>Designer</span>
-        </h2>
-        <div class="contact-info">
-          <span><strong>web: </strong><a href="http://ozanyetkin.com" target="_blank"
-              rel="noopener noreferrer">ozanyetkin.com</a> | <a href="http://dds.archweb.metu.edu.tr" target="_blank"
-              rel="noopener noreferrer">dds.archweb.metu.edu.tr</a>
-          </span>
-          <span><strong>e-mail: </strong><a href="mailto:oyetkin@metu.edu.tr">oyetkin@metu.edu.tr</a> | <a
-              href="mailto:ozan.yetkin@metu.edu.tr">ozan.yetkin@metu.edu.tr</a></span>
-          <span><strong>social: </strong><a href="https://linkedin.com/in/ozan-yetkin/" target="_blank"
-              rel="noopener noreferrer">LinkedIn</a> | <a href="https://github.com/ozanyetkin/" target="_blank"
-              rel="noopener noreferrer">GitHub</a> | <a href="https://researchgate.net/profile/Ozan-Yetkin"
-              target="_blank" rel="noopener noreferrer">ResearchGate</a> | <a
-              href="https://scholar.google.com/citations?user=ZmK_a4EAAAAJ" target="_blank"
-              rel="noopener noreferrer">Scholar</a></span>
-          <span><strong>office: </strong><a href="https://maps.app.goo.gl/FymNDt9nyXz2W9AK9" target="_blank"
-              rel="noopener noreferrer">METU
-              Digital Design Studio</a>
-            |
-            <a href="https://maps.app.goo.gl/yDvWbpzhS4C9CQ8C6" target="_blank" rel="noopener noreferrer">METU
-              Technopolis
-              CoZone</a>
-          </span>
+        <img src="/img/avatar.png" alt="Profile photo of Ozan Yetkin" loading="lazy"
+          style="width: 160px; height: 160px;" />
+        <div class="profile-info">
+          <h1 id="contact-info">Ozan Yetkin</h1>
+          <br />
+          <h2>
+            <span>Researcher</span> |
+            <span>Developer</span> |
+            <span>Designer</span>
+          </h2>
+          <div class="contact-info">
+            <span><strong>web: </strong><a href="http://ozanyetkin.com" target="_blank"
+                rel="noopener noreferrer">ozanyetkin.com</a> | <a href="http://dds.archweb.metu.edu.tr" target="_blank"
+                rel="noopener noreferrer">dds.archweb.metu.edu.tr</a>
+            </span>
+            <span><strong>e-mail: </strong><a href="mailto:oyetkin@metu.edu.tr">oyetkin@metu.edu.tr</a> | <a
+                href="mailto:ozan.yetkin@metu.edu.tr">ozan.yetkin@metu.edu.tr</a></span>
+            <span><strong>social: </strong><a href="https://linkedin.com/in/ozan-yetkin/" target="_blank"
+                rel="noopener noreferrer">LinkedIn</a> | <a href="https://github.com/ozanyetkin/" target="_blank"
+                rel="noopener noreferrer">GitHub</a> | <a href="https://researchgate.net/profile/Ozan-Yetkin"
+                target="_blank" rel="noopener noreferrer">ResearchGate</a> | <a
+                href="https://scholar.google.com/citations?user=ZmK_a4EAAAAJ" target="_blank"
+                rel="noopener noreferrer">Scholar</a></span>
+            <span><strong>office: </strong><a href="https://maps.app.goo.gl/FymNDt9nyXz2W9AK9" target="_blank"
+                rel="noopener noreferrer">METU
+                Digital Design Studio</a>
+              |
+              <a href="https://maps.app.goo.gl/yDvWbpzhS4C9CQ8C6" target="_blank" rel="noopener noreferrer">METU
+                Technopolis
+                CoZone</a>
+            </span>
+          </div>
         </div>
-      </div>
       </div>
     </div>
 
@@ -179,6 +193,7 @@
             <span>2013 – 2017</span>
           </div>
           <span>Middle East Technical University (METU), Department of Architecture</span>
+          <span class="item-description">Graduated as an Honor Student, ranking 3rd out of 131 students</span>
         </div>
       </div>
     </div>

@@ -20,6 +20,9 @@ const getSidebarWidth = () => {
 // If you change this value, update the corresponding CSS transition so animations stay aligned.
 const ANIMATION_DURATION = 300;
 
+// Keep in sync with the `.reveal` opacity transition duration in style.css (0.5s).
+const cardRevealDuration = 500;
+
 // Keep in sync with CSS media queries that use the same breakpoint (e.g. `@media (max-width: 768px)`).
 // If you change this value, update the CSS media query breakpoint to match.
 const MOBILE_BREAKPOINT = 768;
@@ -96,10 +99,6 @@ function toggleTheme() {
     themeIcon.textContent = "⬤";
     localStorage.setItem("theme", "light");
   }
-
-  // Recolor the hero canvas immediately (matters most when motion is reduced
-  // and there's no animation loop to pick up the new theme colors on its own)
-  if (typeof renderHeroFrame === "function") renderHeroFrame();
 }
 
 /**
@@ -347,183 +346,574 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/**
- * Generative hero canvas
- * Draws a field of twinkling pixel dust behind the profile header as a
- * decorative nod to the generative-systems/data-viz work in the portfolio,
- * rendered in a chunky pixel-art style that echoes the pixelated avatar next
- * to it. The scene is composited at a low-resolution grid, then scaled up
- * with image smoothing disabled so every speck snaps to a hard-edged square.
- * Colors are drawn from the avatar's own palette so the two feel like one
- * piece. When the visitor prefers reduced motion, a single static frame is
- * rendered instead of looping.
- */
-const HERO_DUST_COUNT = 90;
-const HERO_PIXEL_SIZE = 5;
-const HERO_DUST_MIN_CYCLE = 90;
-const HERO_DUST_MAX_CYCLE = 220;
-// Sampled from img/avatar.png so the backdrop shares the portrait's palette.
-const HERO_PALETTE = [
-  "#ab1f65",
-  "#ff4f69",
-  "#ffda45",
-  "#ff8142",
-  "#3368dc",
-  "#fff7f8",
-];
-
-let heroCanvas = null;
-let heroCtx = null;
-let heroOffscreen = null;
-let heroOffCtx = null;
-let heroDust = [];
-let heroWidth = 0;
-let heroHeight = 0;
-let heroCols = 0;
-let heroRows = 0;
-let heroAnimationId = null;
 const heroPrefersReducedMotion =
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function resizeHeroCanvas() {
-  const rect = heroCanvas.parentElement.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  heroWidth = rect.width;
-  heroHeight = rect.height;
-  heroCanvas.width = heroWidth * dpr;
-  heroCanvas.height = heroHeight * dpr;
-  heroCanvas.style.width = `${heroWidth}px`;
-  heroCanvas.style.height = `${heroHeight}px`;
-  heroCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  heroCols = Math.max(1, Math.ceil(heroWidth / HERO_PIXEL_SIZE));
-  heroRows = Math.max(1, Math.ceil(heroHeight / HERO_PIXEL_SIZE));
-  if (!heroOffscreen) heroOffscreen = document.createElement("canvas");
-  heroOffscreen.width = heroCols;
-  heroOffscreen.height = heroRows;
-  heroOffCtx = heroOffscreen.getContext("2d");
-}
-
-// A speck of dust lives at a fixed grid cell, fades in and back out over a
-// random-length cycle, then respawns elsewhere with a new color and timing
-// so the field never settles into a visible rhythm.
-function createHeroDustParticle() {
-  return {
-    gx: Math.floor(Math.random() * heroCols),
-    gy: Math.floor(Math.random() * heroRows),
-    size: Math.random() < 0.25 ? 2 : 1,
-    color: HERO_PALETTE[Math.floor(Math.random() * HERO_PALETTE.length)],
-    cycle:
-      HERO_DUST_MIN_CYCLE +
-      Math.random() * (HERO_DUST_MAX_CYCLE - HERO_DUST_MIN_CYCLE),
-    phase: Math.random(),
-  };
-}
-
-function createHeroDust() {
-  heroDust = Array.from({ length: HERO_DUST_COUNT }, createHeroDustParticle);
-}
-
-function renderHeroFrame() {
-  if (!heroCanvas || !heroCtx || !heroOffCtx || !heroWidth || !heroHeight)
-    return;
-
-  heroOffCtx.clearRect(0, 0, heroCols, heroRows);
-
-  heroDust.forEach((p) => {
-    if (!heroPrefersReducedMotion) {
-      p.phase += 1 / p.cycle;
-      if (p.phase >= 1) Object.assign(p, createHeroDustParticle());
-    }
-    const alpha = Math.sin(p.phase * Math.PI);
-    if (alpha <= 0.02) return;
-    heroOffCtx.globalAlpha = alpha;
-    heroOffCtx.fillStyle = p.color;
-    heroOffCtx.fillRect(p.gx, p.gy, p.size, p.size);
-  });
-
-  heroOffCtx.globalAlpha = 1;
-  heroCtx.clearRect(0, 0, heroWidth, heroHeight);
-  heroCtx.imageSmoothingEnabled = false;
-  heroCtx.drawImage(
-    heroOffscreen,
-    0,
-    0,
-    heroCols,
-    heroRows,
-    0,
-    0,
-    heroWidth,
-    heroHeight,
-  );
-
-  if (!heroPrefersReducedMotion) {
-    heroAnimationId = requestAnimationFrame(renderHeroFrame);
-  }
-}
-
-function initHeroCanvas() {
-  heroCanvas = document.getElementById("hero-canvas");
-  if (!heroCanvas) return;
-  heroCtx = heroCanvas.getContext("2d");
-
-  resizeHeroCanvas();
-  createHeroDust();
-
-  if (heroAnimationId) cancelAnimationFrame(heroAnimationId);
-  renderHeroFrame();
-
-  window.addEventListener("resize", () => {
-    resizeHeroCanvas();
-    if (heroPrefersReducedMotion) renderHeroFrame();
-  });
-}
-
-document.addEventListener("DOMContentLoaded", initHeroCanvas);
-
 /**
  * Scroll-reveal micro-interactions
- * Fades/slides content into place as it enters the viewport. Restrained by
- * design: short duration, small travel distance, one-time per element, and a
- * no-op under prefers-reduced-motion (everything is simply visible immediately).
+ * Portfolio thumbnails still fade/type in lazily as the user scrolls to
+ * them (there are dozens of them — too many to front-load). Featured-work
+ * cards *used* to be on this same scroll-triggered path, but there are only
+ * 4 of them, sitting right under the hero — practically always at least
+ * partly in the initial viewport — so gating them behind
+ * IntersectionObserver meant their reveal timing rode on the observer's
+ * batching, which isn't reliable (a fast scroll can coalesce entering and
+ * leaving into one event, or split simultaneously-visible cards across
+ * separate callback invocations with no stagger between them, or — if the
+ * observer never got a chance to register the intersection on the way past
+ * — only actually fire once the user scrolls back up to it, reading as "it
+ * retypes after I scroll down and up"). They're now front-loaded instead,
+ * the same way CV sections are: revealed deterministically right when
+ * Featured Work's own title finishes typing (see revealFeaturedCards,
+ * called from revealSectionTitles) — no observer involved at all. CV
+ * sections themselves are NOT scroll-triggered either: every section title
+ * types out at the same time, right after the boot splash (see
+ * `revealSectionTitles`) — a section near the top of the page used to race
+ * the boot overlay's fade (IntersectionObserver fires as soon as
+ * `observe()` is called for anything already in the viewport), finishing
+ * its whole typing animation invisibly behind the still-opaque overlay. This
+ * setup wraps every section title into hidden tw-chars up front too (see
+ * sectionTitleSpans) — otherwise a title lower on the page sits fully
+ * visible as plain text until its turn, then suddenly blanks out and
+ * retypes, which read as "displayed first, animates after". Restrained by
+ * design otherwise (short duration, small travel distance, one-time per
+ * element, and a no-op under prefers-reduced-motion).
  */
 function initScrollReveal() {
-  const revealTargets = document.querySelectorAll(
-    ".section, .featured-card, .thumbnail",
-  );
-  if (!revealTargets.length) return;
+  const cardTargets = document.querySelectorAll(".thumbnail");
+  const sectionTargets = document.querySelectorAll(".section");
+  if (!cardTargets.length && !sectionTargets.length) return;
 
   if (
     heroPrefersReducedMotion ||
     typeof IntersectionObserver === "undefined"
   ) {
-    revealTargets.forEach((el) => el.classList.add("is-visible"));
+    cardTargets.forEach((el) => el.classList.add("is-visible"));
+    sectionTargets.forEach((el) => el.classList.add("is-visible"));
     return;
   }
 
-  revealTargets.forEach((el) => el.classList.add("reveal"));
+  // Hero pieces: the name types out letter-by-letter (wrapped into hidden
+  // tw-chars up front, same reasoning as sectionTitleSpans below — otherwise
+  // it'd sit fully visible until its turn, then blank out and retype), while
+  // the title/contact lines pop in item-by-item once the boot splash
+  // finishes — see revealHeroItems.
+  const nameEl = document.querySelector(".profile-info h1");
+  if (nameEl) heroNameSpans = wrapCharsForTypewriter(nameEl);
+  getHeroPopItems().forEach((el) => el.classList.add("item-pending"));
+
+  // Deliberately NOT giving .section the box-level `.reveal` fade (only
+  // cards/thumbnails get it): that fade animates the *parent's* opacity
+  // 0→1 over 500ms, and since opacity compounds through parent and child,
+  // it visually smothered the much snappier per-character title typing
+  // underneath into one blurry fade instead of distinct letters appearing —
+  // that's what made the letter-by-letter animation hard to see. Sections
+  // reveal purely through their title's tw-char typing and their content's
+  // item-pending pop-in, with no extra wrapper animation on top.
+  cardTargets.forEach((el) => el.classList.add("reveal"));
+  sectionTargets.forEach((el) => {
+    // Every section title is wrapped into (hidden) tw-chars right now,
+    // up front, rather than lazily when its turn to type comes around —
+    // otherwise a title further down the page sits fully visible as plain
+    // text (nothing hid it) until the reveal sequence reaches it, at which
+    // point it would suddenly blank out and only then start typing: a
+    // visible "shown first, animates after" flash. The spans are stashed in
+    // sectionTitleSpans so revealSectionTitles can just type them later
+    // without re-wrapping (wrapping already-wrapped text would nest tw-c
+    // inside tw-c).
+    const titleEl = el.querySelector(":scope > .section-title");
+    if (titleEl) {
+      sectionTitleSpans.set(titleEl, wrapCharsForTypewriter(titleEl));
+    }
+
+    // Featured Work reveals each card individually (see revealFeaturedCards)
+    // rather than the section's single .featured-grid wrapper as one block —
+    // mark the cards themselves hidden, not the grid.
+    if (el.id === "featured-work") {
+      el.querySelectorAll(".featured-card").forEach((card) =>
+        card.classList.add("item-pending"),
+      );
+      return;
+    }
+
+    // Sections type their title letter-by-letter and only then reveal the
+    // body, item by item — mark each item hidden up front so there's no
+    // flash of fully-visible content before that handoff happens. Research
+    // Interests' single paragraph gets split into comma-separated keyword
+    // chips instead (see revealResearchKeywords) once its title finishes —
+    // marking the whole .item hidden here (already the default child of
+    // .section-content) is enough to keep its raw, unsplit text from
+    // flashing before that split happens.
+    const contentEl = el.querySelector(":scope > .section-content");
+    if (contentEl) {
+      Array.from(contentEl.children).forEach((child) =>
+        child.classList.add("item-pending"),
+      );
+    }
+  });
 
   // threshold: 0 fires on the first pixel of overlap. A higher threshold looks
   // nicer for small cards, but breaks for elements taller than the viewport
   // (e.g. the Portfolio section on mobile) since their intersection ratio can
   // never reach it — they'd stay permanently hidden.
-  const observer = new IntersectionObserver(
+  const cardObserver = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
+      // Cards that scroll into view together (e.g. a whole row/grid at
+      // once, or a fast scroll past a run of thumbnails) used to all fade
+      // and start typing in the same instant — no perceptible order at all.
+      // Staggering by position within *this* batch makes them cascade in
+      // one after another instead, budgeted the same way section items are
+      // (see computeStaggerInterval) so a big batch doesn't take forever.
+      const visible = entries.filter((entry) => entry.isIntersecting);
+      if (!visible.length) return;
+      const staggerInterval = computeStaggerInterval(visible.length);
+
+      visible.forEach((entry, i) => {
+        const el = entry.target;
+        cardObserver.unobserve(el);
+
+        setTimeout(() => {
+          el.classList.add("is-visible");
+
+          // Wait for the card's own `.reveal` opacity fade-in (500ms, see
+          // style.css) to finish before starting the letter-by-letter
+          // title/desc typing inside it — see afterOpacityTransition.
+          afterOpacityTransition(el, cardRevealDuration, () => {
+            typeElementText(el, null, () => contentTypeSpeed);
+          });
+        }, i * staggerInterval);
       });
     },
     { threshold: 0 },
   );
 
-  revealTargets.forEach((el) => observer.observe(el));
+  cardTargets.forEach((el) => cardObserver.observe(el));
 }
 
 document.addEventListener("DOMContentLoaded", initScrollReveal);
+
+/**
+ * Terminal typewriter engine
+ * Wraps the visible text inside an element into one <tw-c class="tw-char">
+ * per character (whitespace stays as plain text nodes so wrapping/spacing is
+ * unaffected), then reveals those elements one at a time via a
+ * self-scheduling setTimeout loop. A custom `<tw-c>` tag (undefined elements
+ * are inline by default) is used instead of `<span>` on purpose: this
+ * stylesheet has several existing `span`-targeting rules (`.contact-info
+ * span`, `.item span:first-of-type`, `.item span:first-child::before`)
+ * meant for the CV's structural spans — reusing `<span>` for character
+ * wrappers would make those rules misfire on individual letters. The
+ * original text nodes stay intact until the moment they're wrapped, so
+ * markup (links, bold, etc.) and copy/paste both keep working normally.
+ */
+let contentTypeSpeed = 32; // ms between characters for CV/section content
+const bootTypeSpeed = 60; // ms between characters typing the boot splash
+const bootEraseSpeed = 26; // ms between characters rolling the boot splash back
+
+// Item-by-item pop-in (hero pieces, section-content children, card/thumbnail
+// batches) uses a budget-based interval rather than one flat speed: a fixed
+// 45ms gap was too fast to read as separate items for short lists (2-4
+// items, e.g. Research Interests' single paragraph, Featured Work's cards)
+// while, for a long list, the same *ceiling* would make the whole section
+// take forever to finish. Spending a roughly fixed total budget across the
+// list — clamped between a floor (keeps very long sections snappy) and a
+// ceiling (keeps very short ones from feeling instant) — makes short lists
+// visibly cascade without letting long ones (Organized Events, Assisted
+// Courses, ~13-14 items) run past ~0.7s.
+const ITEM_REVEAL_MIN_INTERVAL = 40;
+const ITEM_REVEAL_MAX_INTERVAL = 130;
+const ITEM_REVEAL_BUDGET = 700;
+
+function computeStaggerInterval(count) {
+  if (count <= 1) return 0;
+  const budgeted = ITEM_REVEAL_BUDGET / (count - 1);
+  return Math.max(
+    ITEM_REVEAL_MIN_INTERVAL,
+    Math.min(ITEM_REVEAL_MAX_INTERVAL, budgeted),
+  );
+}
+
+// Section titles are wrapped into (hidden) tw-chars up front by
+// initScrollReveal, before any of them are actually typed — this map holds
+// on to those spans so revealSectionTitles can type them later without
+// re-wrapping already-wrapped text.
+const sectionTitleSpans = new WeakMap();
+
+// Same idea for the hero name (.profile-info h1) — a single element, so a
+// plain variable rather than a WeakMap is enough. Populated by
+// initScrollReveal, consumed by revealHeroItems.
+let heroNameSpans = [];
+
+// Splits the text nodes under `root` into individually-revealable <span>s and
+// returns them in document order. `skipSelector`, if given, excludes text
+// nodes whose nearest matching ancestor isn't `root` itself (for excluding a
+// nested subtree that's typed independently, should one ever exist again —
+// nothing currently passes a non-null skipSelector).
+function wrapCharsForTypewriter(root, skipSelector) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !/\S/.test(node.nodeValue)) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      if (skipSelector) {
+        const container = node.parentElement && node.parentElement.closest(skipSelector);
+        if (container && container !== root) return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+
+  const textNodes = [];
+  let node;
+  while ((node = walker.nextNode())) textNodes.push(node);
+
+  const spans = [];
+  textNodes.forEach((textNode) => {
+    const frag = document.createDocumentFragment();
+    for (const ch of textNode.nodeValue) {
+      if (ch === " " || ch === "\n" || ch === "\t") {
+        frag.appendChild(document.createTextNode(ch));
+        continue;
+      }
+      const span = document.createElement("tw-c");
+      span.className = "tw-char";
+      span.textContent = ch;
+      frag.appendChild(span);
+      spans.push(span);
+    }
+    textNode.parentNode.replaceChild(frag, textNode);
+  });
+
+  return spans;
+}
+
+// Reveals `spans` one at a time, in order.
+function typeSpans(spans, speedGetter, onComplete) {
+  let i = 0;
+  function step() {
+    if (i >= spans.length) {
+      if (onComplete) onComplete();
+      return;
+    }
+    spans[i].classList.add("tw-in");
+    i += 1;
+    setTimeout(step, speedGetter());
+  }
+  step();
+}
+
+// Hides `spans` one at a time, starting from the last character — a
+// terminal "rolling back" what it just typed.
+function untypeSpans(spans, speedGetter, onComplete) {
+  let i = spans.length - 1;
+  function step() {
+    if (i < 0) {
+      if (onComplete) onComplete();
+      return;
+    }
+    spans[i].classList.remove("tw-in");
+    i -= 1;
+    setTimeout(step, speedGetter());
+  }
+  step();
+}
+
+function typeElementText(root, skipSelector, speedGetter, onComplete) {
+  const spans = wrapCharsForTypewriter(root, skipSelector);
+  typeSpans(spans, speedGetter, onComplete);
+}
+
+// Waits for `el`'s own opacity transition to finish before calling `cb` —
+// used to sequence a container's fade-in ahead of an independently
+// opacity-animating child (typed text) so the two don't compound (see
+// feedback-compounding-opacity-masks-child-animation). Checks
+// `e.propertyName === "opacity"` and only unregisters once that specific
+// event fires, rather than `{once: true}` alone — a container fading both
+// `opacity` and `transform` can finish either one first, and `{once: true}`
+// would consume the listener on whichever fires first even if it's the
+// wrong property, silently missing the one this is actually waiting for.
+// `fallbackMs` covers the case where no transition ever plays at all (e.g.
+// the hidden -> visible class change lands in the same tick as first
+// paint, so the browser never renders an intermediate state to animate
+// from, and no `transitionend` fires).
+function afterOpacityTransition(el, fallbackMs, cb) {
+  let done = false;
+  function finish() {
+    if (done) return;
+    done = true;
+    el.removeEventListener("transitionend", onTransitionEnd);
+    cb();
+  }
+  function onTransitionEnd(e) {
+    if (e.propertyName === "opacity") finish();
+  }
+  el.addEventListener("transitionend", onTransitionEnd);
+  setTimeout(finish, fallbackMs);
+}
+
+// Types every element in `elements` concurrently (each on its own
+// character-by-character schedule), calling `onAllComplete` once every one
+// of them has finished. Used to type the hero and sidebar pieces at the same
+// time and only move on to the section sequence once both are fully done.
+function typeElementsInParallel(elements, speedGetter, onAllComplete) {
+  if (!elements.length) {
+    if (onAllComplete) onAllComplete();
+    return;
+  }
+  let remaining = elements.length;
+  elements.forEach((el) => {
+    typeElementText(el, null, speedGetter, () => {
+      remaining -= 1;
+      if (remaining === 0 && onAllComplete) onAllComplete();
+    });
+  });
+}
+
+// Pops each element in `elements` in one at a time (removing the
+// `item-pending` class that starts it hidden/offset — see the
+// `.item-pending` CSS), instead of typing every character of every CV item,
+// which is too slow for long sections.
+function revealElementsStaggered(elements, speedGetter, onComplete) {
+  let i = 0;
+  function step() {
+    if (i >= elements.length) {
+      if (onComplete) onComplete();
+      return;
+    }
+    elements[i].classList.remove("item-pending");
+    i += 1;
+    setTimeout(step, speedGetter());
+  }
+  step();
+}
+
+/**
+ * Boot splash + hero/sidebar/section typewriter intro
+ * Types a "> hello world!" terminal boot line on every page load, pauses,
+ * rolls it back out (character by character, in reverse), then fades the
+ * splash away while: the hero name types out letter-by-letter, the title
+ * and contact lines pop in item-by-item underneath it, the sidebar types
+ * itself out letter-by-letter too (echoing the "> hello world!" prompt
+ * already used there), and once *both* the hero and sidebar finish, every
+ * CV section title starts typing at the same time (see revealSectionTitles)
+ * — not one after another, and not gated by scroll position, so a section
+ * that happens to start out in the viewport (Research Interests, Education,
+ * ...) still gets to play its animation instead of finishing invisibly
+ * behind the overlay. Each section's own items only pop in once *that
+ * section's* title finishes, independent of every other section. Not
+ * skippable by design, and skipped entirely under prefers-reduced-motion,
+ * matching the rest of the site's motion-reduction handling.
+ */
+// The name (h1) types out letter-by-letter instead — see heroNameSpans —
+// so it's excluded here; these are the pieces that still pop in as whole
+// items.
+function getHeroPopItems() {
+  return [
+    document.querySelector(".profile-info h2"),
+    ...document.querySelectorAll(".profile-info .contact-info > span"),
+  ].filter(Boolean);
+}
+
+// Types the name first (echoing the boot prompt's own letter-by-letter
+// "hello world!"), then pops the title/contact lines in underneath it once
+// the name's done — same title-then-items shape sections use.
+function revealHeroItems(onComplete) {
+  const popItems = getHeroPopItems();
+  const revealPopItems = () => {
+    revealElementsStaggered(
+      popItems,
+      () => computeStaggerInterval(popItems.length),
+      onComplete,
+    );
+  };
+  if (heroNameSpans.length) {
+    typeSpans(heroNameSpans, () => contentTypeSpeed, revealPopItems);
+  } else {
+    revealPopItems();
+  }
+}
+
+function revealSidebar(onComplete) {
+  const sidebarTargets = Array.from(
+    document.querySelectorAll("#mySidebar h1, #mySidebar a"),
+  );
+  typeElementsInParallel(sidebarTargets, () => contentTypeSpeed, onComplete);
+}
+
+// Reveals each featured-work card one at a time — item-pending pop-in
+// (fade+rise) for the whole card, staggered the same way section items are
+// (see computeStaggerInterval). Text is left as plain, ordinary text rather
+// than typed letter-by-letter — typing it after the card had already faded
+// in read as a second, redundant reveal stacked on top of the first.
+// Deterministic and front-loaded (called once Featured Work's title
+// finishes typing) rather than scroll-gated — see the comment above
+// initScrollReveal for why.
+function revealFeaturedCards(cards, onComplete) {
+  const staggerInterval = computeStaggerInterval(cards.length);
+  cards.forEach((card, i) => {
+    setTimeout(() => {
+      card.classList.remove("item-pending");
+    }, i * staggerInterval);
+  });
+  if (onComplete) onComplete();
+}
+
+// Splits Research Interests' single comma-separated paragraph into
+// individually-revealable keyword chips (a custom `<tw-kw>` tag, not
+// `<span>` — see feedback-typewriter-span-selectors) instead of popping the
+// whole paragraph in as one block. The surrounding `.item` was already
+// hidden as a whole by initScrollReveal (so the raw, unsplit text never
+// flashes before this runs); it's unhidden here with its transition
+// switched off for one frame so its own opacity change is instant rather
+// than an animated fade compounding with the chips' (see
+// feedback-compounding-opacity-masks-child-animation) — only the chips
+// animate.
+function revealResearchKeywords(section, onComplete) {
+  const item = section.querySelector(":scope > .section-content > .item");
+  const span = item && item.querySelector("span");
+  if (!item || !span) {
+    if (onComplete) onComplete();
+    return;
+  }
+
+  const text = span.textContent.replace(/\s+/g, " ").trim();
+  const parts = text
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  span.textContent = "";
+  const chips = parts.map((part, i) => {
+    const chip = document.createElement("tw-kw");
+    chip.className = "kw-chip item-pending";
+    chip.textContent = i < parts.length - 1 ? `${part},` : part;
+    return chip;
+  });
+  chips.forEach((chip, i) => {
+    span.appendChild(chip);
+    if (i < chips.length - 1) span.appendChild(document.createTextNode(" "));
+  });
+
+  item.style.transition = "none";
+  item.classList.remove("item-pending");
+  void item.offsetWidth; // force a reflow so transition: none actually applies before...
+  item.style.transition = "";
+
+  revealElementsStaggered(chips, () => computeStaggerInterval(chips.length), onComplete);
+}
+
+// Types every section's title at the same time (all independently, each on
+// its own schedule — not one after another) rather than making sections
+// wait their turn: the sequential version had a section's title finish
+// letter-typing and then just sit there while earlier sections were still
+// working through theirs, which read as "waiting on scroll" even though
+// nothing was scroll-gated. Each section's items still only pop in — one by
+// one — once *that section's own* title finishes, independent of any other
+// section's progress.
+function revealSectionTitles() {
+  document.querySelectorAll(".section").forEach((el) => {
+    const titleEl = el.querySelector(":scope > .section-title");
+    const contentEl = el.querySelector(":scope > .section-content");
+    const revealItems = () => {
+      if (el.id === "featured-work") {
+        const cards = Array.from(el.querySelectorAll(".featured-card"));
+        if (cards.length) revealFeaturedCards(cards);
+        return;
+      }
+      if (el.id === "research-interests") {
+        revealResearchKeywords(el);
+        return;
+      }
+      if (contentEl) {
+        const items = Array.from(contentEl.children);
+        revealElementsStaggered(items, () => computeStaggerInterval(items.length));
+      }
+    };
+    const spans = titleEl ? sectionTitleSpans.get(titleEl) : null;
+    if (spans && spans.length) {
+      typeSpans(spans, () => contentTypeSpeed, revealItems);
+    } else {
+      revealItems();
+    }
+  });
+}
+
+// Grows/shrinks `el`'s plain text content one character at a time. Used only
+// for the boot splash's "hello world!" input (a single flat string with no
+// markup to preserve), rather than the <tw-c>-span engine used everywhere
+// else — see the comment above #boot-input in style.css for why: real,
+// ordinary text here gives the blinking cursor a normal baseline to track,
+// instead of needing width/overflow tricks that threw off the whole line's
+// vertical alignment.
+function typeBootInput(el, text, speedGetter, onComplete) {
+  let i = 0;
+  function step() {
+    el.textContent = text.slice(0, i);
+    if (i >= text.length) {
+      if (onComplete) onComplete();
+      return;
+    }
+    i += 1;
+    setTimeout(step, speedGetter());
+  }
+  step();
+}
+
+function untypeBootInput(el, text, speedGetter, onComplete) {
+  let i = text.length;
+  function step() {
+    el.textContent = text.slice(0, i);
+    if (i <= 0) {
+      if (onComplete) onComplete();
+      return;
+    }
+    i -= 1;
+    setTimeout(step, speedGetter());
+  }
+  step();
+}
+
+function startBootSequence() {
+  const overlay = document.getElementById("boot-overlay");
+  const bootInputEl = document.getElementById("boot-input");
+
+  if (
+    heroPrefersReducedMotion ||
+    !overlay ||
+    !bootInputEl ||
+    typeof IntersectionObserver === "undefined"
+  ) {
+    if (overlay) overlay.style.display = "none";
+    return;
+  }
+
+  const bootText = "hello world!";
+
+  typeBootInput(bootInputEl, bootText, () => bootTypeSpeed, () => {
+    setTimeout(() => {
+      untypeBootInput(bootInputEl, bootText, () => bootEraseSpeed, () => {
+        setTimeout(() => {
+          overlay.classList.add("is-hidden");
+
+          let remaining = 2;
+          const afterHeroAndSidebar = () => {
+            remaining -= 1;
+            if (remaining === 0) revealSectionTitles();
+          };
+          revealHeroItems(afterHeroAndSidebar);
+          revealSidebar(afterHeroAndSidebar);
+
+          setTimeout(() => {
+            overlay.style.display = "none";
+          }, 500);
+        }, 200);
+      });
+    }, 700);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", startBootSequence);
 
 /**
  * Generate ATS-friendly PDF CV
