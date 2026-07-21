@@ -525,6 +525,11 @@ const ITEM_REVEAL_MIN_INTERVAL = 40;
 const ITEM_REVEAL_MAX_INTERVAL = 130;
 const ITEM_REVEAL_BUDGET = 700;
 
+// Keep in sync with the item-pop transition duration in style.css (0.26s) —
+// used to predict when a section's last item finishes fading in, not just
+// when it starts (see revealSectionTitles).
+const ITEM_POP_TRANSITION_MS = 260;
+
 function computeStaggerInterval(count) {
   if (count <= 1) return 0;
   const budgeted = ITEM_REVEAL_BUDGET / (count - 1);
@@ -811,31 +816,73 @@ function revealResearchKeywords(section, onComplete) {
 // nothing was scroll-gated. Each section's items still only pop in — one by
 // one — once *that section's own* title finishes, independent of any other
 // section's progress.
+//
+// Left alone, sections with a longer title or more items simply take
+// longer end-to-end, so they finish trickling in well after short ones —
+// "Assisted Courses" still popping items in while "Languages" settled a
+// second ago. Every section's total reveal time (title typing + item
+// stagger) is predicted up front (see predictSectionRevealDuration), and
+// every section but the single slowest one is given a matching *start*
+// delay so they all still finish at the same moment — short sections just
+// wait a beat before they start, rather than racing ahead and idling.
+function getSectionItemCount(el) {
+  if (el.id === "featured-work") {
+    return el.querySelectorAll(".featured-card").length;
+  }
+  if (el.id === "research-interests") {
+    const span = el.querySelector(":scope > .section-content > .item span");
+    const text = span ? span.textContent.replace(/\s+/g, " ").trim() : "";
+    return text ? text.split(",").filter((part) => part.trim()).length : 0;
+  }
+  const contentEl = el.querySelector(":scope > .section-content");
+  return contentEl ? contentEl.children.length : 0;
+}
+
+function predictSectionRevealDuration(el) {
+  const titleEl = el.querySelector(":scope > .section-title");
+  const spans = titleEl ? sectionTitleSpans.get(titleEl) : null;
+  const titleDuration = spans && spans.length ? spans.length * contentTypeSpeed : 0;
+
+  const itemCount = getSectionItemCount(el);
+  if (itemCount === 0) return titleDuration;
+  const staggerTail =
+    itemCount > 1 ? (itemCount - 1) * computeStaggerInterval(itemCount) : 0;
+
+  return titleDuration + staggerTail + ITEM_POP_TRANSITION_MS;
+}
+
 function revealSectionTitles() {
-  document.querySelectorAll(".section").forEach((el) => {
-    const titleEl = el.querySelector(":scope > .section-title");
-    const contentEl = el.querySelector(":scope > .section-content");
-    const revealItems = () => {
-      if (el.id === "featured-work") {
-        const cards = Array.from(el.querySelectorAll(".featured-card"));
-        if (cards.length) revealFeaturedCards(cards);
-        return;
+  const sections = Array.from(document.querySelectorAll(".section"));
+  const durations = sections.map(predictSectionRevealDuration);
+  const maxDuration = durations.length ? Math.max(...durations) : 0;
+
+  sections.forEach((el, i) => {
+    const startDelay = maxDuration - durations[i];
+    setTimeout(() => {
+      const titleEl = el.querySelector(":scope > .section-title");
+      const contentEl = el.querySelector(":scope > .section-content");
+      const revealItems = () => {
+        if (el.id === "featured-work") {
+          const cards = Array.from(el.querySelectorAll(".featured-card"));
+          if (cards.length) revealFeaturedCards(cards);
+          return;
+        }
+        if (el.id === "research-interests") {
+          revealResearchKeywords(el);
+          return;
+        }
+        if (contentEl) {
+          const items = Array.from(contentEl.children);
+          revealElementsStaggered(items, () => computeStaggerInterval(items.length));
+        }
+      };
+      const spans = titleEl ? sectionTitleSpans.get(titleEl) : null;
+      if (spans && spans.length) {
+        typeSpans(spans, () => contentTypeSpeed, revealItems);
+      } else {
+        revealItems();
       }
-      if (el.id === "research-interests") {
-        revealResearchKeywords(el);
-        return;
-      }
-      if (contentEl) {
-        const items = Array.from(contentEl.children);
-        revealElementsStaggered(items, () => computeStaggerInterval(items.length));
-      }
-    };
-    const spans = titleEl ? sectionTitleSpans.get(titleEl) : null;
-    if (spans && spans.length) {
-      typeSpans(spans, () => contentTypeSpeed, revealItems);
-    } else {
-      revealItems();
-    }
+    }, startDelay);
   });
 }
 

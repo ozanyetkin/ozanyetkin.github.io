@@ -452,6 +452,7 @@ h3 {
   background: color-mix(in srgb, var(--text-color) 4%, transparent);
   border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
   transition:
+    opacity 0.26s ease,
     transform var(--transition),
     border-color var(--transition),
     box-shadow var(--transition);
