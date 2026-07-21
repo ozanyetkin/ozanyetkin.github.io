@@ -349,31 +349,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /**
  * Generative hero canvas
- * Draws a slowly drifting node network behind the profile header as a decorative
- * nod to the generative-systems/data-viz work in the portfolio. Colors are read
- * live from the current theme's CSS variables. When the visitor prefers reduced
- * motion, a single static frame is rendered instead of looping.
+ * Draws a field of twinkling pixel dust behind the profile header as a
+ * decorative nod to the generative-systems/data-viz work in the portfolio,
+ * rendered in a chunky pixel-art style that echoes the pixelated avatar next
+ * to it. The scene is composited at a low-resolution grid, then scaled up
+ * with image smoothing disabled so every speck snaps to a hard-edged square.
+ * Colors are drawn from the avatar's own palette so the two feel like one
+ * piece. When the visitor prefers reduced motion, a single static frame is
+ * rendered instead of looping.
  */
-const HERO_NODE_COUNT = 42;
-const HERO_LINK_DISTANCE = 120;
+const HERO_DUST_COUNT = 90;
+const HERO_PIXEL_SIZE = 5;
+const HERO_DUST_MIN_CYCLE = 90;
+const HERO_DUST_MAX_CYCLE = 220;
+// Sampled from img/avatar.png so the backdrop shares the portrait's palette.
+const HERO_PALETTE = [
+  "#ab1f65",
+  "#ff4f69",
+  "#ffda45",
+  "#ff8142",
+  "#3368dc",
+  "#fff7f8",
+];
 
 let heroCanvas = null;
 let heroCtx = null;
-let heroNodes = [];
+let heroOffscreen = null;
+let heroOffCtx = null;
+let heroDust = [];
 let heroWidth = 0;
 let heroHeight = 0;
+let heroCols = 0;
+let heroRows = 0;
 let heroAnimationId = null;
 const heroPrefersReducedMotion =
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-function getHeroColors() {
-  const styles = getComputedStyle(document.body);
-  return {
-    dot: styles.getPropertyValue("--accent-color").trim() || "#ffd943",
-    line: styles.getPropertyValue("--link-color").trim() || "#76a1ff",
-  };
-}
 
 function resizeHeroCanvas() {
   const rect = heroCanvas.parentElement.getBoundingClientRect();
@@ -385,57 +396,67 @@ function resizeHeroCanvas() {
   heroCanvas.style.width = `${heroWidth}px`;
   heroCanvas.style.height = `${heroHeight}px`;
   heroCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  heroCols = Math.max(1, Math.ceil(heroWidth / HERO_PIXEL_SIZE));
+  heroRows = Math.max(1, Math.ceil(heroHeight / HERO_PIXEL_SIZE));
+  if (!heroOffscreen) heroOffscreen = document.createElement("canvas");
+  heroOffscreen.width = heroCols;
+  heroOffscreen.height = heroRows;
+  heroOffCtx = heroOffscreen.getContext("2d");
 }
 
-function createHeroNodes() {
-  heroNodes = Array.from({ length: HERO_NODE_COUNT }, () => ({
-    x: Math.random() * heroWidth,
-    y: Math.random() * heroHeight,
-    vx: (Math.random() - 0.5) * 0.25,
-    vy: (Math.random() - 0.5) * 0.25,
-  }));
+// A speck of dust lives at a fixed grid cell, fades in and back out over a
+// random-length cycle, then respawns elsewhere with a new color and timing
+// so the field never settles into a visible rhythm.
+function createHeroDustParticle() {
+  return {
+    gx: Math.floor(Math.random() * heroCols),
+    gy: Math.floor(Math.random() * heroRows),
+    size: Math.random() < 0.25 ? 2 : 1,
+    color: HERO_PALETTE[Math.floor(Math.random() * HERO_PALETTE.length)],
+    cycle:
+      HERO_DUST_MIN_CYCLE +
+      Math.random() * (HERO_DUST_MAX_CYCLE - HERO_DUST_MIN_CYCLE),
+    phase: Math.random(),
+  };
+}
+
+function createHeroDust() {
+  heroDust = Array.from({ length: HERO_DUST_COUNT }, createHeroDustParticle);
 }
 
 function renderHeroFrame() {
-  if (!heroCanvas || !heroCtx || !heroWidth || !heroHeight) return;
-  const { dot, line } = getHeroColors();
-  heroCtx.clearRect(0, 0, heroWidth, heroHeight);
+  if (!heroCanvas || !heroCtx || !heroOffCtx || !heroWidth || !heroHeight)
+    return;
 
-  if (!heroPrefersReducedMotion) {
-    heroNodes.forEach((n) => {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > heroWidth) n.vx *= -1;
-      if (n.y < 0 || n.y > heroHeight) n.vy *= -1;
-    });
-  }
+  heroOffCtx.clearRect(0, 0, heroCols, heroRows);
 
-  for (let i = 0; i < heroNodes.length; i++) {
-    for (let j = i + 1; j < heroNodes.length; j++) {
-      const a = heroNodes[i];
-      const b = heroNodes[j];
-      const dx = a.x - b.x;
-      const dy = a.y - b.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < HERO_LINK_DISTANCE) {
-        heroCtx.strokeStyle = line;
-        heroCtx.globalAlpha = 1 - dist / HERO_LINK_DISTANCE;
-        heroCtx.lineWidth = 1;
-        heroCtx.beginPath();
-        heroCtx.moveTo(a.x, a.y);
-        heroCtx.lineTo(b.x, b.y);
-        heroCtx.stroke();
-      }
+  heroDust.forEach((p) => {
+    if (!heroPrefersReducedMotion) {
+      p.phase += 1 / p.cycle;
+      if (p.phase >= 1) Object.assign(p, createHeroDustParticle());
     }
-  }
-
-  heroCtx.globalAlpha = 1;
-  heroNodes.forEach((n) => {
-    heroCtx.fillStyle = dot;
-    heroCtx.beginPath();
-    heroCtx.arc(n.x, n.y, 1.8, 0, Math.PI * 2);
-    heroCtx.fill();
+    const alpha = Math.sin(p.phase * Math.PI);
+    if (alpha <= 0.02) return;
+    heroOffCtx.globalAlpha = alpha;
+    heroOffCtx.fillStyle = p.color;
+    heroOffCtx.fillRect(p.gx, p.gy, p.size, p.size);
   });
+
+  heroOffCtx.globalAlpha = 1;
+  heroCtx.clearRect(0, 0, heroWidth, heroHeight);
+  heroCtx.imageSmoothingEnabled = false;
+  heroCtx.drawImage(
+    heroOffscreen,
+    0,
+    0,
+    heroCols,
+    heroRows,
+    0,
+    0,
+    heroWidth,
+    heroHeight,
+  );
 
   if (!heroPrefersReducedMotion) {
     heroAnimationId = requestAnimationFrame(renderHeroFrame);
@@ -448,7 +469,7 @@ function initHeroCanvas() {
   heroCtx = heroCanvas.getContext("2d");
 
   resizeHeroCanvas();
-  createHeroNodes();
+  createHeroDust();
 
   if (heroAnimationId) cancelAnimationFrame(heroAnimationId);
   renderHeroFrame();
