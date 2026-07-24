@@ -411,7 +411,18 @@ function initScrollReveal() {
   // that's what made the letter-by-letter animation hard to see. Sections
   // reveal purely through their title's tw-char typing and their content's
   // item-pending pop-in, with no extra wrapper animation on top.
-  cardTargets.forEach((el) => el.classList.add("reveal"));
+  // Also wrapped into hidden tw-chars right now, up front — same reasoning
+  // as sectionTitleSpans just below. The observer callback used to wrap the
+  // text lazily, right as each thumbnail's fade-in finished (see
+  // afterOpacityTransition), which left it sitting as plain, fully-visible
+  // text for the whole ~500ms fade before suddenly blanking out and only
+  // then typing — the "shown first, animates after" flash, just delayed
+  // instead of eliminated. Stashed in thumbnailSpans so the observer can
+  // type them later without re-wrapping.
+  cardTargets.forEach((el) => {
+    el.classList.add("reveal");
+    thumbnailSpans.set(el, wrapCharsForTypewriter(el));
+  });
   sectionTargets.forEach((el) => {
     // Every section title is wrapped into (hidden) tw-chars right now,
     // up front, rather than lazily when its turn to type comes around —
@@ -478,9 +489,13 @@ function initScrollReveal() {
 
           // Wait for the card's own `.reveal` opacity fade-in (500ms, see
           // style.css) to finish before starting the letter-by-letter
-          // title/desc typing inside it — see afterOpacityTransition.
+          // title/desc typing inside it — see afterOpacityTransition. The
+          // spans are already wrapped (see thumbnailSpans above), so this
+          // only ever reveals already-hidden characters, never wraps
+          // plain-visible text at the last second.
+          const spans = thumbnailSpans.get(el);
           afterOpacityTransition(el, cardRevealDuration, () => {
-            typeElementText(el, null, () => contentTypeSpeed);
+            if (spans && spans.length) typeSpans(spans, () => contentTypeSpeed);
           });
         }, i * staggerInterval);
       });
@@ -544,6 +559,11 @@ function computeStaggerInterval(count) {
 // on to those spans so revealSectionTitles can type them later without
 // re-wrapping already-wrapped text.
 const sectionTitleSpans = new WeakMap();
+
+// Same idea for thumbnails (see the comment above `thumbnailSpans.set` in
+// initScrollReveal) — populated up front, consumed by the cardObserver
+// callback once each thumbnail's fade-in finishes.
+const thumbnailSpans = new WeakMap();
 
 // Same idea for the hero name (.profile-info h1) — a single element, so a
 // plain variable rather than a WeakMap is enough. Populated by
