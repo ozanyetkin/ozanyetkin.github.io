@@ -554,6 +554,24 @@ function computeStaggerInterval(count) {
   );
 }
 
+// Summary's paragraph splits into far more pieces (70+ words) than any other
+// staggered reveal on the page (a handful of cards or list items), so
+// computeStaggerInterval's 40ms floor — tuned for those chunkier items —
+// still stretches it out to a few seconds. Words are quicker to read
+// individually, so this uses a lower floor/ceiling and a smaller budget.
+const WORD_REVEAL_MIN_INTERVAL = 6;
+const WORD_REVEAL_MAX_INTERVAL = 30;
+const WORD_REVEAL_BUDGET = 350;
+
+function computeWordStaggerInterval(count) {
+  if (count <= 1) return 0;
+  const budgeted = WORD_REVEAL_BUDGET / (count - 1);
+  return Math.max(
+    WORD_REVEAL_MIN_INTERVAL,
+    Math.min(WORD_REVEAL_MAX_INTERVAL, budgeted),
+  );
+}
+
 // Section titles are wrapped into (hidden) tw-chars up front by
 // initScrollReveal, before any of them are actually typed — this map holds
 // on to those spans so revealSectionTitles can type them later without
@@ -873,7 +891,7 @@ function revealSummaryWords(section, onComplete) {
   void p.offsetWidth; // force a reflow so transition: none actually applies before...
   p.style.transition = "";
 
-  revealElementsStaggered(wordEls, () => computeStaggerInterval(wordEls.length), onComplete);
+  revealElementsStaggered(wordEls, () => computeWordStaggerInterval(wordEls.length), onComplete);
 }
 
 // Types every section's title at the same time (all independently, each on
@@ -918,8 +936,12 @@ function predictSectionRevealDuration(el) {
 
   const itemCount = getSectionItemCount(el);
   if (itemCount === 0) return titleDuration;
-  const staggerTail =
-    itemCount > 1 ? (itemCount - 1) * computeStaggerInterval(itemCount) : 0;
+  // Summary's words fly by at computeWordStaggerInterval's pace (see
+  // revealSummaryWords), not the chunkier item-tuned computeStaggerInterval
+  // every other section's staggerTail uses.
+  const intervalFn =
+    el.id === "summary" ? computeWordStaggerInterval : computeStaggerInterval;
+  const staggerTail = itemCount > 1 ? (itemCount - 1) * intervalFn(itemCount) : 0;
 
   return titleDuration + staggerTail + ITEM_POP_TRANSITION_MS;
 }
@@ -930,7 +952,16 @@ function revealSectionTitles() {
   const maxDuration = durations.length ? Math.max(...durations) : 0;
 
   sections.forEach((el, i) => {
-    const startDelay = maxDuration - durations[i];
+    // Every other section gets held back so they all finish together (see
+    // the comment above this function) — but that's *why* Summary kept
+    // failing to "get faster": shrinking its own predicted duration just
+    // grew this delay to match, pinning its finish time to whatever section
+    // is actually slowest (Work Experience, Publications, ...) no matter how
+    // quick its own word-reveal became. Summary sits above all of those on
+    // the page and should read immediately rather than wait on sections the
+    // user hasn't scrolled to yet, so it's exempted from the sync and always
+    // starts the moment the boot/hero sequence hands off.
+    const startDelay = el.id === "summary" ? 0 : maxDuration - durations[i];
     setTimeout(() => {
       const titleEl = el.querySelector(":scope > .section-title");
       const contentEl = el.querySelector(":scope > .section-content");
