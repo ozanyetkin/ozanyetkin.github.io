@@ -526,11 +526,6 @@ let contentTypeSpeed = 24; // ms between characters for CV/section content
 const bootTypeSpeed = 60; // ms between characters typing the boot splash
 const bootEraseSpeed = 26; // ms between characters rolling the boot splash back
 
-// Summary's intro paragraph is much longer than anything else typed
-// letter-by-letter (the hero name, section titles), so it gets its own
-// faster pace — contentTypeSpeed would take 10s+ to finish a few sentences.
-const summaryTypeSpeed = 4; // ms between characters for Summary's intro paragraph
-
 // Item-by-item pop-in (hero pieces, section-content children, card/thumbnail
 // batches) uses a budget-based interval rather than one flat speed: a fixed
 // 45ms gap was too fast to read as separate items for short lists (2-4
@@ -833,27 +828,52 @@ function revealResearchKeywords(section, onComplete) {
   revealElementsStaggered(chips, () => computeStaggerInterval(chips.length), onComplete);
 }
 
-// Summary's intro paragraph types out letter-by-letter, echoing the hero
-// name's typewriter treatment (see heroNameSpans) instead of popping in as
-// one block like every other section's items. The <p> was already marked
-// item-pending as a whole by initScrollReveal; unhidden here with its
-// transition switched off for one frame so its own opacity change is
-// instant rather than an animated fade compounding with the per-character
-// typing (see feedback-compounding-opacity-masks-child-animation).
-function revealSummaryText(section, onComplete) {
+// Summary's intro paragraph reveals word-by-word rather than letter-by-letter.
+// A full character-by-character type-out (previously used here, echoing the
+// hero name) took several seconds for a multi-sentence paragraph, and how
+// fast it *looked* was entangled with predictSectionRevealDuration's
+// cross-section sync: turning the per-char speed down just shrank this
+// section's own predicted duration, which pushed its *start* later to keep
+// pace with slower sections — the actual finish time barely moved, reading
+// as "doesn't get faster" no matter how low the speed went. Splitting into
+// words and reusing the same budget-based stagger every other section's
+// items use (computeStaggerInterval) sidesteps that: it's aligned with the
+// rest of the site's reveal pacing instead of a bespoke speed knob, and
+// finishes in a few hundred ms instead of several seconds. Mirrors
+// revealResearchKeywords's chip approach (custom <tw-w> tag, not <span> —
+// see feedback-typewriter-span-selectors); the <p> was already marked
+// item-pending as a whole by initScrollReveal, so it's unhidden here with
+// its transition switched off for one frame so its own opacity change is
+// instant rather than an animated fade compounding with the chips' (see
+// feedback-compounding-opacity-masks-child-animation).
+function revealSummaryWords(section, onComplete) {
   const p = section.querySelector(":scope > .section-content p");
   if (!p) {
     if (onComplete) onComplete();
     return;
   }
 
+  const text = p.textContent.replace(/\s+/g, " ").trim();
+  const words = text.split(" ").filter(Boolean);
+
+  p.textContent = "";
+  const wordEls = words.map((word) => {
+    const el = document.createElement("tw-w");
+    el.className = "kw-chip item-pending";
+    el.textContent = word;
+    return el;
+  });
+  wordEls.forEach((el, i) => {
+    p.appendChild(el);
+    if (i < wordEls.length - 1) p.appendChild(document.createTextNode(" "));
+  });
+
   p.style.transition = "none";
   p.classList.remove("item-pending");
   void p.offsetWidth; // force a reflow so transition: none actually applies before...
   p.style.transition = "";
 
-  const spans = wrapCharsForTypewriter(p);
-  typeSpans(spans, () => summaryTypeSpeed, onComplete);
+  revealElementsStaggered(wordEls, () => computeStaggerInterval(wordEls.length), onComplete);
 }
 
 // Types every section's title at the same time (all independently, each on
@@ -885,7 +905,7 @@ function getSectionItemCount(el) {
   if (el.id === "summary") {
     const p = el.querySelector(":scope > .section-content p");
     const text = p ? p.textContent.replace(/\s+/g, " ").trim() : "";
-    return text.replace(/\s/g, "").length;
+    return text ? text.split(" ").filter(Boolean).length : 0;
   }
   const contentEl = el.querySelector(":scope > .section-content");
   return contentEl ? contentEl.children.length : 0;
@@ -895,14 +915,6 @@ function predictSectionRevealDuration(el) {
   const titleEl = el.querySelector(":scope > .section-title");
   const spans = titleEl ? sectionTitleSpans.get(titleEl) : null;
   const titleDuration = spans && spans.length ? spans.length * contentTypeSpeed : 0;
-
-  // Summary types character-by-character rather than item-by-item, so its
-  // tail follows the same per-char pace as typeSpans (see
-  // revealSummaryText), not the item-pop stagger every other section uses.
-  if (el.id === "summary") {
-    const charCount = getSectionItemCount(el);
-    return titleDuration + charCount * summaryTypeSpeed;
-  }
 
   const itemCount = getSectionItemCount(el);
   if (itemCount === 0) return titleDuration;
@@ -933,7 +945,7 @@ function revealSectionTitles() {
           return;
         }
         if (el.id === "summary") {
-          revealSummaryText(el);
+          revealSummaryWords(el);
           return;
         }
         if (contentEl) {
