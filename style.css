@@ -135,6 +135,17 @@ p {
   content: "";
 }
 
+#work-experience .item-description {
+  padding-left: 1.4em;
+  max-width: 620px;
+}
+#work-experience .item-description::before {
+  content: "- ";
+  color: var(--accent-color);
+  opacity: 0.85;
+  font-style: normal;
+}
+
 #publications .item > span:first-of-type {
   padding-left: 1em;
 }
