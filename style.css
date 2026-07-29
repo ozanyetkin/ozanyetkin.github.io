@@ -137,13 +137,18 @@ p {
 
 #work-experience .item-description {
   padding-left: 1.4em;
-  max-width: 620px;
+  /* Leaves room for the item-header's 160px-wide date column (see
+     .item-header > *:last-child) plus a small margin, so wrapped lines end
+     clear of long month-inclusive date ranges instead of running the full
+     800px shared by other sections. */
+  max-width: calc(100% - 180px);
 }
 #work-experience .item-description::before {
-  content: "- ";
+  content: "▸ ";
   color: var(--accent-color);
-  opacity: 0.85;
+  opacity: 1;
   font-style: normal;
+  font-weight: bold;
 }
 
 #publications .item > span:first-of-type {
@@ -919,6 +924,12 @@ html {
     width: auto;
     text-align: left;
     margin-top: 0.3em;
+  }
+  /* No date column to clear once item-header stacks vertically above, so
+     let descriptions use the full available width instead of the desktop
+     calc(100% - 180px) reservation. */
+  #work-experience .item-description {
+    max-width: 100%;
   }
 
   .section-content-computer-literacy,

@@ -853,7 +853,7 @@ function revealSummaryText(section, onComplete) {
   p.style.transition = "";
 
   const spans = wrapCharsForTypewriter(p);
-  typeSpans(spans, () => contentTypeSpeed, onComplete);
+  typeSpans(spans, () => summaryTypeSpeed, onComplete);
 }
 
 // Types every section's title at the same time (all independently, each on
@@ -901,7 +901,7 @@ function predictSectionRevealDuration(el) {
   // revealSummaryText), not the item-pop stagger every other section uses.
   if (el.id === "summary") {
     const charCount = getSectionItemCount(el);
-    return titleDuration + charCount * contentTypeSpeed;
+    return titleDuration + charCount * summaryTypeSpeed;
   }
 
   const itemCount = getSectionItemCount(el);
