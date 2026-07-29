@@ -522,14 +522,14 @@ document.addEventListener("DOMContentLoaded", initScrollReveal);
  * original text nodes stay intact until the moment they're wrapped, so
  * markup (links, bold, etc.) and copy/paste both keep working normally.
  */
-let contentTypeSpeed = 32; // ms between characters for CV/section content
+let contentTypeSpeed = 24; // ms between characters for CV/section content
 const bootTypeSpeed = 60; // ms between characters typing the boot splash
 const bootEraseSpeed = 26; // ms between characters rolling the boot splash back
 
 // Summary's intro paragraph is much longer than anything else typed
 // letter-by-letter (the hero name, section titles), so it gets its own
 // faster pace — contentTypeSpeed would take 10s+ to finish a few sentences.
-const summaryTypeSpeed = 10;
+const summaryTypeSpeed = 8;
 
 // Item-by-item pop-in (hero pieces, section-content children, card/thumbnail
 // batches) uses a budget-based interval rather than one flat speed: a fixed
