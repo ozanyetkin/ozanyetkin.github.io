@@ -529,7 +529,7 @@ const bootEraseSpeed = 26; // ms between characters rolling the boot splash back
 // Summary's intro paragraph is much longer than anything else typed
 // letter-by-letter (the hero name, section titles), so it gets its own
 // faster pace — contentTypeSpeed would take 10s+ to finish a few sentences.
-const summaryTypeSpeed = 8;
+const summaryTypeSpeed = 4; // ms between characters for Summary's intro paragraph
 
 // Item-by-item pop-in (hero pieces, section-content children, card/thumbnail
 // batches) uses a budget-based interval rather than one flat speed: a fixed

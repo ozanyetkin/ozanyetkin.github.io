@@ -144,7 +144,7 @@ p {
   max-width: calc(100% - 180px);
 }
 #work-experience .item-description::before {
-  content: "▸ ";
+  content: "- ";
   color: var(--accent-color);
   opacity: 1;
   font-style: normal;
